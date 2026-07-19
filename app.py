@@ -54,10 +54,15 @@ if projects.empty:
 # --- 10-second question ---
 st.html(
     """
+    <div class="iq-live-strip" aria-live="polite">
+      <span class="iq-live-dot" aria-hidden="true"></span>
+      <span class="iq-live-label">Realtime decision link</span>
+      <span class="iq-live-meta">Bagaluru · Aerospace Highway · telemetry active</span>
+    </div>
     <div class="iq-hub-ask" role="heading" aria-level="1">
-      <div class="iq-hub-ask-kicker">Bagaluru · Aerospace Highway</div>
+      <div class="iq-hub-ask-kicker">Mission · Launch call</div>
       <h1>Should we launch at this price?</h1>
-      <p>Set project + ₹/sqft. Verdict, risk, and ₹ Cr exposure update live.</p>
+      <p>Lock project + ₹/sqft. Threat, ₹ Cr exposure, and intervene path update live — like a race engineer HUD, not a report.</p>
     </div>
     """
 )

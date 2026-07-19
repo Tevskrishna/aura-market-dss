@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-20 — Realtime Race HUD (visual OS)
+
+### Changed
+- New `assets/realtime_hud.css` — NFS/GTA-inspired decision HUD (asphalt night, amber/cyan telemetry, live pulses, cinematic Hub + EDS)
+- Typography: Exo 2 + Rajdhani (drop Inter)
+- Hub live strip + mission title card; EDS open-decision telemetry strip
+- Theme inject order includes HUD skin last
+
 ## 2026-07-20 — CEO Morning Loop (Decision OS)
 
 ### Added

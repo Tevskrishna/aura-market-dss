@@ -3,30 +3,30 @@
    Reference: Bengaluru Real Estate AI Map Dashboard (accepted look)
    Charcoal canvas · white type · red active accent · neon chart colors
    ========================================================= */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap');
 
 :root {
-  --bg: #0e1117;
-  --bg-2: #161b22;
-  --panel: #1c2128;
-  --panel-2: #222831;
-  --line: #30363d;
-  --line-soft: #21262d;
-  --text: #e6edf3;
-  --text-soft: #c9d1d9;
-  --muted: #8b949e;
-  --accent: #ff4b4b;
-  --accent-soft: rgba(255, 75, 75, 0.18);
-  --ok: #3dd68c;
-  --warn: #f0b429;
-  --blue: #58a6ff;
-  --cyan: #39d0d8;
-  --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
-  --radius: 12px;
+  --bg: #07090d;
+  --bg-2: #0c1018;
+  --panel: #0c121c;
+  --panel-2: #121a26;
+  --line: rgba(61, 224, 208, 0.22);
+  --line-soft: rgba(255, 192, 72, 0.12);
+  --text: #f2f6fb;
+  --text-soft: #c5d0dc;
+  --muted: #8a9bb0;
+  --accent: #ff8a1a;
+  --accent-soft: rgba(255, 138, 26, 0.18);
+  --ok: #3dff9a;
+  --warn: #ffc048;
+  --blue: #3de0d0;
+  --cyan: #3de0d0;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --radius: 6px;
 }
 
 html, body, [class*="css"], .stMarkdown, .stText, .stSelectbox, input, textarea {
-  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+  font-family: "Rajdhani", "Exo 2", "Segoe UI", sans-serif !important;
   color: var(--text) !important;
 }
 

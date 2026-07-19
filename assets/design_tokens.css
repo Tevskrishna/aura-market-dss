@@ -6,20 +6,20 @@
   --iq-space-4: 1rem;
   --iq-space-5: 1.5rem;
   --iq-space-6: 2rem;
-  --iq-radius: 12px;
-  --iq-radius-lg: 16px;
+  --iq-radius: 6px;
+  --iq-radius-lg: 8px;
   --iq-tap: 44px;
-  --iq-font: Inter, "Segoe UI", system-ui, sans-serif;
-  /* Dark (default) */
-  --iq-bg: #0e1117;
-  --iq-surface: #1c2128;
-  --iq-border: #30363d;
-  --iq-text: #e6edf3;
-  --iq-muted: #8b949e;
-  --iq-accent: #ff4b4b;
-  --iq-ok: #3dd68c;
-  --iq-warn: #f0b429;
-  --iq-info: #58a6ff;
+  --iq-font: "Rajdhani", "Exo 2", "Segoe UI", sans-serif;
+  /* Dark asphalt HUD (default) — realtime race language */
+  --iq-bg: #07090d;
+  --iq-surface: #0c121c;
+  --iq-border: rgba(61, 224, 208, 0.22);
+  --iq-text: #f2f6fb;
+  --iq-muted: #8a9bb0;
+  --iq-accent: #ff8a1a;
+  --iq-ok: #3dff9a;
+  --iq-warn: #ffc048;
+  --iq-info: #3de0d0;
 }
 
 /* Light tokens reserved for Phase P2-5 — class toggled later */

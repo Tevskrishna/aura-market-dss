@@ -43,6 +43,11 @@ def render_executive_sheet(brief: DecisionBrief, *, key: str = "eds") -> None:
     st.html(
         f"""
         <div class="iq-eds" role="region" aria-label="Executive decision sheet">
+          <div class="iq-live-strip" style="margin:0 0 0.75rem;padding:0.35rem 0.55rem;">
+            <span class="iq-live-dot" aria-hidden="true"></span>
+            <span class="iq-live-label">Open decision</span>
+            <span class="iq-live-meta">{html.escape(brief.module)} · risk telemetry</span>
+          </div>
           <div class="iq-eds-top">
             <div>
               <div class="iq-eds-kicker">Executive Decision Sheet · {html.escape(brief.module)}</div>

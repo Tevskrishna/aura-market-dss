@@ -41,7 +41,7 @@ NAV_SECTIONS: list[tuple[str, list[str]]] = [
 
 def inject_theme(*, gate: bool = False) -> None:
     chunks: list[str] = []
-    for name in ("styles.css", "dynamic.css", "copilot.css", "design_tokens.css"):
+    for name in ("styles.css", "dynamic.css", "copilot.css", "design_tokens.css", "realtime_hud.css"):
         path = settings.ASSETS_DIR / name
         if path.exists():
             chunks.append(path.read_text(encoding="utf-8"))
