@@ -30,14 +30,50 @@ MODULE_NAV: list[tuple[str, str]] = [
 ]
 
 
-def inject_theme() -> None:
+def inject_theme(*, gate: bool = False) -> None:
     chunks: list[str] = []
     for name in ("styles.css", "dynamic.css", "copilot.css", "design_tokens.css"):
         path = settings.ASSETS_DIR / name
         if path.exists():
             chunks.append(path.read_text(encoding="utf-8"))
-    if chunks:
-        st.html(f"<style>{''.join(chunks)}</style>")
+    # Hide Streamlit auto multipage list — causes login hell + raw UX
+    chunks.append(
+        """
+        [data-testid="stSidebarNav"],
+        [data-testid="stSidebarNavItems"],
+        div[data-testid="stSidebarNav"] {
+          display: none !important;
+          height: 0 !important;
+          overflow: hidden !important;
+          visibility: hidden !important;
+        }
+        """
+    )
+    if gate:
+        chunks.append(
+            """
+            section[data-testid="stSidebar"] { display: none !important; }
+            [data-testid="stSidebarCollapsedControl"] { display: none !important; }
+            header[data-testid="stHeader"] {
+              background: transparent !important;
+            }
+            .block-container {
+              padding-top: 0.75rem !important;
+              max-width: 1100px !important;
+            }
+            div[data-testid="stForm"] input {
+              min-height: 48px !important;
+              font-size: 1.05rem !important;
+            }
+            div[data-testid="stForm"] button[kind="primaryFormSubmit"],
+            div[data-testid="stForm"] button {
+              min-height: 52px !important;
+              font-size: 1.05rem !important;
+              font-weight: 800 !important;
+            }
+            """
+        )
+    st.html(f"<style>{''.join(chunks)}</style>")
 
 
 def _running_under_pages() -> bool:
@@ -52,13 +88,17 @@ def _running_under_pages() -> bool:
 
 
 def require_login() -> dict:
-    inject_theme()
     if st.session_state.get(SESSION_AUTH_KEY) and st.session_state.get(SESSION_USER_KEY):
+        inject_theme(gate=False)
         _sidebar_chrome()
+        from components.touch_nav import render_sidebar_touch_nav
+
+        render_sidebar_touch_nav()
         render_module_nav()
         return st.session_state[SESSION_USER_KEY]
 
-    # P0-3: deep-linked page URLs must not show login collage under wrong title
+    inject_theme(gate=True)
+
     if _running_under_pages():
         st.session_state["_login_notice"] = True
         try:
@@ -79,46 +119,44 @@ def require_login() -> dict:
         <style>
           .prop-login {{
             position: relative;
-            min-height: 88vh;
-            border-radius: 18px;
+            min-height: 92vh;
+            border-radius: 20px;
             overflow: hidden;
             border: 1px solid #30363d;
-            margin: 0.2rem 0 1rem;
+            margin: 0;
             background:
-              linear-gradient(105deg, rgba(8,10,14,0.92) 28%, rgba(8,10,14,0.55) 55%, rgba(8,10,14,0.25) 100%),
+              linear-gradient(105deg, rgba(8,10,14,0.94) 22%, rgba(8,10,14,0.55) 55%, rgba(8,10,14,0.2) 100%),
               url('{night}') center/cover no-repeat;
           }}
           .prop-login-grid {{
             display: grid;
-            grid-template-columns: 1.15fr 0.95fr;
-            gap: 1rem;
-            padding: 1.4rem 1.3rem 1.5rem;
-            min-height: 88vh;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 1.25rem;
+            padding: clamp(1.2rem, 3vw, 2rem);
+            min-height: 92vh;
             align-items: center;
           }}
           @media (max-width: 900px) {{
             .prop-login-grid {{ grid-template-columns: 1fr; min-height: auto; padding: 1rem; }}
             .prop-login {{ min-height: auto; background-position: 70% center; }}
+            .prop-thumb {{ display: none; }}
           }}
           .prop-login-copy .prop-brand {{
             margin: 0 0 0.35rem !important;
-            font-size: clamp(2.15rem, 5.2vw, 3.35rem) !important;
+            font-size: clamp(2.3rem, 6vw, 3.5rem) !important;
             font-weight: 800 !important;
             letter-spacing: -0.03em;
             line-height: 1.05 !important;
             color: #fff !important;
             text-shadow: 0 10px 32px rgba(0,0,0,0.5);
           }}
-          .prop-login-copy .prop-brand span {{
-            color: #ff4b4b;
-          }}
+          .prop-login-copy .prop-brand span {{ color: #ff4b4b; }}
           .prop-login-copy h1 {{
-            font-size: clamp(1.15rem, 2.4vw, 1.55rem) !important;
+            font-size: clamp(1.15rem, 2.6vw, 1.55rem) !important;
             font-weight: 600 !important;
             margin: 0.15rem 0 0.65rem !important;
             color: #e8eef6 !important;
             line-height: 1.35 !important;
-            text-shadow: 0 6px 20px rgba(0,0,0,0.4);
             max-width: 34rem;
           }}
           .prop-login-copy .prop-place {{
@@ -144,17 +182,29 @@ def require_login() -> dict:
             box-shadow: 0 16px 40px rgba(0,0,0,0.4);
           }}
           .prop-login-card {{
-            background: rgba(22,27,34,0.88);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 16px;
-            padding: 1.15rem 1.15rem 0.85rem;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+            background: rgba(22,27,34,0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 18px;
+            padding: 1.35rem 1.25rem 0.5rem;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
           }}
           .prop-login-card h3 {{
             margin: 0 0 0.35rem !important;
             color: #fff !important;
-            font-size: 1.2rem !important;
+            font-size: 1.35rem !important;
+          }}
+          .prop-feature-row {{
+            display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.85rem 0 0.2rem;
+          }}
+          .prop-feature-row span {{
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.05);
+            color: #c9d1d9;
+            border-radius: 999px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 700;
           }}
         </style>
         <div class="prop-login">
@@ -167,25 +217,27 @@ def require_login() -> dict:
                 Competition, land margin, inventory twin, and marketing ROI fold into one
                 executive call for the Aerospace Highway corridor.
               </p>
+              <div class="prop-feature-row">
+                <span>Touch module hub</span><span>Live threat score</span><span>Board PDF</span>
+              </div>
               <img class="prop-thumb" src="{day}" alt="Bagaluru residential project" />
             </div>
             <div class="prop-login-card">
               <div class="dss-brand-mark">AM</div>
               <h3>Sign in · Executive Hub</h3>
-              <p class="dss-subtitle" style="margin:0 0 0.4rem;">AURA-Market · RealEstateIQ preview</p>
+              <p class="dss-subtitle" style="margin:0 0 0.55rem;">One gate — then a graphical workspace. Sidebar page list is hidden.</p>
             </div>
           </div>
         </div>
         """
     )
 
-    # Form aligned under the glass card column on desktop via nested columns
-    _left, right = st.columns([1.15, 0.95])
+    _left, right = st.columns([1.1, 0.9])
     with right:
-        with st.form("login_form"):
+        with st.form("login_form", clear_on_submit=False):
             username = st.text_input("Username", placeholder="admin or demo")
             password = st.text_input("Password", type="password", placeholder="••••••••")
-            submitted = st.form_submit_button("Enter Executive Hub", width="stretch")
+            submitted = st.form_submit_button("Enter Executive Hub →", type="primary", width="stretch")
             if submitted:
                 user = verify_credentials(username, password)
                 if user:
@@ -194,7 +246,7 @@ def require_login() -> dict:
                     st.rerun()
                 st.error("Invalid credentials.")
         if st.session_state.pop("_login_notice", None):
-            st.info("Sign in here first — deep links open the Executive Hub when you are logged out.")
+            st.info("Sign in once here — module links stay locked until you enter the Hub.")
         st.html(
             '<div class="dss-login-creds">Demo · <b>admin / admin123</b> &nbsp;·&nbsp; <b>demo / demo123</b></div>'
         )
@@ -231,7 +283,7 @@ def render_module_nav() -> None:
 
     st.html(
         '<div class="dss-mobile-nav">'
-        '<div class="dss-mobile-nav-label">Executive Hub · jump to any module</div>'
+        '<div class="dss-mobile-nav-label">Quick jump · or use touch tiles on Hub</div>'
         "</div>"
     )
     choice = st.selectbox(
@@ -240,7 +292,7 @@ def render_module_nav() -> None:
         index=idx,
         key="dss_module_nav",
         label_visibility="collapsed",
-        help="Use this if the left sidebar is closed on your phone. On desktop you can also use the sidebar.",
+        help="Phone-safe jump list. Prefer graphical tiles on Executive Hub.",
     )
     st.session_state["dss_nav_label"] = choice
     target = path_by[choice]
@@ -269,7 +321,7 @@ def _sidebar_chrome() -> None:
         st.session_state[SESSION_USER_KEY] = None
         st.rerun()
     st.sidebar.markdown("---")
-    st.sidebar.caption("Phone tip: use the red menu button top-left, or the Modules dropdown on the page.")
+    st.sidebar.caption("Use Workspaces below · Streamlit page list is hidden on purpose.")
 
 
 def page_hero(

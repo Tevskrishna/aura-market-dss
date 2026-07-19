@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
 from components.copilot_ui import action_cards, factor_bars, threat_gauge, verdict_banner
 from components.layout import require_login, section_label
 from components.states import data_honesty_banner, empty_state, page_hub_label
+from components.touch_nav import render_touch_hub
 from components.viz_studio import generate_button, render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
@@ -62,6 +63,9 @@ st.html(
     </div>
     """
 )
+
+section_label("Workspaces · tap to open")
+render_touch_hub(title="Graphical module launch pad")
 
 if projects.empty:
     empty_state(

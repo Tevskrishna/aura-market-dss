@@ -134,11 +134,63 @@ html[data-theme="light"] {
   color: var(--iq-text);
 }
 
+/* Touch graphical hub */
+.iq-touch-hub-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--iq-text, #e6edf3);
+  margin: 0.5rem 0 0.15rem;
+}
+.iq-touch-hub-sub {
+  color: var(--iq-muted, #8b949e);
+  font-size: 0.85rem;
+  margin: 0 0 0.85rem;
+}
+.iq-tile-preview {
+  border: 1px solid var(--iq-border, #30363d);
+  background: linear-gradient(145deg, rgba(28,33,40,0.95), rgba(14,17,23,0.9));
+  border-radius: 14px;
+  padding: 0.85rem 0.8rem 0.55rem;
+  min-height: 96px;
+  margin-bottom: 0.35rem;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.iq-tile-preview:hover {
+  border-color: rgba(255, 75, 75, 0.55);
+  transform: translateY(-1px);
+}
+.iq-tile-active {
+  border-color: #ff4b4b !important;
+  box-shadow: 0 0 0 1px rgba(255, 75, 75, 0.25);
+}
+.iq-tile-mark {
+  display: block;
+  font-size: 1.35rem;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+.iq-tile-preview strong {
+  display: block;
+  color: #e6edf3;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+.iq-tile-blurb {
+  display: block;
+  color: #8b949e;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+@media (max-width: 640px) {
+  .iq-tile-preview { min-height: 88px; }
+}
+
 /* Touch-friendly floor */
 .stButton > button,
 div[data-testid="stSegmentedControl"] label {
   min-height: var(--iq-tap) !important;
 }
+
 
 @media (max-width: 768px) {
   .block-container {
