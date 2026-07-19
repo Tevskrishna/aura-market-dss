@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.competition_service import build_competition_snapshot, launch_price_pressure
 from services.margin_service import build_margin_viability, margin_kpis
 from utils.charts import PALETTE
@@ -137,5 +137,23 @@ else:
     high = int((threats["threat"] == "High").sum())
     if high:
         st.warning(f"{high} upcoming project(s) priced within ~5% of your launch price — blind-spot risk.")
+        decision_action(
+            "Do not launch blind at this price",
+            [
+                f"{high} upcoming launch(es) sit within ~5% of ₹{my_price:,.0f}/sqft — revise price or differentiate amenity/financing now.",
+                "Cross-check UC unsold stock on this page and land margin viability before advertising.",
+                "Simulate the rival case on Digital Twin before locking brochure pricing.",
+            ],
+            tone="warn",
+        )
     else:
         st.success("No high-threat price overlap in upcoming set.")
+        decision_action(
+            "Competition pressure is manageable at this quote",
+            [
+                "Still monitor RERA density and UC unsold before final print.",
+                "Confirm margin stays Viable at this launch price.",
+                "Lock MONITOR ownership on SPC after go-live.",
+            ],
+            tone="ok",
+        )

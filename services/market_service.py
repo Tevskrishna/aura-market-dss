@@ -128,14 +128,15 @@ def quarterly_performance_frame(monthly: pd.DataFrame, bookings: pd.DataFrame) -
 def marketing_efficiency_frame(
     marketing: pd.DataFrame, bookings: pd.DataFrame, projects: pd.DataFrame
 ) -> pd.DataFrame:
-    """Spend (₹ Cr) vs outcomes — efficiency signal for MEASURE."""
+    """Spend (₹ Cr) vs outcomes — efficiency / ROI base for MEASURE."""
     if marketing.empty:
-        return pd.DataFrame(columns=["project", "spend_cr", "bookings", "sales_value_cr", "efficiency"])
+        return pd.DataFrame(
+            columns=["project", "spend_cr", "bookings", "sales_value_cr", "efficiency", "roi_sales", "roi_bookings"]
+        )
 
     spend = marketing.groupby("project", as_index=False)["spend_cr"].sum()
 
     if not bookings.empty:
-        # fuzzy: booking project label contained in marketing project name or vice versa
         bcounts = bookings.groupby("project").size().to_dict()
     else:
         bcounts = {}
@@ -156,8 +157,9 @@ def marketing_efficiency_frame(
             if sp.lower() in name.lower() or name.lower().split()[0] in sp.lower():
                 sv += float(val)
         spend_cr = float(row["spend_cr"])
-        # sales value per ₹ Cr marketing (or bookings per Cr if no sales match)
-        efficiency = (sv / spend_cr) if spend_cr > 0 and sv > 0 else (bk / spend_cr if spend_cr > 0 else 0)
+        roi_sales = (sv / spend_cr) if spend_cr > 0 else 0.0
+        roi_bookings = (bk / spend_cr) if spend_cr > 0 else 0.0
+        efficiency = roi_sales if sv > 0 else roi_bookings
         records.append(
             {
                 "project": name,
@@ -165,6 +167,8 @@ def marketing_efficiency_frame(
                 "bookings": bk,
                 "sales_value_cr": round(sv, 2),
                 "efficiency": round(efficiency, 2),
+                "roi_sales": round(roi_sales, 2),
+                "roi_bookings": round(roi_bookings, 2),
             }
         )
     return pd.DataFrame(records).sort_values("spend_cr", ascending=False)

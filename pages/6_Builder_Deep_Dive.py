@@ -10,9 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.adapters import get_adapter
-from services.recommendation_engine import defect_probability, fit_gb_forecast, root_causes
+from services.recommendation_engine import defect_probability, fit_gb_forecast, recommendations_for_row, root_causes
 from services.sigma_service import market_kpis
 from utils.dmaic_charts import ml_vs_actual_chart, stacked_sold_unsold
 
@@ -51,12 +51,30 @@ st.plotly_chart(ml_vs_actual_chart(pred_sub), width="stretch")
 
 section_label("At-risk project cards")
 at_risk = sub[sub["absorption_pct"] < 85].sort_values("absorption_pct")
+sold_out = df[df["absorption_pct"] >= 95]
 if at_risk.empty:
     st.success("No projects under 85% absorption for this builder.")
+    decision_action(
+        "Hold the playbook",
+        ["Keep price discipline; pace construction CRM updates; re-check monthly on SPC."],
+        tone="ok",
+    )
 else:
+    decision_action(
+        f"Execute IMPROVE actions for {developer}",
+        [
+            "Open each at-risk expander below — run the listed actions this fortnight.",
+            "Validate material price cuts on Digital Twin before publishing ads.",
+            "Track recovery on Market Overview absorption bands next review.",
+        ],
+        tone="warn",
+    )
     for _, row in at_risk.iterrows():
         with st.expander(f"{row['project']} — {row['absorption_pct']}% absorbed"):
             st.write(f"**ML defect probability:** {defect_probability(row):.0%}")
             st.write("**Root causes:**")
             for c in root_causes(row):
                 st.write(f"- {c}")
+            st.write("**Developer actions:**")
+            for rec in recommendations_for_row(row, sold_out)[:3]:
+                st.write(f"- **{rec['action']}** — {rec['detail']} (est. recoverable {rec['recoverable_units']} units)")

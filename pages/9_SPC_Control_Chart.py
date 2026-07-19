@@ -11,7 +11,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
 from services.spc_service import forecast_linear_seasonal, imr_chart
@@ -58,6 +58,11 @@ st.write(
 section_label("Out-of-control & runs-rule events")
 if not result["ooc"]:
     st.success("No OOC / runs-rule violations detected.")
+    decision_action(
+        "Process appears in statistical control",
+        ["Hold the current sales plan; review I-MR monthly; escalate only if a new OOC point appears."],
+        tone="ok",
+    )
 else:
     months = series.index.tolist()
     rows = []
@@ -73,6 +78,11 @@ else:
             }
         )
     st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+    decision_action(
+        "Correct the out-of-control process",
+        [f"{r['month']}: {r['corrective_action']} ({r['rule']})" for r in rows[:4]],
+        tone="warn",
+    )
 
 section_label("6-Month forecast")
 fc = forecast_linear_seasonal(series, months=6)

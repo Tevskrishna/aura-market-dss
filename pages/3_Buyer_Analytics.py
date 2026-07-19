@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.buyer_service import build_buyer_insights
 from services.data_loader import load_catalog
 from utils.charts import PALETTE
@@ -43,6 +43,21 @@ render_kpi_cards(
 if insights.total_bookings == 0:
     st.warning("No bookings for current filters.")
     st.stop()
+
+# Channel hint for CTA
+top_ch = ""
+if not insights.channel_mix.empty and {"channel", "count"}.issubset(insights.channel_mix.columns):
+    r0 = insights.channel_mix.sort_values("count", ascending=False).iloc[0]
+    top_ch = f"{r0['channel']} ({int(r0['count']):,})"
+
+decision_action(
+    "Match product + media to who actually books",
+    [
+        f"Protect / scale top conversion channel: {top_ch or 'see channel mix below'}.",
+        "Align new launches to dominant unit mix and age band on this page.",
+        "If native vs outstation skew is extreme, localize messaging and site tours accordingly.",
+    ],
+)
 
 section_label("Conversion channels & unit mix")
 c1, c2 = st.columns(2)

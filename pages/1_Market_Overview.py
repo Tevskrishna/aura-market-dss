@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.data_loader import load_catalog
 from services.market_service import build_market_bundle, get_validation_report
 from services.sigma_service import market_kpis as sigma_kpis
@@ -50,6 +50,16 @@ render_kpi_cards(
     columns=5,
 )
 st.caption(f"DPMO = (unsold ÷ launched) × 1,000,000 → **{sk['dpmo']:,.0f}**")
+
+decision_action(
+    "This week's market moves",
+    [
+        f"Escalate {sk['at_risk_projects']} at-risk project(s) (absorption <70%) to AI Recommendations.",
+        "Compare red-band projects vs sold-out benchmarks on Builder Deep Dive.",
+        "If DPMO stays high, prioritize IMPROVE actions before the next launch quarter.",
+    ],
+    tone="warn" if sk["at_risk_projects"] else "ok",
+)
 
 section_label("Absorption & mix")
 c1, c2 = st.columns([1.3, 1])

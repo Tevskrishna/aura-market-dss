@@ -11,7 +11,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
 from services.spc_service import forecast_linear_seasonal
@@ -54,9 +54,31 @@ fig.add_trace(go.Scatter(x=fc["month"], y=fc["lower"], name="Lower 95%", line=di
 st.plotly_chart(_style(fig, title), width="stretch")
 st.dataframe(fc[["month", "forecast", "lower", "upper"]], width="stretch", hide_index=True)
 
+slope = float(fc["forecast"].iloc[-1] - series.iloc[-1]) if len(series) else 0.0
+if slope < 0:
+    decision_action(
+        "Near-term outlook is softening",
+        [
+            "Pull Digital Twin interventions forward before the next launch quarter.",
+            "Reallocate SMC from low-ROI names (Marketing Intelligence) into campaigns that can still book this horizon.",
+            "Hold aggressive launch pricing until Competition Intelligence threat is Low/Medium.",
+        ],
+        tone="warn",
+    )
+else:
+    decision_action(
+        "Near-term outlook supports paced growth",
+        [
+            "Keep MONITOR cadence on SPC; do not overspend SMC without ROI checks.",
+            "Use Map DSS top-pick zones for any new land diligence this quarter.",
+            "Still clear competition crowding before any price increase.",
+        ],
+        tone="ok",
+    )
+
 st.info(
-    "Krishna Kumar sir: good for short-term decisions. Longer 1–3 year horizon "
-    "(metro uplift, adjoining large launches) is documented as Phase-3 — not claimed in this build."
+    "Mentor note: strong for short-term decisions. Longer 1–3 year metro / mega-launch shocks "
+    "are Phase-3 — not claimed as complete in this submission build."
 )
 st.download_button(
     "Download forecast CSV",

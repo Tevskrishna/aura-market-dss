@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.map_service import (
     METRO_STATIONS,
     explain_zone,
@@ -62,6 +62,14 @@ with t_home:
         columns=3,
     )
     st.info(f"Highest growth area: **{kpis['highest_growth_area']}** · AI top-pick: **{kpis['ai_top_pick']}**")
+    decision_action(
+        "Where to build / diligence next",
+        [
+            f"Prioritize land and construction diligence in **{kpis['ai_top_pick']}** (AI top-pick).",
+            f"Defer or redesign zones counted in high-risk ({kpis['high_risk_zones']}) — flood or score <50.",
+            "Use Compare + What-If tabs before committing acquisition terms.",
+        ],
+    )
     top5 = zones.sort_values("suitability_score", ascending=False).head(5)
     st.dataframe(top5[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "price_trend_yoy_pct"]], width="stretch", hide_index=True)
     st.caption("ML inputs: price, trend, metro, highway, hospitals, schools, malls, parks, flood, AQI, population growth")
@@ -94,7 +102,7 @@ with t_map:
             fill=True,
             popup=f"Metro: {s['station']} ({s['line']})",
         ).add_to(m)
-    st_folium(m, width=None, height=520)
+    st_folium(m, width=None, height=380)
     st.dataframe(view[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "highway_km"]], width="stretch", hide_index=True)
 
 with t_ai:

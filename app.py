@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from components.layout import info_panel, module_cards, page_hero, require_login, section_label
+from components.layout import decision_action, info_panel, module_cards, page_hero, require_login, section_label
 from config import settings
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
@@ -58,6 +58,15 @@ with c3:
         "Data mode",
         f"{meta.description} Live adapters plug in when KRERA/land credentials arrive.",
     )
+
+decision_action(
+    "Start here for a launch decision",
+    [
+        "Open Competition Intelligence — check RERA crowding, upcoming ads, UC unsold, and margin index before setting price.",
+        "Open Marketing Intelligence — cut bottom-quartile SMC ROI projects and shift budget to high-ROI names.",
+        "Validate any price cut / subvention on Digital Twin, then MONITOR with SPC.",
+    ],
+)
 
 section_label("Navigate AURA-Market")
 module_cards(

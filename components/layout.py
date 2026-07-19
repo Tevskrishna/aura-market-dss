@@ -32,7 +32,7 @@ def require_login() -> dict:
         "</div></div>"
     )
 
-    left, center, right = st.columns([1, 1.35, 1])
+    _, center, _ = st.columns([0.2, 1.2, 0.2])
     with center:
         with st.form("login_form"):
             username = st.text_input("Username", placeholder="admin or demo")
@@ -113,3 +113,15 @@ def module_cards(modules: list[tuple[str, str, str]]) -> None:
             f"<span>{html.escape(desc)}</span></div>"
         )
     st.html(f'<div class="dss-module-grid">{"".join(cards)}</div>')
+
+
+def decision_action(title: str, actions: list[str], tone: str = "action") -> None:
+    """Explicit 'what should the developer do?' callout — required on every module."""
+    items = "".join(f"<li>{html.escape(a)}</li>" for a in actions if a)
+    klass = {"ok": "ok", "warn": "warn", "action": ""}.get(tone, "")
+    st.html(
+        f'<div class="dss-decision {klass}">'
+        f'<div class="dss-decision-kicker">Developer action</div>'
+        f"<h3>{html.escape(title)}</h3>"
+        f"<ul>{items}</ul></div>"
+    )

@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.dmaic_service import build_dmaic_snapshot
 
 st.set_page_config(page_title="DMAIC Workspace", page_icon="🧭", layout="wide")
@@ -65,4 +65,14 @@ else:
 section_label("At-risk projects (absorption below threshold)")
 st.dataframe(snap.at_risk, width="stretch", hide_index=True)
 
-st.caption("Next: Fishbone · correlation · SHAP · Digital Twin · SPC CONTROL charts on this same filter contract.")
+decision_action(
+    "Close the DMAIC loop this sprint",
+    [
+        "Attack the top Pareto unsold projects with IMPROVE actions on AI Recommendations.",
+        "Run Digital Twin interventions (price / subvention) on the largest unsold pile.",
+        "Move CONTROL ownership to SPC — review OOC signals monthly.",
+    ],
+    tone="action",
+)
+
+st.caption("ANALYZE/IMPROVE surfaces: Builder Deep Dive · Digital Twin · AI Recommendations · SPC.")

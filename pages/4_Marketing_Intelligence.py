@@ -1,4 +1,4 @@
-"""Marketing Intelligence — SMC spend vs outcomes."""
+"""Marketing Intelligence — SMC spend vs outcomes + ROI recommendations."""
 from __future__ import annotations
 
 import sys
@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
 from services.marketing_service import build_marketing_insights
 from utils.charts import marketing_efficiency_chart
 
@@ -22,26 +22,38 @@ require_login()
 page_hero(
     kicker="MEASURE · Marketing efficiency",
     title="Marketing Intelligence",
-    subtitle="SMC spends (₹ Cr) linked to bookings and sales outcomes — stop blind spend.",
-    chips=[("SMC workbook", "ok"), ("Quarterly", ""), ("Efficiency", "")],
+    subtitle="SMC spends (₹ Cr) → bookings → ROI quartiles → reallocation actions — stop blind spend.",
+    chips=[("SMC workbook", "ok"), ("ROI", "ok"), ("Reallocate", "")],
 )
 
 filters = render_global_filters("mkt")
 insights = build_marketing_insights(filters)
+
+avg_roi = float(insights.roi["roi_score"].mean()) if not insights.roi.empty else 0.0
+cut_n = int((insights.roi["verdict"] == "Cut / reallocate").sum()) if not insights.roi.empty else 0
 
 section_label("Spend scorecard")
 render_kpi_cards(
     [
         {"label": "Total SMC spend", "value": insights.total_spend_cr, "format": "cr"},
         {"label": "Projects tracked", "value": len(insights.by_project), "format": "int"},
-        {"label": "Quarters", "value": len(insights.by_quarter), "format": "int"},
+        {"label": "Avg ROI score", "value": round(avg_roi, 2), "format": "float"},
+        {"label": "Cut candidates", "value": cut_n, "format": "int", "help": "Bottom-quartile ROI"},
     ],
-    columns=3,
 )
 
 if insights.by_quarter.empty:
     st.warning("No marketing spend rows for current filters.")
     st.stop()
+
+decision_action(
+    "Reallocate SMC budget this quarter",
+    [
+        *(f"{r['action']}: {r['project']} — {r['detail']}" for r in insights.reallocation[:4]),
+        insights.top_channel_hint or "Protect known high-conversion booking channels when shifting media mix.",
+    ],
+    tone="action",
+)
 
 st.plotly_chart(
     px.line(insights.by_quarter, x="fy_quarter", y="spend_cr", markers=True, title="SMC spend by quarter (₹ Cr)"),
@@ -63,10 +75,40 @@ with c1:
 with c2:
     st.plotly_chart(marketing_efficiency_chart(insights.efficiency), width="stretch")
 
-st.dataframe(insights.efficiency, width="stretch", hide_index=True)
-st.download_button(
-    "Download efficiency table",
-    insights.efficiency.to_csv(index=False).encode("utf-8"),
-    file_name="marketing_efficiency.csv",
-    mime="text/csv",
-)
+section_label("ROI table (spend → bookings → sales)")
+show_cols = [c for c in ["project", "spend_cr", "bookings", "sales_value_cr", "roi_sales", "roi_bookings", "roi_score", "quartile", "verdict"] if c in insights.roi.columns]
+st.dataframe(insights.roi[show_cols] if show_cols else insights.roi, width="stretch", hide_index=True)
+
+section_label("SMC share matrix (utilization)")
+if insights.share_long.empty:
+    st.caption("No smc_spends.csv share rows loaded.")
+else:
+    st.caption(f"{len(insights.share_long):,} quarterly share rows from wide SMC workbook — used to cross-check concentration.")
+    top_share = (
+        insights.share_long.groupby("project", as_index=False)["spend_share"]
+        .sum()
+        .sort_values("spend_share", ascending=False)
+        .head(10)
+    )
+    st.plotly_chart(
+        px.bar(top_share, x="spend_share", y="project", orientation="h", title="Cumulative SMC budget share by project"),
+        width="stretch",
+    )
+
+c_dl1, c_dl2 = st.columns(2)
+with c_dl1:
+    st.download_button(
+        "Download ROI table",
+        insights.roi.to_csv(index=False).encode("utf-8"),
+        file_name="marketing_roi.csv",
+        mime="text/csv",
+        width="stretch",
+    )
+with c_dl2:
+    st.download_button(
+        "Download efficiency table",
+        insights.efficiency.to_csv(index=False).encode("utf-8"),
+        file_name="marketing_efficiency.csv",
+        mime="text/csv",
+        width="stretch",
+    )
