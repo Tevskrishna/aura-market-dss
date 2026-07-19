@@ -14,7 +14,12 @@ from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.competition_service import build_competition_snapshot
 from services.dmaic_service import build_dmaic_snapshot
-from services.report_service import build_executive_html, build_executive_markdown, competition_csv
+from services.report_service import (
+    build_executive_html,
+    build_executive_markdown,
+    build_executive_pdf,
+    competition_csv,
+)
 
 st.set_page_config(page_title="Executive Reports", page_icon="📄", layout="wide")
 require_login()
@@ -22,13 +27,19 @@ require_login()
 page_hero(
     kicker="CONTROL · Submission pack",
     title="Executive Reports",
-    subtitle="One-click decision brief for mentors and company reviewers — Markdown + printable HTML (Print → PDF).",
-    chips=[("Markdown", "ok"), ("HTML / PDF", "ok"), ("Filter-aware", "")],
+    subtitle="One-click board pack for mentors and reviewers — Markdown, printable HTML, and native PDF.",
+    chips=[("Markdown", "ok"), ("HTML", "ok"), ("PDF board pack", "ok")],
 )
 
 filters = render_global_filters("report")
 md = build_executive_markdown(filters)
 html = build_executive_html(filters)
+try:
+    pdf_bytes = build_executive_pdf(filters)
+    pdf_err = None
+except Exception as exc:  # pragma: no cover
+    pdf_bytes = b""
+    pdf_err = str(exc)
 dmaic = build_dmaic_snapshot(filters)
 comp = build_competition_snapshot()
 
@@ -46,8 +57,8 @@ render_kpi_cards(
 decision_action(
     "Use this brief in the review meeting",
     [
-        "Download HTML and Print → Save as PDF for mentors who prefer a one-pager.",
-        "Walk Priority actions (§6) first — then attach Marketing ROI and Competition counts.",
+        "Download the PDF board pack for mentors who want a single attachment.",
+        "Walk Priority actions first — then attach Marketing allocator and Competition land sheet.",
         "Do not claim live KRERA — state local/seed competition mode unless credentials arrive.",
     ],
 )
@@ -55,7 +66,8 @@ decision_action(
 section_label("Preview")
 st.markdown(md)
 
-c1, c2, c3 = st.columns(3)
+c1, c2 = st.columns(2)
+c3, c4 = st.columns(2)
 with c1:
     st.download_button(
         "Download brief (.md)",
@@ -73,6 +85,17 @@ with c2:
         width="stretch",
     )
 with c3:
+    if pdf_bytes:
+        st.download_button(
+            "Download board pack (PDF)",
+            data=pdf_bytes,
+            file_name="aura_board_pack.pdf",
+            mime="application/pdf",
+            width="stretch",
+        )
+    else:
+        st.warning(pdf_err or "PDF unavailable — install fpdf2.")
+with c4:
     st.download_button(
         "Download competition CSV",
         data=competition_csv().to_csv(index=False).encode("utf-8"),

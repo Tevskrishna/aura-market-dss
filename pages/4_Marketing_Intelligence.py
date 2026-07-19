@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 from components.filters import render_global_filters
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
-from services.marketing_service import build_marketing_insights
+from services.marketing_service import build_marketing_insights, weekly_budget_allocation
 from utils.charts import marketing_efficiency_chart
 
 st.set_page_config(page_title="Marketing Intelligence", page_icon="📣", layout="wide")
@@ -78,6 +78,35 @@ with c2:
 section_label("ROI table (spend → bookings → sales)")
 show_cols = [c for c in ["project", "spend_cr", "bookings", "sales_value_cr", "roi_sales", "roi_bookings", "roi_score", "quartile", "verdict"] if c in insights.roi.columns]
 st.dataframe(insights.roi[show_cols] if show_cols else insights.roi, width="stretch", hide_index=True)
+
+section_label("Weekly budget allocator")
+st.caption("Fixed weekly SMC pool redistributed by ROI quartile (Q1-High gets more; Q4-Low trimmed).")
+wb = st.slider("Weekly budget (₹ Cr)", 0.1, 5.0, 1.0, 0.1, key="mkt_weekly_budget")
+alloc = weekly_budget_allocation(insights.roi, weekly_budget_cr=float(wb))
+if alloc.empty:
+    st.info("No ROI rows to allocate.")
+else:
+    top = alloc.iloc[0]
+    decision_action(
+        f"Deploy ₹{wb:.1f} Cr this week — lead with {top['project']}",
+        [
+            f"{r['project']}: ₹{r['allocated_cr']:.2f} Cr ({r['pct_of_budget']:.0f}%) — {r['action']}"
+            for _, r in alloc.head(5).iterrows()
+        ],
+        tone="action",
+    )
+    st.dataframe(alloc, width="stretch", hide_index=True)
+    st.plotly_chart(
+        px.bar(
+            alloc,
+            x="allocated_cr",
+            y="project",
+            color="quartile",
+            orientation="h",
+            title=f"Weekly allocation (₹ {wb:.1f} Cr pool)",
+        ),
+        width="stretch",
+    )
 
 section_label("SMC share matrix (utilization)")
 if insights.share_long.empty:

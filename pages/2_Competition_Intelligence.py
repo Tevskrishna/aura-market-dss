@@ -15,8 +15,9 @@ from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.states import data_honesty_banner, page_hub_label
 from components.viz_studio import generate_button, live_kpi_strip, render_dynamic_figure, scenario_bar
+from config import settings
 from services.competition_service import build_competition_snapshot, launch_price_pressure
-from services.margin_service import build_margin_viability, margin_kpis
+from services.margin_service import build_margin_viability, evaluate_land_decision, margin_kpis
 from utils.charts import PALETTE, _style
 
 st.set_page_config(page_title="Competition & Land · RealEstateIQ", page_icon="🏢", layout="wide")
@@ -169,6 +170,25 @@ with t4:
         )
         st.plotly_chart(fig, width="stretch")
 
+    section_label("Land decision sheet")
+    st.caption("BUY / HOLD / PASS on seed land basis + upcoming/UC pressure — same margin math as Margin tab.")
+    mm_opts = snap.land["micro_market"].astype(str).tolist() if not snap.land.empty else [settings.MICRO_MARKET_DEFAULT]
+    lc1, lc2 = st.columns([2, 1])
+    with lc1:
+        land_mm = st.selectbox("Micro-market parcel", mm_opts, key="land_decision_mm")
+    with lc2:
+        land_exit = st.number_input("Assumed exit ₹/sqft", 5000, 20000, 9000, 100, key="land_decision_exit")
+    land_dec = evaluate_land_decision(micro_market=str(land_mm), assumed_sale_psf=float(land_exit))
+    render_kpi_cards(
+        [
+            {"label": "Verdict", "value": land_dec.verdict, "format": "str"},
+            {"label": "Margin", "value": land_dec.margin_pct, "format": "pct"},
+            {"label": "Land ₹/sqft", "value": land_dec.land_price_psf, "format": "int"},
+            {"label": "UC unsold", "value": land_dec.uc_unsold_nearby, "format": "int"},
+        ]
+    )
+    tone = {"BUY": "ok", "HOLD": "warn", "PASS": "warn"}.get(land_dec.verdict, "action")
+    decision_action(land_dec.headline, land_dec.actions, tone=tone)
 with t5:
     st.write(
         "Developer Margin Viability Index = (Sale ₹/sqft − loaded land − construction cost) ÷ Sale. "

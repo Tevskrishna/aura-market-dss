@@ -6,3 +6,5 @@ folium>=0.15
 streamlit-folium>=0.18
 scikit-learn>=1.4
 openpyxl>=3.1
+fpdf2>=2.7
+joblib>=1.3

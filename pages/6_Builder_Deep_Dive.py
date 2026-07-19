@@ -12,7 +12,13 @@ sys.path.insert(0, str(ROOT))
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.adapters import get_adapter
-from services.recommendation_engine import defect_probability, fit_gb_forecast, recommendations_for_row, root_causes
+from services.recommendation_engine import (
+    defect_probability,
+    fit_gb_forecast,
+    gb_artifact_status,
+    recommendations_for_row,
+    root_causes,
+)
 from services.sigma_service import market_kpis
 from utils.dmaic_charts import ml_vs_actual_chart, stacked_sold_unsold
 
@@ -44,9 +50,16 @@ render_kpi_cards(
 st.plotly_chart(stacked_sold_unsold(sub), width="stretch")
 
 section_label("Gradient Boosting — forecast vs actual")
-pred, score, _ = fit_gb_forecast(df)
+force = st.checkbox("Force retrain model", value=False, help="Ignore cached artifact under models/artifacts/")
+pred, score, _ = fit_gb_forecast(df, force_retrain=force)
+status = gb_artifact_status()
+loaded = bool(getattr(pred, "attrs", {}).get("model_loaded_from_disk"))
+st.caption(
+    f"Holdout R² ≈ {score:.2f} · "
+    + ("loaded from disk artifact" if loaded else "trained and saved this run")
+    + (f" · `{status['path']}`" if status.get("path") else "")
+)
 pred_sub = pred[pred["developer"] == developer]
-st.caption(f"Holdout R² ≈ {score:.2f} · trained on 10× Gaussian-augmented rows (anti-overfit)")
 st.plotly_chart(ml_vs_actual_chart(pred_sub), width="stretch")
 
 section_label("At-risk project cards")

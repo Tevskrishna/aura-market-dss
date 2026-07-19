@@ -1,8 +1,29 @@
 ﻿from __future__ import annotations
 
+import hashlib
+
 import pandas as pd
 
+from config import settings
 from services.sigma_service import augment_for_ml
+
+_GB_FEATURES = [
+    "price_psf",
+    "avg_unit_size_sqft",
+    "construction_delay_months",
+    "construction_progress_pct",
+    "brand_score",
+    "total_units",
+]
+_ARTIFACT_DIR = settings.PROJECT_ROOT / "models" / "artifacts"
+_GB_PATH = _ARTIFACT_DIR / "gb_absorption.joblib"
+_HASH_PATH = _ARTIFACT_DIR / "gb_absorption.hash"
+
+
+def _projects_fingerprint(projects: pd.DataFrame) -> str:
+    cols = [c for c in _GB_FEATURES + ["absorption_pct", "project"] if c in projects.columns]
+    payload = projects[cols].sort_values("project" if "project" in cols else cols[0]).to_csv(index=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
 def defect_probability(row: pd.Series) -> float:
@@ -125,29 +146,56 @@ def recommendations_for_row(row: pd.Series, sold_out: pd.DataFrame) -> list[dict
     return recs
 
 
-def fit_gb_forecast(projects: pd.DataFrame):
-    """Gradient Boosting absorption forecast vs actual."""
+def fit_gb_forecast(projects: pd.DataFrame, *, force_retrain: bool = False):
+    """
+    Gradient Boosting absorption forecast vs actual.
+    Persists artifact under models/artifacts/ so UI does not retrain every click.
+    """
+    import joblib
     from sklearn.ensemble import GradientBoostingRegressor
     from sklearn.model_selection import train_test_split
 
-    aug = augment_for_ml(projects)
-    features = [
-        "price_psf",
-        "avg_unit_size_sqft",
-        "construction_delay_months",
-        "construction_progress_pct",
-        "brand_score",
-        "total_units",
-    ]
-    X = aug[features]
-    y = aug["absorption_pct"]
-    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, random_state=42)
-    model = GradientBoostingRegressor(random_state=42)
-    model.fit(Xtr, ytr)
+    features = _GB_FEATURES
+    fp = _projects_fingerprint(projects)
+    model = None
+    score = None
+    loaded = False
+
+    if not force_retrain and _GB_PATH.exists() and _HASH_PATH.exists():
+        try:
+            if _HASH_PATH.read_text(encoding="utf-8").strip() == fp:
+                blob = joblib.load(_GB_PATH)
+                model = blob["model"]
+                score = float(blob.get("score", 0.0))
+                loaded = True
+        except Exception:
+            loaded = False
+
+    if not loaded:
+        aug = augment_for_ml(projects)
+        X = aug[features]
+        y = aug["absorption_pct"]
+        Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, random_state=42)
+        model = GradientBoostingRegressor(random_state=42)
+        model.fit(Xtr, ytr)
+        score = float(model.score(Xte, yte))
+        _ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
+        joblib.dump({"model": model, "score": score, "features": features}, _GB_PATH)
+        _HASH_PATH.write_text(fp, encoding="utf-8")
+
     preds = model.predict(projects[features])
-    score = float(model.score(Xte, yte))
     out = projects[["developer", "project", "absorption_pct"]].copy()
     out["ml_forecast_pct"] = preds.round(1)
     out["gap_pp"] = (out["ml_forecast_pct"] - out["absorption_pct"]).round(1)
+    out.attrs["model_loaded_from_disk"] = loaded
     return out, score, model
+
+
+def gb_artifact_status() -> dict:
+    """Diagnostic for Recommendations UI."""
+    return {
+        "artifact_exists": _GB_PATH.exists(),
+        "path": str(_GB_PATH.relative_to(settings.PROJECT_ROOT)) if _GB_PATH.exists() else "",
+        "hash_path": str(_HASH_PATH.relative_to(settings.PROJECT_ROOT)) if _HASH_PATH.exists() else "",
+    }
 

@@ -145,7 +145,8 @@ with t_map:
             fill=True,
             popup=f"Metro: {s['station']} ({s['line']})",
         ).add_to(m)
-    st_folium(m, width=None, height=380, key=f"folium_{st.session_state.get('map_folium_nonce', 0)}")
+    st_folium(m, width=None, height=420, key=f"folium_{st.session_state.get('map_folium_nonce', 0)}")
+    st.caption("Map height adapts via design tokens (≈280px phone · 340px tablet · 420px+ desktop).")
     st.dataframe(
         view[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "highway_km"]],
         width="stretch",

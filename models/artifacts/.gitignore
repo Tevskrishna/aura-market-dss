@@ -1,0 +1,4 @@
+# ML artifacts are regenerated locally / on Cloud; keep the folder.
+*.joblib
+*.hash
+!.gitkeep

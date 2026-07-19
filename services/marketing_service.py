@@ -159,3 +159,61 @@ def build_marketing_insights(filters: FilterState) -> MarketingInsights:
         reallocation=recs,
         top_channel_hint=hint,
     )
+
+
+def weekly_budget_allocation(
+    roi: pd.DataFrame,
+    *,
+    weekly_budget_cr: float = 1.0,
+) -> pd.DataFrame:
+    """
+    Marketing allocator v1 — redistribute a fixed weekly budget by ROI quartile.
+    Extends project_roi_frame; weights Q1-High ↑ … Q4-Low ↓.
+    """
+    empty_cols = ["project", "quartile", "weight", "allocated_cr", "pct_of_budget", "action"]
+    if roi is None or roi.empty or weekly_budget_cr <= 0:
+        return pd.DataFrame(columns=empty_cols)
+
+    frame = roi.copy()
+    if "quartile" not in frame.columns:
+        return pd.DataFrame(columns=empty_cols)
+
+    def _weight(q) -> float:
+        s = str(q)
+        if "Q1" in s or "High" in s:
+            return 4.0
+        if "Q2" in s:
+            return 2.5
+        if "Q3" in s:
+            return 1.0
+        if "Q4" in s or "Low" in s:
+            return 0.35
+        return 1.0
+
+    frame["weight"] = frame["quartile"].map(_weight).astype(float)
+    total_w = float(frame["weight"].sum())
+    if total_w <= 0:
+        frame["weight"] = 1.0
+        total_w = float(len(frame))
+
+    frame["allocated_cr"] = (frame["weight"] / total_w * weekly_budget_cr).round(3)
+    frame["pct_of_budget"] = (frame["allocated_cr"] / weekly_budget_cr * 100).round(1)
+
+    def _action(q) -> str:
+        s = str(q)
+        if "Q1" in s or "High" in s:
+            return "Scale — protect and grow spend"
+        if "Q2" in s:
+            return "Hold — optimize creative"
+        if "Q3" in s:
+            return "Trim — shift toward High"
+        if "Q4" in s or "Low" in s:
+            return "Cut heavily — reallocate to High"
+        return "Review"
+
+    frame["action"] = frame["quartile"].map(_action)
+    cols = ["project", "quartile", "weight", "allocated_cr", "pct_of_budget", "action"]
+    for c in ["bookings", "spend_cr", "roi_score"]:
+        if c in frame.columns:
+            cols.insert(-1, c)
+    return frame[cols].sort_values("allocated_cr", ascending=False).reset_index(drop=True)

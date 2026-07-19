@@ -95,3 +95,91 @@ def margin_kpis(df: pd.DataFrame) -> dict:
         "stressed": int((df["viability"] == "Stressed").sum()),
         "unviable": int((df["viability"] == "Unviable").sum()),
     }
+
+
+@dataclass(frozen=True)
+class LandDecision:
+    """Should we buy / diligence this micro-market land at planned exit price?"""
+
+    micro_market: str
+    land_price_psf: float
+    assumed_sale_psf: float
+    construction_cost_psf: float
+    loaded_land_psf: float
+    margin_pct: float
+    viability: str
+    nearby_upcoming: int
+    uc_unsold_nearby: int
+    verdict: str  # BUY / HOLD / PASS
+    headline: str
+    actions: list[str]
+
+
+def evaluate_land_decision(
+    *,
+    micro_market: str | None = None,
+    assumed_sale_psf: float = 9000.0,
+    construction_cost_psf: float | None = None,
+) -> LandDecision:
+    """
+    Land Intelligence decision sheet — extends margin + competition signals.
+    Reuses adapter land/upcoming/UC; does not duplicate margin math.
+    """
+    adapter = get_adapter()
+    land = adapter.land_prices()
+    upcoming = adapter.upcoming()
+    uc = adapter.under_construction()
+    mm = micro_market or settings.MICRO_MARKET_DEFAULT
+    land_psf = _nearest_land(mm, land)
+    if land_psf != land_psf:  # NaN
+        land_psf = float(land["land_price_psf"].median()) if not land.empty else 4500.0
+    build_cost = construction_cost_psf if construction_cost_psf is not None else settings.CONSTRUCTION_COST_PSF
+    loaded = land_psf * settings.LAND_FSI_LOAD_FACTOR
+    sale = float(assumed_sale_psf)
+    margin_psf = sale - loaded - build_cost
+    margin_pct = (margin_psf / sale * 100) if sale else 0.0
+    viability = _viability_label(margin_pct)
+
+    # Lightweight rivalry pressure (seed-aware)
+    up_n = len(upcoming) if not upcoming.empty else 0
+    uc_unsold = int(uc["unsold_units"].sum()) if not uc.empty else 0
+
+    if viability == "Unviable" or margin_pct < settings.MARGIN_STRESSED_PCT:
+        verdict = "PASS"
+        headline = "Do not acquire at this land basis — exit price cannot clear target margin."
+        actions = [
+            f"Re-trade land toward ≤ ₹{int(sale * 0.35 / settings.LAND_FSI_LOAD_FACTOR):,}/sqft loaded basis, or raise exit price.",
+            "Require seller price cut before LOI; model again on Competition → Margin tab.",
+            "If strategic, phase smaller plot / JV to de-risk cash.",
+        ]
+    elif viability == "Stressed" or up_n >= 3 or uc_unsold > 500:
+        verdict = "HOLD"
+        headline = "Margin is thin or supply pressure is elevated — diligence only, no hard bid yet."
+        actions = [
+            "Complete Competition density check (upcoming + UC unsold) before earnest money.",
+            f"Stress-test exit at ₹{int(sale * 0.95):,}/sqft on Digital Twin / Co-pilot.",
+            "Cap marketing pre-launch until absorption proof on comparable inventory.",
+        ]
+    else:
+        verdict = "BUY"
+        headline = "Land basis supports target margin under current seed competition set."
+        actions = [
+            "Proceed to title / layout diligence with margin floor locked in IC note.",
+            "Pre-clear launch price band on Executive Hub before brochure.",
+            "Monitor upcoming ads weekly — HOLD if High-threat rivals appear.",
+        ]
+
+    return LandDecision(
+        micro_market=mm,
+        land_price_psf=round(float(land_psf), 0),
+        assumed_sale_psf=round(sale, 0),
+        construction_cost_psf=round(float(build_cost), 0),
+        loaded_land_psf=round(float(loaded), 0),
+        margin_pct=round(float(margin_pct), 1),
+        viability=viability,
+        nearby_upcoming=up_n,
+        uc_unsold_nearby=uc_unsold,
+        verdict=verdict,
+        headline=headline,
+        actions=actions,
+    )

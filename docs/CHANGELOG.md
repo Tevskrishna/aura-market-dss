@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-07-20 — P1 enterprise slice (RealEstateIQ plan)
+
+### Added
+- Land decision sheet (BUY/HOLD/PASS) on Competition → Land (`evaluate_land_decision`)
+- Weekly marketing budget allocator from ROI quartiles
+- Persisted Gradient Boosting artifact (`models/artifacts/`) — no retrain every click
+- Native PDF board pack download on Executive Reports (`fpdf2`)
+- Thin `repositories/catalog_repo.py` wrapping existing catalog/adapter
+- Responsive CSS pass 320–1920 for tables / Folium height
+
+### Dependencies
+- `fpdf2`, `joblib` added to `requirements.txt`
+
+### Docs
+- `IMPLEMENTATION_SUMMARY.md` + `docs/IMPLEMENTATION_SUMMARY_P1.md`
+
 ## 2026-07-20 — P0 enterprise slice (RealEstateIQ plan)
 
 ### Added

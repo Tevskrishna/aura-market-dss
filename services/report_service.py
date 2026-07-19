@@ -183,3 +183,82 @@ li {{ margin: 0.25rem 0; }} li.sub {{ margin-left: 1rem; list-style: circle; }}
 def competition_csv() -> pd.DataFrame:
     snap = build_competition_snapshot()
     return snap.upcoming.assign(layer="upcoming")
+
+
+def build_executive_pdf(filters: FilterState | None = None) -> bytes:
+    """
+    Board pack PDF — same narrative as markdown/HTML brief.
+    Uses fpdf2 core fonts (latin-1); unicode is transliterated.
+    """
+    filters = filters or default_filters()
+    md = build_executive_markdown(filters)
+    try:
+        from fpdf import FPDF
+    except ImportError as exc:  # pragma: no cover
+        raise RuntimeError("fpdf2 is required for PDF export; pip install fpdf2") from exc
+
+    def _safe(text: str) -> str:
+        repl = {
+            "\u2014": "-",
+            "\u2013": "-",
+            "\u2018": "'",
+            "\u2019": "'",
+            "\u201c": '"',
+            "\u201d": '"',
+            "\u20b9": "INR ",
+            "\u2022": "*",
+            "\xa0": " ",
+        }
+        for a, b in repl.items():
+            text = text.replace(a, b)
+        text = text.replace("**", "").replace("—", "-").replace("–", "-").replace("₹", "INR ")
+        return text.encode("latin-1", errors="replace").decode("latin-1")
+
+    pdf = FPDF(format="A4", unit="mm")
+    pdf.set_margins(14, 14, 14)
+    pdf.set_auto_page_break(auto=True, margin=14)
+    pdf.add_page()
+
+    def _line(text: str, *, bold: bool = False, size: int = 9) -> None:
+        pdf.set_x(pdf.l_margin)
+        style = "B" if bold else ""
+        pdf.set_font("Helvetica", style, size)
+        usable = pdf.epw
+        if usable < 10:
+            pdf.set_x(pdf.l_margin)
+            usable = pdf.w - pdf.l_margin - pdf.r_margin
+        pdf.multi_cell(usable, 5, _safe(text))
+
+    _line("AURA-Market - Board Decision Pack", bold=True, size=14)
+    _line(f"Generated: {date.today().isoformat()} | Micro-market: {settings.MICRO_MARKET_DEFAULT}", size=9)
+    pdf.ln(2)
+
+    for line in md.splitlines():
+        raw = line.rstrip()
+        if not raw:
+            pdf.ln(2)
+            continue
+        text = raw
+        bold = False
+        size = 9
+        if text.startswith("# "):
+            pdf.ln(3)
+            bold, size, text = True, 12, text[2:]
+        elif text.startswith("## "):
+            pdf.ln(2)
+            bold, size, text = True, 11, text[3:]
+        elif text.startswith("### "):
+            bold, size, text = True, 10, text[4:]
+        elif text.startswith("|"):
+            size = 8
+            text = " | ".join(c.strip() for c in text.strip("|").split("|"))
+        elif text.startswith("- "):
+            text = "* " + text[2:]
+        elif text.startswith("> "):
+            text = text[2:]
+        _line(text, bold=bold, size=size)
+
+    out = pdf.output()
+    if isinstance(out, (bytes, bytearray)):
+        return bytes(out)
+    return str(out).encode("latin-1", errors="replace")
