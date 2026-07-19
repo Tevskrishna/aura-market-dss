@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-20 — CEO Morning Loop (Decision OS)
+
+### Added
+- `services/decision_context.py` — Hub → Twin / Recs / Reports session continuity
+- Board pack **Section 0. Open Decision** from live Hub `evaluate_launch` context
+- Twin scenario presets (Blind spot / Intervene / Hold) + NumPy honesty
+- `NAV_SECTIONS` sidebar grouping (≤5 sections, same 13 routes)
+- Compact `page_hero` for morning-loop surfaces
+- Tests: `tests/test_ceo_morning_loop.py`
+- Docs: `docs/IMPLEMENTATION_SUMMARY_CEO_MORNING_LOOP.md`, updated `docs/DEMO_SCRIPT.md`
+
 ## 2026-07-20 — CTO Wave 1: Executive Decision Sheet
 
 ### Added

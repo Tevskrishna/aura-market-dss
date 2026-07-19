@@ -23,6 +23,7 @@ from components.viz_studio import render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_launch
+from services.decision_context import save_decision_context
 from services.launch_copilot_service import evaluate_launch, verdict_markdown
 from services.twin_service import run_twin_with_cannibalization
 from utils.charts import _style
@@ -103,6 +104,21 @@ verdict = evaluate_launch(
     use_subvention=bool(sub),
     rival_month=int(rival_m),
     horizon_months=int(months),
+)
+
+# Carry open decision into Twin / Recs / Board pack (CEO morning loop)
+save_decision_context(
+    project=project,
+    my_price_psf=float(my_price),
+    cut_pct=float(cut),
+    subvention=bool(sub),
+    rival_month=int(rival_m),
+    intervene_month=int(intervene_m),
+    horizon_months=int(months),
+    verdict=verdict.verdict,
+    threat_score=int(verdict.threat_score),
+    blind_spot_loss_cr=float(verdict.blind_spot_loss_cr),
+    recovery_cr=float(verdict.recovery_cr),
 )
 
 # --- Decision story (primary) ---

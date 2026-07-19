@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
 from components.executive_sheet import render_executive_sheet
-from components.layout import decision_action, page_hero, require_login, section_label
+from components.layout import page_hero, require_login, section_label
 from components.viz_studio import generate_button, graphic_html, live_kpi_strip, render_dynamic_figure, scenario_bar
 from services.decision_brief_service import brief_from_market
 from services.data_loader import load_catalog
@@ -25,10 +25,10 @@ require_login("Market Intelligence")
 
 report = get_validation_report()
 page_hero(
-    kicker="Phase 1 · MEASURE",
-    title="Market Overview",
-    subtitle="Tap a KPI chip or chart lens — the graphic and inventory table respond live.",
-    chips=[("Interactive KPIs", "ok"), ("Chart lenses", "ok"), ("Deep-link actions", "ok")],
+    kicker="MEASURE · Market",
+    title="Market Intelligence",
+    subtitle="Confirm demand health before the launch call — KPI lenses update the graphic live.",
+    compact=True,
 )
 
 if not report or not report.ready_for_market_overview:
@@ -106,16 +106,6 @@ with a3:
         from components.touch_nav import navigate_to
 
         navigate_to("Digital Twin", "pages/7_Digital_Twin.py")
-
-decision_action(
-    "This week's market moves",
-    [
-        f"Escalate {sk['at_risk_projects']} at-risk project(s) — use Focus at-risk, then AI Recommendations.",
-        "Tap Show sold-out, then compare pricing on Builder Deep Dive.",
-        "If DPMO stays high, open DMAIC IMPROVE before the next launch quarter.",
-    ],
-    tone="warn" if sk["at_risk_projects"] else "ok",
-)
 
 section_label("Interactive market graphics — change lens to redraw")
 graphic_html("trend-pulse.svg", "dss-graphic")

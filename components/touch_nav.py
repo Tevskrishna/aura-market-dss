@@ -13,7 +13,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from components.layout import MODULE_NAV, _current_nav_label
+from components.layout import MODULE_NAV, NAV_SECTIONS, _current_nav_label
 
 PENDING_MODULE_NAV = "_dss_pending_module_nav"
 
@@ -100,17 +100,24 @@ def _tile_row(items: list[tuple[str, str, str, str]], current: str) -> None:
 
 
 def render_sidebar_touch_nav() -> None:
-    """Sidebar finger-friendly jump list (replaces Streamlit's raw page list)."""
+    """Sidebar finger-friendly jump list grouped into decision sections."""
     st.sidebar.markdown("##### Workspaces")
     current = _current_nav_label()
-    for label, path in MODULE_NAV:
-        is_here = label == current
-        clicked = st.sidebar.button(
-            ("● " if is_here else "") + label,
-            key=f"side_nav_{Path(path).stem}",
-            type="primary" if is_here else "secondary",
-            width="stretch",
-            disabled=is_here,
-        )
-        if clicked and not is_here:
-            navigate_to(label, path)
+    path_by = dict(MODULE_NAV)
+    known = {label for label, _ in MODULE_NAV}
+    for section, labels in NAV_SECTIONS:
+        st.sidebar.caption(section)
+        for label in labels:
+            if label not in known:
+                continue
+            path = path_by[label]
+            is_here = label == current
+            clicked = st.sidebar.button(
+                ("● " if is_here else "") + label,
+                key=f"side_nav_{Path(path).stem}",
+                type="primary" if is_here else "secondary",
+                width="stretch",
+                disabled=is_here,
+            )
+            if clicked and not is_here:
+                navigate_to(label, path)

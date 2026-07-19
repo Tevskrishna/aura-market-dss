@@ -29,6 +29,15 @@ MODULE_NAV: list[tuple[str, str]] = [
     ("Demand Forecast", "pages/12_Forecasting.py"),
 ]
 
+# Sidebar IA — ≤7 sections, same 13 routes (CEO Morning Loop)
+NAV_SECTIONS: list[tuple[str, list[str]]] = [
+    ("Executive Decision", ["Executive Hub", "Reports"]),
+    ("Market & Land", ["Market Intelligence", "Competition & Land", "Map Intelligence"]),
+    ("Customers & Growth", ["Buyer Intelligence", "Marketing Intelligence"]),
+    ("Simulate & Act", ["Digital Twin", "AI Recommendations", "Demand Forecast"]),
+    ("Quality Evidence", ["DMAIC Quality", "Project Deep Dive", "SPC Control"]),
+]
+
 
 def inject_theme(*, gate: bool = False) -> None:
     chunks: list[str] = []
@@ -367,9 +376,21 @@ def _sidebar_chrome() -> None:
 def page_hero(
     kicker: str,
     title: str,
-    subtitle: str,
+    subtitle: str = "",
     chips: list[tuple[str, str]] | None = None,
+    *,
+    compact: bool = False,
 ) -> None:
+    """Supporting chrome. Use compact=True under EDS so the sheet stays primary."""
+    if compact:
+        sub = f'<p class="dss-subtitle dss-hero-compact-sub">{html.escape(subtitle)}</p>' if subtitle else ""
+        st.html(
+            f'<div class="dss-hero dss-hero-compact">'
+            f'<div class="dss-kicker">{html.escape(kicker)}</div>'
+            f"<h1>{html.escape(title)}</h1>"
+            f"{sub}</div>"
+        )
+        return
     chips = chips or []
     chip_html = "".join(
         f'<span class="dss-chip {html.escape(klass)}">{html.escape(label)}</span>'

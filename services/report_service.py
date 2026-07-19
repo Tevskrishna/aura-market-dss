@@ -12,7 +12,10 @@ from config import settings
 from models.market import FilterState
 from services.adapters import get_adapter
 from services.competition_service import build_competition_snapshot
+from services.decision_brief_service import brief_from_launch
+from services.decision_context import get_decision_context
 from services.dmaic_service import build_dmaic_snapshot
+from services.launch_copilot_service import evaluate_launch
 from services.map_service import map_home_kpis, scored_zones
 from services.marketing_service import build_marketing_insights
 from services.market_service import build_market_bundle
@@ -30,7 +33,68 @@ def default_filters() -> FilterState:
     )
 
 
-def build_executive_markdown(filters: FilterState | None = None) -> str:
+def resolve_open_launch(
+    session: dict | None = None,
+) -> tuple[object, bool]:
+    """
+    Rebuild Hub LaunchVerdict from session context (or catalog defaults).
+    Returns (verdict, from_hub_context).
+    """
+    ctx = get_decision_context(session)
+    projects = get_adapter().projects()
+    if projects.empty:
+        raise RuntimeError("No projects in catalog for board pack")
+    if ctx and ctx.get("project") in set(projects["project"].tolist()):
+        v = evaluate_launch(
+            project=str(ctx["project"]),
+            my_price_psf=float(ctx.get("my_price_psf", 9000)),
+            intervene_cut_pct=float(ctx.get("cut_pct", 8)),
+            use_subvention=bool(ctx.get("subvention", True)),
+            rival_month=int(ctx.get("rival_month", 3)),
+            horizon_months=int(ctx.get("horizon_months", 12)),
+        )
+        return v, True
+    project = str(projects.iloc[0]["project"])
+    price = float(projects.iloc[0]["price_psf"])
+    v = evaluate_launch(project=project, my_price_psf=price)
+    return v, False
+
+
+def _open_decision_markdown(session: dict | None = None) -> list[str]:
+    verdict, from_hub = resolve_open_launch(session)
+    brief = brief_from_launch(verdict)
+    source = (
+        "Locked from Executive Hub session"
+        if from_hub
+        else "Using catalog defaults — open Executive Hub to lock today’s call"
+    )
+    lines = [
+        "## 0. Open Decision (CEO Hub)",
+        "",
+        f"**Source:** {source}  ",
+        f"**Verdict:** **{verdict.verdict}** on **{verdict.project}** at ₹{verdict.my_price_psf:,.0f}/sqft  ",
+        f"**Threat score:** {verdict.threat_score}  ",
+        f"**Risk:** {brief.risk_level}  ",
+        f"**Blind-spot loss:** ₹{verdict.blind_spot_loss_cr} Cr  ",
+        f"**Recoverable with intervene:** ₹{verdict.recovery_cr} Cr  ",
+        f"**AI call:** {brief.ai_recommendation}  ",
+        f"**Confidence:** {brief.confidence}",
+        "",
+        "### Do this week",
+    ]
+    for a in list(verdict.actions)[:3]:
+        lines.append(f"- {a}")
+    if brief.honesty_notes:
+        lines.append("")
+        lines.append(f"*{brief.honesty_notes[0]}*")
+    lines.append("")
+    return lines
+
+
+def build_executive_markdown(
+    filters: FilterState | None = None,
+    session: dict | None = None,
+) -> str:
     filters = filters or default_filters()
     bundle = build_market_bundle(filters)
     sk = market_kpis(bundle.projects)
@@ -48,6 +112,9 @@ def build_executive_markdown(filters: FilterState | None = None) -> str:
         f"**Micro-market:** {settings.MICRO_MARKET_DEFAULT}  ",
         f"**Data mode:** {adapter.mode} — {adapter.description}",
         "",
+    ]
+    lines += _open_decision_markdown(session)
+    lines += [
         "## 1. Situation (DEFINE)",
         "",
         dmaic.problem_statement,
@@ -140,9 +207,12 @@ def build_executive_markdown(filters: FilterState | None = None) -> str:
     return "\n".join(lines)
 
 
-def build_executive_html(filters: FilterState | None = None) -> str:
+def build_executive_html(
+    filters: FilterState | None = None,
+    session: dict | None = None,
+) -> str:
     """Printable HTML brief (open in browser → Print to PDF)."""
-    md = build_executive_markdown(filters)
+    md = build_executive_markdown(filters, session=session)
     body_parts: list[str] = []
     for line in md.splitlines():
         if line.startswith("# "):
@@ -185,13 +255,16 @@ def competition_csv() -> pd.DataFrame:
     return snap.upcoming.assign(layer="upcoming")
 
 
-def build_executive_pdf(filters: FilterState | None = None) -> bytes:
+def build_executive_pdf(
+    filters: FilterState | None = None,
+    session: dict | None = None,
+) -> bytes:
     """
     Board pack PDF — same narrative as markdown/HTML brief.
     Uses fpdf2 core fonts (latin-1); unicode is transliterated.
     """
     filters = filters or default_filters()
-    md = build_executive_markdown(filters)
+    md = build_executive_markdown(filters, session=session)
     try:
         from fpdf import FPDF
     except ImportError as exc:  # pragma: no cover

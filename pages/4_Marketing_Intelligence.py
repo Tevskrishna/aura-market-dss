@@ -22,10 +22,10 @@ st.set_page_config(page_title="Marketing Intelligence", page_icon="📣", layout
 require_login("Marketing Intelligence")
 
 page_hero(
-    kicker="MEASURE · Marketing efficiency",
+    kicker="MEASURE · Marketing",
     title="Marketing Intelligence",
-    subtitle="SMC spends (₹ Cr) → bookings → ROI quartiles → reallocation actions — stop blind spend.",
-    chips=[("SMC workbook", "ok"), ("ROI", "ok"), ("Reallocate", "")],
+    subtitle="Where the next ₹ Cr of SMC should go — ROI quartiles and weekly allocator.",
+    compact=True,
 )
 
 filters = render_global_filters("mkt")
@@ -56,15 +56,6 @@ render_kpi_cards(
 if insights.by_quarter.empty:
     st.warning("No marketing spend rows for current filters.")
     st.stop()
-
-decision_action(
-    "Reallocate SMC budget this quarter",
-    [
-        *(f"{r['action']}: {r['project']} — {r['detail']}" for r in insights.reallocation[:4]),
-        insights.top_channel_hint or "Protect known high-conversion booking channels when shifting media mix.",
-    ],
-    tone="action",
-)
 
 st.plotly_chart(
     px.line(insights.by_quarter, x="fy_quarter", y="spend_cr", markers=True, title="SMC spend by quarter (₹ Cr)"),

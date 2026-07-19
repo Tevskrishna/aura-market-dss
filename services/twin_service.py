@@ -168,3 +168,44 @@ def run_segmented_twin(
         competitor_price_psf=competitor_price_psf,
         seed=seed,
     )
+
+
+# Named CEO scenarios — map to widget seeds (no second engine)
+TWIN_PRESET_NAMES = ("Blind spot", "Intervene", "Hold")
+
+
+def twin_preset_params(
+    name: str,
+    *,
+    hub_cut: float = 8.0,
+    hub_subvention: bool = True,
+    hub_intervene: int = 4,
+    hub_rival: int = 3,
+    horizon: int = 12,
+) -> dict:
+    """Return slider/checkbox targets for a named scenario."""
+    n = (name or "").strip()
+    if n == "Blind spot":
+        return {
+            "enable_rival": True,
+            "rival_month": max(1, min(int(hub_rival), horizon)),
+            "intervene_month": 0,
+            "cut_pct": 0.0,
+            "subvention": False,
+        }
+    if n == "Hold":
+        return {
+            "enable_rival": False,
+            "rival_month": max(1, min(int(hub_rival), horizon)),
+            "intervene_month": 0,
+            "cut_pct": 0.0,
+            "subvention": False,
+        }
+    # Intervene (default)
+    return {
+        "enable_rival": True,
+        "rival_month": max(1, min(int(hub_rival), horizon)),
+        "intervene_month": max(1, min(int(hub_intervene), horizon)),
+        "cut_pct": float(hub_cut),
+        "subvention": bool(hub_subvention),
+    }

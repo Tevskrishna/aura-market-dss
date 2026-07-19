@@ -413,3 +413,19 @@ div[data-testid="stDataEditor"] {
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
 }
+
+/* CEO Morning Loop — compact heroes under EDS */
+.dss-hero-compact {
+  padding: 0.35rem 0 0.75rem !important;
+  margin-bottom: 0.35rem !important;
+  border-bottom: 1px solid var(--line, #30363d);
+}
+.dss-hero-compact h1 {
+  font-size: 1.35rem !important;
+  margin: 0.15rem 0 0.25rem !important;
+}
+.dss-hero-compact-sub {
+  font-size: 0.92rem !important;
+  margin: 0 !important;
+  opacity: 0.85;
+}

@@ -1,4 +1,4 @@
-"""AI Recommendations Engine — Phase-1 Page 4."""
+"""AI Recommendations — continue Hub project; prescribe with mini twin."""
 from __future__ import annotations
 
 import sys
@@ -13,6 +13,7 @@ from components.layout import page_hero, require_login, section_label
 from components.executive_sheet import render_executive_sheet
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_recommendations
+from services.decision_context import context_banner_text, get_decision_context
 from services.recommendation_engine import recommendations_for_row
 from services.twin_service import run_segmented_twin
 from utils.dmaic_charts import twin_curves
@@ -20,14 +21,27 @@ from utils.dmaic_charts import twin_curves
 st.set_page_config(page_title="AI Recommendations", page_icon="💡", layout="wide")
 require_login("AI Recommendations")
 
+ctx = get_decision_context()
+df = get_adapter().projects()
+projects = df["project"].tolist()
+
+if "_recs_ctx_seeded" not in st.session_state and ctx and ctx.get("project") in projects:
+    st.session_state["recs_project"] = ctx["project"]
+    st.session_state["_recs_ctx_seeded"] = True
+if "recs_project" not in st.session_state:
+    st.session_state["recs_project"] = projects[0]
+
 page_hero(
-    kicker="Phase 1 · IMPROVE (prescribe)",
-    title="AI Recommendations Engine",
-    subtitle="Rule + ML signals vs sold-out benchmarks — with WHY, expected recoverable units, and mini twin preview.",
-    chips=[("6 issue signals", "ok"), ("Benchmarked", ""), ("Mini twin", "")],
+    kicker="IMPROVE · Prescribe",
+    title="AI Recommendations",
+    subtitle="Actions for the open project — why, recoverable units, mini twin.",
+    compact=True,
 )
 
-df = get_adapter().projects()
+banner = context_banner_text(ctx)
+if banner:
+    st.info(banner)
+
 sold_out = df[df["absorption_pct"] >= 95].sort_values("absorption_pct", ascending=False)
 
 section_label("Sold-out / near sold-out benchmarks")
@@ -37,7 +51,7 @@ st.dataframe(
     hide_index=True,
 )
 
-project = st.selectbox("Project needing recommendations", df["project"].tolist())
+project = st.selectbox("Project needing recommendations", projects, key="recs_project")
 row = df[df["project"] == project].iloc[0]
 recs = recommendations_for_row(row, sold_out)
 
@@ -61,18 +75,21 @@ for r in recs:
 st.metric("Total estimated recoverable units", total_recover)
 
 section_label("Mini digital twin preview")
-ticket = row["avg_unit_size_sqft"] * row["price_psf"] / 100_000
+price = float(ctx.get("my_price_psf") if ctx and ctx.get("project") == project else row["price_psf"])
+cut_hub = float(ctx.get("cut_pct", 8) if ctx else 8)
 cut = next((r["price_cut_psf"] for r in recs if r.get("price_cut_psf")), 0)
-cut_pct = (cut / row["price_psf"] * 100) if cut else 8
+cut_pct = (cut / row["price_psf"] * 100) if cut else cut_hub
+ticket = float(row["avg_unit_size_sqft"]) * price / 100_000
 twin = run_segmented_twin(
     base_monthly_rate=max(int(row["units_sold"] / 24), 6),
-    months=12,
-    price_psf=float(row["price_psf"]),
+    months=int(ctx.get("horizon_months", 12) if ctx else 12),
+    price_psf=price,
     construction_progress=float(row["construction_progress_pct"]),
     avg_ticket_lakhs=float(ticket),
-    intervene_month=3,
+    intervene_month=int(ctx.get("intervene_month", 3) if ctx else 3),
     price_cut_pct=float(cut_pct),
-    subvention=True,
+    subvention=bool(ctx.get("subvention", True) if ctx else True),
+    competitor_launch_month=int(ctx.get("rival_month", 3) if ctx else 3),
 )
 st.plotly_chart(twin_curves(twin.months, twin.baseline, twin.intervention, twin.cannibalized), width="stretch")
-st.caption(f"Estimated revenue recovery: ₹ {twin.recovery_cr} Cr")
+st.caption(f"Estimated revenue recovery: ₹ {twin.recovery_cr} Cr · Continue → Digital Twin to stress-test.")

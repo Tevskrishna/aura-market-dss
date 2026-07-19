@@ -1,4 +1,4 @@
-"""Executive Reports — downloadable decision brief for company submission."""
+"""Executive Reports — board pack reprints Hub DecisionBrief (Section 0)."""
 from __future__ import annotations
 
 import sys
@@ -14,25 +14,27 @@ from dataclasses import replace
 from components.filters import render_global_filters
 from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
-from components.layout import decision_action, page_hero, require_login, section_label
+from components.layout import page_hero, require_login, section_label
 from services.competition_service import build_competition_snapshot
-from services.decision_brief_service import brief_from_market
+from services.decision_brief_service import brief_from_launch
+from services.decision_context import has_decision_context
 from services.dmaic_service import build_dmaic_snapshot
 from services.report_service import (
     build_executive_html,
     build_executive_markdown,
     build_executive_pdf,
     competition_csv,
+    resolve_open_launch,
 )
 
 st.set_page_config(page_title="Executive Reports", page_icon="📄", layout="wide")
 require_login("Reports")
 
 page_hero(
-    kicker="CONTROL · Submission pack",
+    kicker="BOARD · Decision pack",
     title="Executive Reports",
-    subtitle="One-click board pack for mentors and reviewers — Markdown, printable HTML, and native PDF.",
-    chips=[("Markdown", "ok"), ("HTML", "ok"), ("PDF board pack", "ok")],
+    subtitle="One-click board pack — Section 0 matches today’s Hub verdict.",
+    compact=True,
 )
 
 filters = render_global_filters("report")
@@ -47,26 +49,40 @@ except Exception as exc:  # pragma: no cover
 dmaic = build_dmaic_snapshot(filters)
 comp = build_competition_snapshot()
 
-render_executive_sheet(
-    replace(
-        brief_from_market(
-            absorption_pct=float(dmaic.kpis["absorption_pct"]),
-            at_risk=int(dmaic.kpis["at_risk_projects"]),
-            dpmo=float(dmaic.kpis.get("dpmo", 0) or 0),
-            unsold=int(dmaic.kpis["unsold_units"]),
-        ),
+verdict, from_hub = resolve_open_launch()
+base_brief = brief_from_launch(verdict)
+if from_hub:
+    brief = replace(
+        base_brief,
         module="Reports",
-        executive_summary="Board pack consolidates Hub + market + competition into mentor-ready downloads.",
-        ai_recommendation="Download PDF board pack and walk Priority actions in the IC / mentor review.",
         next_step=None,
         suggested_actions=[
-            "Download PDF board pack for the review room.",
-            "Attach Competition land verdict and Twin ₹ Cr figures.",
+            "Download PDF board pack — Section 0 matches Hub.",
+            "Walk Do this week actions in the IC / mentor review.",
             "Do not claim live KRERA unless AURA_LIVE_*_URL is active.",
         ],
-    ),
-    key="report_eds",
-)
+    )
+else:
+    brief = replace(
+        base_brief,
+        module="Reports",
+        executive_summary=(
+            "Using catalog defaults — open Executive Hub to lock today’s call, then regenerate this pack."
+        ),
+        next_step=None,
+        suggested_actions=[
+            "Open Executive Hub and set project + ₹/sqft.",
+            "Return here — Section 0 will match the Hub verdict.",
+            "Download PDF only after the Hub call is locked.",
+        ],
+    )
+
+if has_decision_context():
+    st.success(f"Board pack locked to Hub: {verdict.verdict} · {verdict.project} @ ₹{verdict.my_price_psf:,.0f}/sqft")
+else:
+    st.caption("Using catalog defaults — open Executive Hub to lock today’s call.")
+
+render_executive_sheet(brief, key="report_eds")
 
 section_label("Brief scorecard")
 render_kpi_cards(
@@ -76,15 +92,6 @@ render_kpi_cards(
         {"label": "At-risk projects", "value": dmaic.kpis["at_risk_projects"], "format": "int"},
         {"label": "Upcoming launches", "value": comp.upcoming_count, "format": "int"},
         {"label": "UC unsold units", "value": comp.unsold_uc_units, "format": "int"},
-    ],
-)
-
-decision_action(
-    "Use this brief in the review meeting",
-    [
-        "Download the PDF board pack for mentors who want a single attachment.",
-        "Walk Priority actions first — then attach Marketing allocator and Competition land sheet.",
-        "Do not claim live KRERA — state local/seed competition mode unless credentials arrive.",
     ],
 )
 

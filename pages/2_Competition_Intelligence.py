@@ -58,15 +58,10 @@ data_honesty_banner(
 render_executive_sheet(brief_from_land(land_preview), key="comp_eds")
 
 page_hero(
-    kicker="AURA-Market · Competition blind spot",
+    kicker="Intelligence · Competition & Land",
     title="Competition Intelligence",
-    subtitle="RERA density, pre-launch ads, under-construction supply, land arbitrage, and Developer Margin Viability Index.",
-    chips=[
-        (f"Adapter · {snap.adapter_mode}", "ok" if snap.adapter_mode == "local" else "warn"),
-        ("RERA 3–5 yrs", "ok"),
-        ("Coming soon", "ok"),
-        ("Margin index", "ok"),
-    ],
+    subtitle="RERA density, UC supply, land BUY/HOLD/PASS, and margin viability.",
+    compact=True,
 )
 
 section_label("Supply & land scorecard")
