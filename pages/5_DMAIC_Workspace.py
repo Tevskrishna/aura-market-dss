@@ -11,8 +11,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
+from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from services.decision_brief_service import brief_from_dmaic
 from services.dmaic_service import build_dmaic_snapshot
 
 st.set_page_config(page_title="DMAIC Workspace", page_icon="🧭", layout="wide")
@@ -27,6 +29,15 @@ page_hero(
 
 filters = render_global_filters("dmaic")
 snap = build_dmaic_snapshot(filters)
+
+render_executive_sheet(
+    brief_from_dmaic(
+        absorption_pct=float(snap.kpis["absorption_pct"]),
+        at_risk=int(snap.kpis["at_risk_projects"]),
+        unsold=int(snap.kpis["unsold_units"]),
+    ),
+    key="dmaic_eds",
+)
 
 section_label("Problem statement (DEFINE)")
 st.info(snap.problem_statement)

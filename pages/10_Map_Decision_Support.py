@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.executive_sheet import render_executive_sheet
 from components.states import data_honesty_banner, page_hub_label
 from components.viz_studio import (
     generate_button,
@@ -21,6 +22,7 @@ from components.viz_studio import (
     render_dynamic_figure,
     scenario_bar,
 )
+from services.decision_brief_service import brief_from_map
 from services.map_service import (
     METRO_STATIONS,
     explain_zone,
@@ -62,6 +64,15 @@ page_hero(
 
 zones = scored_zones()
 kpis = map_home_kpis(zones)
+
+render_executive_sheet(
+    brief_from_map(
+        top_zone=str(kpis["ai_top_pick"]),
+        high_risk=int(kpis["high_risk_zones"]),
+        areas=int(kpis["areas_covered"]),
+    ),
+    key="map_eds",
+)
 
 live_kpi_strip(
     [

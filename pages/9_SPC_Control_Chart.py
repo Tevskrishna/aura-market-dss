@@ -12,8 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.executive_sheet import render_executive_sheet
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
+from services.decision_brief_service import brief_from_spc
 from services.spc_service import forecast_linear_seasonal, imr_chart
 from utils.charts import _style
 from utils.dmaic_charts import imr_i_chart, imr_mr_chart
@@ -42,6 +44,14 @@ result = imr_chart(series)
 if not result["ok"]:
     st.error(result["reason"])
     st.stop()
+
+series_label = "Market total"
+if scope == "Single project":
+    series_label = str(p)
+render_executive_sheet(
+    brief_from_spc(ooc=len(result.get("ooc") or []), series_label=series_label),
+    key="spc_eds",
+)
 
 section_label("I-Chart")
 st.plotly_chart(

@@ -12,8 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.executive_sheet import render_executive_sheet
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
+from services.decision_brief_service import brief_from_forecast
 from services.spc_service import forecast_linear_seasonal
 from utils.charts import _style
 
@@ -44,6 +46,15 @@ series = series_df.set_index("month")["units_sold_month"]
 fc = forecast_linear_seasonal(series, months=horizon)
 last = series.index.max()
 fc["month"] = pd.date_range(last + pd.offsets.MonthBegin(1), periods=horizon, freq="MS")
+
+render_executive_sheet(
+    brief_from_forecast(
+        horizon=int(horizon),
+        last_yhat=float(fc["forecast"].iloc[-1]) if not fc.empty else 0.0,
+        series_label=title,
+    ),
+    key="fc_eds",
+)
 
 section_label(title)
 fig = go.Figure()

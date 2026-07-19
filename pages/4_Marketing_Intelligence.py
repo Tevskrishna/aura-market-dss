@@ -11,8 +11,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
+from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from services.decision_brief_service import brief_from_marketing
 from services.marketing_service import build_marketing_insights, weekly_budget_allocation
 from utils.charts import marketing_efficiency_chart
 
@@ -31,6 +33,15 @@ insights = build_marketing_insights(filters)
 
 avg_roi = float(insights.roi["roi_score"].mean()) if not insights.roi.empty else 0.0
 cut_n = int((insights.roi["verdict"] == "Cut / reallocate").sum()) if not insights.roi.empty else 0
+
+render_executive_sheet(
+    brief_from_marketing(
+        total_spend_cr=float(insights.total_spend_cr),
+        avg_roi=float(avg_roi),
+        cut_n=int(cut_n),
+    ),
+    key="mktg_eds",
+)
 
 section_label("Spend scorecard")
 render_kpi_cards(

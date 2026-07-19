@@ -11,9 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
+from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.buyer_service import build_buyer_insights
+from services.decision_brief_service import brief_from_buyer
 from services.data_loader import load_catalog
 from utils.charts import PALETTE
 
@@ -29,6 +31,21 @@ page_hero(
 
 filters = render_global_filters("buyer")
 insights = build_buyer_insights(filters)
+
+top_ch = "mixed"
+if not insights.channel_mix.empty:
+    cm = insights.channel_mix
+    if "Primary Source" in cm.columns:
+        top_ch = str(cm.iloc[0]["Primary Source"])
+    elif "channel" in cm.columns:
+        top_ch = str(cm.iloc[0]["channel"])
+    else:
+        top_ch = str(cm.iloc[0, 0])
+
+render_executive_sheet(
+    brief_from_buyer(bookings=int(insights.total_bookings), top_channel=top_ch),
+    key="buyer_eds",
+)
 
 section_label("Demand scorecard")
 render_kpi_cards(

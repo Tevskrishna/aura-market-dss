@@ -10,8 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
+from components.executive_sheet import render_executive_sheet
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.adapters import get_adapter
+from services.decision_brief_service import brief_from_builder
 from services.recommendation_engine import (
     defect_probability,
     fit_gb_forecast,
@@ -36,6 +38,16 @@ df = get_adapter().projects()
 developer = st.sidebar.selectbox("Developer", sorted(df["developer"].unique()))
 sub = df[df["developer"] == developer].copy()
 k = market_kpis(sub)
+at_risk_n = int((sub["absorption_pct"] < 85).sum())
+
+render_executive_sheet(
+    brief_from_builder(
+        developer=str(developer),
+        at_risk=at_risk_n,
+        absorption_pct=float(k["absorption_pct"]),
+    ),
+    key="builder_eds",
+)
 
 section_label(f"{developer} scorecard")
 render_kpi_cards(

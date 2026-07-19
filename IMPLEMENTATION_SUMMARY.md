@@ -1,7 +1,8 @@
 # IMPLEMENTATION SUMMARY — latest
 
-**Latest shipped (CTO Wave 1):** Shared **Executive Decision Sheet** + guided journey CTA.
+**CTO Wave 1:** Executive Decision Sheet + journey CTA  
+**CTO Wave 2:** EDS mounted on **all** modules  
 
-See `docs/IMPLEMENTATION_SUMMARY_EXECUTIVE_SHEET.md` for full detail.
-
-Prior waves: P0 / P1 / Enterprise101 docs under `docs/`.
+Details:
+- `docs/IMPLEMENTATION_SUMMARY_EXECUTIVE_SHEET.md`
+- `docs/IMPLEMENTATION_SUMMARY_EDS_WAVE2.md`
