@@ -118,14 +118,16 @@ def linked_kpi_lens_strip(
 ) -> None:
     """Scorecard figures as buttons — tap a KPI to switch the graphics layer."""
     cols = st.columns(len(cards))
-    for col, card in zip(cols, cards):
+    for i, (col, card) in enumerate(zip(cols, cards)):
         lens = str(card.get("lens") or "")
         active = st.session_state.get(lens_key) == lens
         label = f"{card.get('label', '')}\n{card.get('display', card.get('value', ''))}"
+        # Keys must be unique even when two KPIs share the same lens (e.g. UC + UC unsold).
+        btn_key = f"{lens_key}_kpi_{i}_{_slug(str(card.get('label', '')))}_{_slug(lens)}"
         with col:
             if st.button(
                 label,
-                key=f"{lens_key}_kpi_{_slug(lens or str(card.get('label', '')))}",
+                key=btn_key,
                 type="primary" if active else "secondary",
                 width="stretch",
                 help=str(card.get("hint") or f"Show {lens}"),
