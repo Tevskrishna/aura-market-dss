@@ -13,7 +13,7 @@ CSS_PATH = settings.ASSETS_DIR / "styles.css"
 
 # Mobile-safe module jump list (does not rely on the Streamlit sidebar)
 MODULE_NAV: list[tuple[str, str]] = [
-    ("Home", "app.py"),
+    ("Launch Co-pilot", "app.py"),
     ("Market Overview", "pages/1_Market_Overview.py"),
     ("Competition Intelligence", "pages/2_Competition_Intelligence.py"),
     ("Audience Demographics", "pages/3_Buyer_Analytics.py"),
@@ -31,7 +31,7 @@ MODULE_NAV: list[tuple[str, str]] = [
 
 def inject_theme() -> None:
     chunks: list[str] = []
-    for name in ("styles.css", "dynamic.css"):
+    for name in ("styles.css", "dynamic.css", "copilot.css"):
         path = settings.ASSETS_DIR / name
         if path.exists():
             chunks.append(path.read_text(encoding="utf-8"))
@@ -131,9 +131,9 @@ def _sidebar_chrome() -> None:
     st.sidebar.html(
         f'<div class="dss-brand">'
         f'<div class="dss-brand-mark">{html.escape(settings.BRAND_MARK)}</div>'
-        '<p class="dss-brand-name">AI Map Dashboard</p>'
+        '<p class="dss-brand-name">Launch Co-pilot</p>'
         '<div class="dss-brand-sub">Bengaluru Real Estate</div>'
-        '<div class="dss-brand-tag">AI-Powered Construction Suitability</div>'
+        '<div class="dss-brand-tag">GO · HOLD · NO-GO in one screen</div>'
         "</div>"
         f'<div class="dss-user-card"><strong>{html.escape(str(user.get("name", "User")))}</strong><br/>'
         f'<span>{html.escape(str(user.get("role", "viewer")).upper())} ACCESS</span></div>'

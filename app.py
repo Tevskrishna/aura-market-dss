@@ -1,192 +1,157 @@
-"""AURA-Market Home — proptech decision cockpit (dynamic UI)."""
+"""
+AURA-Market — Launch Decision Co-pilot
+
+Product (not a dashboard): one real-world question —
+Can I launch / reprice at ₹X this month in Bagaluru?
+"""
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
-import plotly.express as px
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from components.layout import decision_action, module_cards, require_login, section_label
-from components.viz_studio import (
-    cockpit_hero,
-    generate_button,
-    live_kpi_strip,
-    render_dynamic_figure,
-    scenario_bar,
-)
+from components.copilot_ui import action_cards, factor_bars, threat_gauge, verdict_banner
+from components.layout import require_login, section_label
+from components.viz_studio import generate_button, render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
-from services.data_loader import load_catalog
-from services.map_service import map_home_kpis, scored_zones
-from services.market_service import build_market_bundle
-from services.sigma_service import market_kpis
-from models.market import FilterState
-from datetime import date
-from utils.charts import PALETTE, _style
+from services.launch_copilot_service import evaluate_launch, verdict_markdown
+from utils.charts import _style
+from utils.dmaic_charts import twin_curves
+from services.twin_service import run_twin_with_cannibalization
 
 st.set_page_config(
-    page_title=settings.APP_SHORT_NAME,
+    page_title="Launch Decision Co-pilot · AURA-Market",
     page_icon=settings.PAGE_ICON,
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
-user = require_login()
+require_login()
 adapter = get_adapter()
-meta = adapter.meta()
-catalog = load_catalog()
-report = catalog.report
-ready = bool(report and report.ready_for_market_overview)
+projects = adapter.projects()
+upcoming = adapter.upcoming()
 
-zones = scored_zones()
-mk = map_home_kpis(zones)
-filters = FilterState(
-    builder=settings.ALL_BUILDERS_LABEL,
-    project=settings.ALL_PROJECTS_LABEL,
-    date_start=date(2022, 12, 1),
-    date_end=date(2025, 11, 30),
-    quarter=settings.ALL_QUARTERS_LABEL,
-)
-bundle = build_market_bundle(filters, catalog)
-sk = market_kpis(bundle.projects)
-
-cockpit_hero(
-    title="AURA-Market",
-    subtitle="Interactive Bengaluru micro-market DSS — click scenarios to regenerate live graphics, then act.",
-    bullets=[
-        "Map-first location scoring (proptech pattern: decide WHERE before price)",
-        "Competition + SMC ROI signals that update on demand",
-        "Digital Twin interventions before you publish a launch price",
-    ],
+st.html(
+    """
+    <div class="dss-kicker" style="margin-top:0.2rem;">OUT-OF-BOX PRODUCT · NOT A DASHBOARD</div>
+    <h1 style="margin:0.15rem 0 0.35rem;">Launch Decision Co-pilot</h1>
+    <p class="dss-subtitle" style="margin-bottom:0.8rem;">
+      One question the market actually asks: <b>Can I launch at this price this month?</b>
+      We fuse rival supply + simulated ₹ Cr loss + margin + SMC into a GO / HOLD / NO-GO verdict —
+      a launch OS Indian mid-market developers do not have today.
+    </p>
+    """
 )
 
-live_kpi_strip(
-    [
-        {"label": "Absorption", "display": f"{sk['absorption_pct']}%", "hint": "Bagaluru filtered"},
-        {"label": "At-risk", "display": str(sk["at_risk_projects"]), "hint": "<70% absorption"},
-        {"label": "Zones", "display": str(mk["areas_covered"]), "hint": "Suitability scored"},
-        {"label": "AI top pick", "display": str(mk["ai_top_pick"]), "hint": "Where to diligence"},
-        {"label": "Data", "display": meta.mode.upper(), "hint": user.get("name", "user")},
-        {"label": "Ready", "display": "YES" if ready else "NO", "hint": "Catalog gate"},
-    ]
-)
-
-decision_action(
-    "Lead walkthrough — 6 minutes",
-    [
-        "Home studio (below): pick a scenario → Generate live graphics.",
-        "Competition Intelligence: launch price helper.",
-        "Marketing Intelligence: cut/boost ROI actions.",
-        "Digital Twin → Map Decision Support → download Executive Report.",
-    ],
-)
-
-section_label("Live graphics studio")
-scene = scenario_bar(
-    "home_scene",
-    "Market lens",
-    ["Absorption health", "Price vs sell-through", "Zone suitability", "Growth corridors"],
-)
-focus = scenario_bar(
-    "home_focus",
-    "Segment focus",
-    ["All builders", "At-risk only", "Sold-out benchmarks"],
-)
-generate_button("home_studio", "Generate responsive graphics")
-
-projects = bundle.projects.copy()
-if focus == "At-risk only":
-    projects = projects[projects["absorption_pct"] < 70]
-elif focus == "Sold-out benchmarks":
-    projects = projects[projects["absorption_pct"] >= 95]
-
-
-def _home_fig():
-    if scene == "Absorption health":
-        fig = px.bar(
-            projects.sort_values("absorption_pct"),
-            x="project",
-            y="absorption_pct",
-            color="absorption_pct",
-            color_continuous_scale=["#ff4b4b", "#f0b429", "#3dd68c"],
-            title=f"Absorption % · {focus}",
-        )
-        fig.update_layout(xaxis_tickangle=-35)
-        return _style(fig, "Live absorption surface")
-    if scene == "Price vs sell-through":
-        fig = px.scatter(
-            projects,
-            x="price_psf",
-            y="absorption_pct",
-            size="total_units",
-            color="developer",
-            hover_name="project",
-            color_discrete_sequence=PALETTE,
-            title="Price positioning vs absorption",
-        )
-        return _style(fig, "Price vs sell-through")
-    if scene == "Zone suitability":
-        fig = px.bar(
-            zones.sort_values("suitability_score", ascending=False).head(12),
-            x="suitability_score",
-            y="zone",
-            orientation="h",
-            color="suitability_score",
-            color_continuous_scale=["#ff4b4b", "#f0b429", "#3dd68c"],
-            title="Top construction-ready zones",
-        )
-        return _style(fig, "Zone suitability")
-    fig = px.scatter(
-        zones,
-        x="metro_km",
-        y="price_trend_yoy_pct",
-        size="population_growth_index",
-        color="suitability_score",
-        hover_name="zone",
-        color_continuous_scale="Turquoise",
-        title="Growth corridors · metro distance vs YoY price",
+# --- Controls that recompute in real time on every change ---
+c_proj, c_price = st.columns([1.2, 1])
+with c_proj:
+    project = st.selectbox("My project", projects["project"].tolist(), key="cp_project")
+with c_price:
+    row0 = projects[projects["project"] == project].iloc[0]
+    default_price = int(row0["price_psf"])
+    my_price = st.slider(
+        "Planned launch / list price (₹/sqft)",
+        5000,
+        20000,
+        default_price,
+        50,
+        key="cp_price",
     )
-    return _style(fig, "Growth corridors")
 
+a1, a2, a3, a4 = st.columns(4)
+with a1:
+    cut = st.slider("If I intervene: price cut %", 0, 20, 8, key="cp_cut")
+with a2:
+    sub = st.toggle("Add subvention", value=True, key="cp_sub")
+with a3:
+    rival_m = st.slider("Rival launch month", 1, 12, 3, key="cp_rival_m")
+with a4:
+    months = st.slider("Horizon (months)", 6, 18, 12, key="cp_months")
 
-render_dynamic_figure("home_studio", _home_fig, height=420)
+generate_button("copilot", "Recalculate live verdict")
 
-section_label("Navigate AURA-Market")
-module_cards(
-    [
-        ("01", "Market Overview", "Sigma absorption diagnostics"),
-        ("02", "Competition Intelligence", "RERA · Coming soon · UC · Land · Margin index"),
-        ("03", "Audience Demographics", "Age · Native · Family · Channels"),
-        ("04", "Marketing Intelligence", "SMC spend → ROI → reallocate"),
-        ("05", "DMAIC Workspace", "DEFINE / MEASURE problem framing"),
-        ("06", "Builder Deep Dive", "ML forecast + root causes"),
-        ("07", "Digital Twin", "Rival cannibalization + interventions"),
-        ("08", "AI Recommendations", "Prescriptive actions"),
-        ("09", "SPC Control", "CONTROL charts + forecast"),
-        ("10", "Map Decision Support", "Where to build — interactive map"),
-        ("11", "Executive Reports", "Downloadable decision brief"),
-        ("12", "Forecasting", "Short-horizon predictive outlook"),
-    ]
+# Live evaluate on every interaction (slider move = new world state)
+verdict = evaluate_launch(
+    project=project,
+    my_price_psf=float(my_price),
+    intervene_cut_pct=float(cut),
+    use_subvention=bool(sub),
+    rival_month=int(rival_m),
+    horizon_months=int(months),
 )
 
-section_label("Dataset readiness")
-rows = [
-    {
-        "Dataset": d.name.replace("_", " ").title(),
-        "Status": "OK" if d.ok else "FAIL",
-        "Rows": f"{d.rows:,}",
-        "Notes": "; ".join([*d.errors, *d.warnings]) or "—",
-    }
-    for d in (report.datasets if report else [])
-]
-st.dataframe(rows, width="stretch", hide_index=True)
+left, right = st.columns([1, 1.15])
+with left:
+    threat_gauge(verdict.threat_score, verdict.verdict, verdict.verdict_color)
+    verdict_banner(verdict)
+    st.html(
+        f"""
+        <div class="copilot-loss">
+          <div class="copilot-loss-card"><span>Blind-spot loss</span><strong>₹ {verdict.blind_spot_loss_cr}</strong><span>Cr if rival unchecked</span></div>
+          <div class="copilot-loss-card"><span>Recovery</span><strong>₹ {verdict.recovery_cr}</strong><span>Cr with your intervene</span></div>
+          <div class="copilot-loss-card"><span>Nearest rival</span><strong>₹ {verdict.rival_price_psf:,.0f}</strong><span>{verdict.rival_name}</span></div>
+          <div class="copilot-loss-card"><span>Margin</span><strong>{verdict.margin_pct}%</strong><span>{verdict.margin_label}</span></div>
+        </div>
+        """
+    )
+
+with right:
+    section_label("Why this score (live factors)")
+    factor_bars(verdict)
+    section_label("Do this next — 3 actions")
+    action_cards(verdict.actions)
+
+section_label("Money path — twin graphic (regenerates with controls)")
+row = projects[projects["project"] == project].iloc[0]
+ticket = float(row["avg_unit_size_sqft"]) * float(my_price) / 100_000
+base_rate = max(int(row["units_sold"] / 24), 6)
+twin = run_twin_with_cannibalization(
+    base_monthly_rate=base_rate,
+    months=int(months),
+    price_psf=float(my_price),
+    construction_progress=float(row["construction_progress_pct"]),
+    avg_ticket_lakhs=ticket,
+    intervene_month=4,
+    price_cut_pct=float(cut),
+    subvention=bool(sub),
+    competitor_launch_month=int(rival_m),
+    competitor_price_psf=float(verdict.rival_price_psf),
+)
+
+render_dynamic_figure(
+    "copilot",
+    lambda: _style(
+        twin_curves(twin.months, twin.baseline, twin.intervention, twin.cannibalized),
+        f"{project} · ₹{my_price:,.0f}/sqft · {verdict.verdict}",
+    ),
+    height=400,
+)
+
+md = verdict_markdown(verdict)
+d1, d2 = st.columns(2)
+with d1:
+    st.download_button(
+        "Download verdict (.md)",
+        md.encode("utf-8"),
+        file_name=f"launch_verdict_{project.replace(' ', '_')}.md",
+        mime="text/markdown",
+        width="stretch",
+    )
+with d2:
+    st.caption(
+        f"War-room modules (depth): use Modules menu → Competition / Map / SMC. "
+        f"Zone tip: **{verdict.zone_tip}** · SMC: {verdict.smc_tip}"
+    )
 
 st.markdown(
-    f'<p class="dss-footer">{settings.MICRO_MARKET_DEFAULT} · Dynamic UI rebuild · {settings.DEMO_NOTICE}</p>',
+    f'<p class="dss-footer">Launch Co-pilot · {settings.MICRO_MARKET_DEFAULT} · '
+    f"Threat Score is a proprietary composite — not a vanity KPI.</p>",
     unsafe_allow_html=True,
 )

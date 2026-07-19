@@ -1,0 +1,107 @@
+/* Launch Decision Co-pilot — product surface (not a dashboard) */
+.copilot-gauge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0.4rem 0 0.8rem;
+}
+.copilot-gauge { width: min(320px, 92vw); height: auto; }
+.copilot-gauge-caption {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 700;
+  margin-top: 0.2rem;
+}
+
+.copilot-banner {
+  border: 1px solid var(--line);
+  border-left-width: 5px;
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(135deg, rgba(28,33,40,0.95), rgba(14,17,23,0.98));
+  margin: 0.4rem 0 1rem;
+  animation: dss-fade-up 0.45s ease both;
+}
+.copilot-banner-kicker {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+.copilot-banner p { color: var(--text-soft); margin: 0; font-size: 0.95rem; }
+
+.copilot-factors { display: grid; gap: 0.55rem; margin: 0.5rem 0 1rem; }
+.copilot-factor {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+}
+.copilot-factor-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin-bottom: 0.35rem;
+}
+.copilot-factor-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #21262d;
+  overflow: hidden;
+}
+.copilot-factor-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #58a6ff, #ff4b4b);
+  transition: width 0.45s ease;
+}
+.copilot-factor-note { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+
+.copilot-actions {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.5rem 0 1rem;
+}
+.copilot-action {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem 0.95rem;
+}
+.copilot-action-num {
+  font-weight: 800;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+.copilot-action div { color: var(--text-soft); font-size: 0.92rem; line-height: 1.4; }
+
+.copilot-loss {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.55rem;
+  margin: 0.5rem 0 1rem;
+}
+.copilot-loss-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem;
+  text-align: center;
+}
+.copilot-loss-card strong {
+  display: block;
+  font-size: 1.35rem;
+  color: #fff;
+  margin: 0.2rem 0;
+}
+.copilot-loss-card span { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+
+@media (max-width: 640px) {
+  .copilot-action { grid-template-columns: 1fr; }
+}

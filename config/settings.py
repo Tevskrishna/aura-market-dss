@@ -12,7 +12,7 @@ ASSETS_DIR = PROJECT_ROOT / "assets"
 # --- Product (Proposed Project Spec rebrand) ---
 APP_TITLE = "AURA-Market: AI-Powered Predictive & Prescriptive Decision Support System for Urban Real Estate Analytics"
 APP_SHORT_NAME = "AURA-Market"
-PRODUCT_TAGLINE = "Predictive · Prescriptive · Competition-aware simulation for Bagaluru"
+PRODUCT_TAGLINE = "Launch Decision Co-pilot — GO / HOLD / NO-GO for Bagaluru pricing"
 MICRO_MARKET_DEFAULT = "Bagaluru / Aerospace Highway"
 PAGE_ICON = "🏙️"
 COMPANY_NAME = "AURA-Market"
