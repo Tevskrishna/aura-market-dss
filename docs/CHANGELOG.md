@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-07-20 — Enterprise + demo 101% wave
+
+### Added
+- Hybrid/Live adapters with `AURA_LIVE_*_URL` (HTTP or `data/live_samples/*.json`)
+- SQLite catalog mirror (`services/sqlite_store.py`, `AURA_DATA_BACKEND=sqlite`)
+- Env-based auth passwords + optional salted SHA-256 hashes
+- GitHub Actions CI + `.env.example`
+- Demo wiring: Competition lens-only panels, Twin rival on canvas, Map what-if chart, Co-pilot intervene month
+
+### Honest scope
+- Demo control surface maximized; live KRERA requires partner URL credentials
+
 ## 2026-07-20 — P1 enterprise slice (RealEstateIQ plan)
 
 ### Added

@@ -3,11 +3,13 @@ AURA-Market application configuration — single source of truth.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 ASSETS_DIR = PROJECT_ROOT / "assets"
+SQLITE_PATH = PROJECT_ROOT / "data" / "aura_catalog.sqlite"
 
 # --- Product (Proposed Project Spec rebrand) ---
 APP_TITLE = "AURA-Market: AI-Powered Predictive & Prescriptive Decision Support System for Urban Real Estate Analytics"
@@ -77,8 +79,23 @@ ALL_BUILDERS_LABEL = "All Builders"
 ALL_PROJECTS_LABEL = "All Projects"
 ALL_QUARTERS_LABEL = "All Quarters"
 
-DATA_ADAPTER_MODE = "local"
-DEMO_NOTICE = "AURA-Market demo · Local adapters until live KRERA/land feeds are connected"
+DATA_ADAPTER_MODE = os.getenv("AURA_DATA_ADAPTER_MODE", "hybrid").lower()  # local | live | hybrid
+DATA_BACKEND = os.getenv("AURA_DATA_BACKEND", "csv").lower()  # csv | sqlite
+DEMO_NOTICE = "AURA-Market · hybrid adapters (live URLs when set, else validated seed CSVs)"
+
+# Live / partner JSON endpoints (optional — enterprise path)
+LIVE_RERA_URL = os.getenv("AURA_LIVE_RERA_URL", "").strip()
+LIVE_UPCOMING_URL = os.getenv("AURA_LIVE_UPCOMING_URL", "").strip()
+LIVE_UC_URL = os.getenv("AURA_LIVE_UC_URL", "").strip()
+LIVE_LAND_URL = os.getenv("AURA_LIVE_LAND_URL", "").strip()
+LIVE_TIMEOUT_SEC = float(os.getenv("AURA_LIVE_TIMEOUT_SEC", "8"))
+
+# Auth — override demo passwords via env; optional salt enables SHA-256 hashes
+AUTH_SALT = os.getenv("AURA_AUTH_SALT", "").strip()
+AUTH_ADMIN_PASSWORD = os.getenv("AURA_ADMIN_PASSWORD", "admin123")
+AUTH_DEMO_PASSWORD = os.getenv("AURA_DEMO_PASSWORD", "demo123")
+AUTH_ADMIN_PASSWORD_HASH = os.getenv("AURA_ADMIN_PASSWORD_HASH", "").strip()
+AUTH_DEMO_PASSWORD_HASH = os.getenv("AURA_DEMO_PASSWORD_HASH", "").strip()
 
 # Karnataka / Bengaluru native city tokens for audience segmentation
 NATIVE_CITY_TOKENS = (

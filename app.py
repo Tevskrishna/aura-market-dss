@@ -87,14 +87,16 @@ with c_price:
         key="cp_price",
     )
 
-a1, a2, a3, a4 = st.columns(4)
+a1, a2, a3, a4, a5 = st.columns(5)
 with a1:
     cut = st.slider("If I intervene: price cut %", 0, 20, 8, key="cp_cut")
 with a2:
     sub = st.toggle("Add subvention", value=True, key="cp_sub")
 with a3:
-    rival_m = st.slider("Rival launch month", 1, 12, 3, key="cp_rival_m")
+    intervene_m = st.slider("My intervene month", 1, 12, 4, key="cp_intervene_m")
 with a4:
+    rival_m = st.slider("Rival launch month", 1, 12, 3, key="cp_rival_m")
+with a5:
     months = st.slider("Horizon (months)", 6, 18, 12, key="cp_months")
 
 generate_button("copilot", "Recalculate live verdict")
@@ -140,7 +142,7 @@ twin = run_twin_with_cannibalization(
     price_psf=float(my_price),
     construction_progress=float(row["construction_progress_pct"]),
     avg_ticket_lakhs=ticket,
-    intervene_month=4,
+    intervene_month=int(intervene_m),
     price_cut_pct=float(cut),
     subvention=bool(sub),
     competitor_launch_month=int(rival_m),
@@ -154,7 +156,7 @@ render_dynamic_figure(
         f"{project} · ₹{my_price:,.0f}/sqft · {verdict.verdict}",
     ),
     height=400,
-    scene=f"{project}|{my_price}|{cut}|{sub}|{rival_m}|{months}",
+    scene=f"{project}|{my_price}|{cut}|{sub}|{intervene_m}|{rival_m}|{months}",
 )
 
 md = verdict_markdown(verdict)

@@ -16,6 +16,7 @@ from components.layout import decision_action, page_hero, require_login, section
 from components.states import data_honesty_banner, page_hub_label
 from components.viz_studio import generate_button, live_kpi_strip, render_dynamic_figure, scenario_bar
 from config import settings
+from services.adapters import get_adapter
 from services.competition_service import build_competition_snapshot, launch_price_pressure
 from services.margin_service import build_margin_viability, evaluate_land_decision, margin_kpis
 from utils.charts import PALETTE, _style
@@ -115,63 +116,55 @@ def _comp_fig():
 
 render_dynamic_figure("comp_studio", _comp_fig, height=400, scene=str(comp_lens))
 
-t1, t2, t3, t4, t5 = st.tabs(
-    ["RERA Pipeline", "Pre-Launch / Coming Soon", "Under Construction", "Land Arbitrage", "Margin Viability"]
-)
+# Single control path: lens drives detail (no duplicate tab charts)
+section_label(f"Layer detail · {comp_lens}")
+adapter_meta = get_adapter().meta()
+st.caption(f"Adapter: {adapter_meta.mode} — {adapter_meta.description}")
 
-with t1:
-    st.write("Historical + recent RERA clearances — launch density for the micro-market (3–5 year window).")
+if comp_lens == "RERA density":
+    st.write("Historical + recent RERA clearances — launch density for the micro-market.")
     st.dataframe(snap.rera, width="stretch", hide_index=True)
-    if not snap.rera.empty:
-        tmp = snap.rera.copy()
-        tmp["year"] = pd.to_datetime(tmp["approval_date"], errors="coerce").dt.year
-        fig = px.bar(tmp.groupby("year").size().reset_index(name="approvals"), x="year", y="approvals", color_discrete_sequence=PALETTE)
-        st.plotly_chart(fig, width="stretch")
-
-with t2:
+elif comp_lens == "Upcoming launches":
     st.write("Early-stage marketing / coming-soon signals — who enters next?")
     st.dataframe(snap.upcoming, width="stretch", hide_index=True)
-    if not snap.upcoming.empty:
-        fig = px.scatter(
-            snap.upcoming,
-            x="indicative_price_psf",
-            y="planned_units",
-            size="planned_units",
-            color="developer",
-            hover_name="project",
-            color_discrete_sequence=PALETTE,
-        )
-        st.plotly_chart(fig, width="stretch")
-
-with t3:
+    section_label("Launch decision helper")
+    my_price = st.number_input("My planned launch price (₹/sqft)", 5000, 20000, 9000, 100, key="comp_my_price")
+    threats = launch_price_pressure(snap.upcoming, float(my_price))
+    if threats.empty:
+        st.info("No upcoming rows in current adapter.")
+    else:
+        st.dataframe(threats, width="stretch", hide_index=True)
+        high = int((threats["threat"] == "High").sum())
+        if high:
+            st.warning(f"{high} upcoming project(s) priced within ~5% of your launch price — blind-spot risk.")
+            decision_action(
+                "Do not launch blind at this price",
+                [
+                    f"{high} upcoming launch(es) sit within ~5% of ₹{my_price:,.0f}/sqft — revise price or differentiate now.",
+                    "Cross-check UC unsold and land margin before advertising.",
+                    "Simulate the rival case on Digital Twin before locking brochure pricing.",
+                ],
+                tone="warn",
+            )
+        else:
+            st.success("No high-threat price overlap in upcoming set.")
+            decision_action(
+                "Competition pressure is manageable at this quote",
+                [
+                    "Still monitor RERA density and UC unsold before final print.",
+                    "Confirm margin stays Viable at this launch price.",
+                    "Lock MONITOR ownership on SPC after go-live.",
+                ],
+                tone="ok",
+            )
+elif comp_lens == "UC unsold":
     st.write("Ongoing supply buyers can choose today.")
     st.dataframe(snap.under_construction, width="stretch", hide_index=True)
-    if not snap.under_construction.empty:
-        fig = px.bar(
-            snap.under_construction.sort_values("unsold_units", ascending=False),
-            x="project",
-            y="unsold_units",
-            color="developer",
-            color_discrete_sequence=PALETTE,
-        )
-        fig.update_layout(xaxis_tickangle=-25)
-        st.plotly_chart(fig, width="stretch")
-
-with t4:
+elif comp_lens == "Land prices":
     st.write("Raw land cost indices — foundation for margin arbitrage.")
     st.dataframe(snap.land, width="stretch", hide_index=True)
-    if not snap.land.empty:
-        fig = px.bar(
-            snap.land.sort_values("land_price_psf", ascending=False),
-            x="micro_market",
-            y="land_price_psf",
-            color="yoy_change_pct",
-            color_continuous_scale="Tealgrn",
-        )
-        st.plotly_chart(fig, width="stretch")
-
     section_label("Land decision sheet")
-    st.caption("BUY / HOLD / PASS on seed land basis + upcoming/UC pressure — same margin math as Margin tab.")
+    st.caption("BUY / HOLD / PASS on land basis + upcoming/UC pressure — same margin math as Margins lens.")
     mm_opts = snap.land["micro_market"].astype(str).tolist() if not snap.land.empty else [settings.MICRO_MARKET_DEFAULT]
     lc1, lc2 = st.columns([2, 1])
     with lc1:
@@ -189,7 +182,7 @@ with t4:
     )
     tone = {"BUY": "ok", "HOLD": "warn", "PASS": "warn"}.get(land_dec.verdict, "action")
     decision_action(land_dec.headline, land_dec.actions, tone=tone)
-with t5:
+else:
     st.write(
         "Developer Margin Viability Index = (Sale ₹/sqft − loaded land − construction cost) ÷ Sale. "
         "Loaded land uses FSI load factor from config."
@@ -202,44 +195,4 @@ with t5:
             {"label": "Avg margin", "value": mk["avg_margin_pct"], "format": "pct"},
         ]
     )
-    fig = px.bar(
-        margins,
-        x="margin_pct",
-        y="project",
-        color="viability",
-        orientation="h",
-        color_discrete_map={"Viable": "#3dd68c", "Stressed": "#f0b429", "Unviable": "#ff4b4b"},
-    )
-    st.plotly_chart(fig, width="stretch")
     st.dataframe(margins, width="stretch", hide_index=True)
-
-section_label("Launch decision helper")
-my_price = st.number_input("My planned launch price (₹/sqft)", 5000, 20000, 9000, 100)
-threats = launch_price_pressure(snap.upcoming, float(my_price))
-if threats.empty:
-    st.info("No upcoming rows in current adapter.")
-else:
-    st.dataframe(threats, width="stretch", hide_index=True)
-    high = int((threats["threat"] == "High").sum())
-    if high:
-        st.warning(f"{high} upcoming project(s) priced within ~5% of your launch price — blind-spot risk.")
-        decision_action(
-            "Do not launch blind at this price",
-            [
-                f"{high} upcoming launch(es) sit within ~5% of ₹{my_price:,.0f}/sqft — revise price or differentiate amenity/financing now.",
-                "Cross-check UC unsold stock on this page and land margin viability before advertising.",
-                "Simulate the rival case on Digital Twin before locking brochure pricing.",
-            ],
-            tone="warn",
-        )
-    else:
-        st.success("No high-threat price overlap in upcoming set.")
-        decision_action(
-            "Competition pressure is manageable at this quote",
-            [
-                "Still monitor RERA density and UC unsold before final print.",
-                "Confirm margin stays Viable at this launch price.",
-                "Lock MONITOR ownership on SPC after go-live.",
-            ],
-            tone="ok",
-        )

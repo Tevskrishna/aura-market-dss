@@ -247,7 +247,7 @@ with t_dmaic:
 
     render_dynamic_figure("map_dmaic", _dmaic_fig, height=360, scene="pareto")
     st.plotly_chart(importance_chart(feature_importance(zones)), width="stretch")
-    section_label("What-if scenario")
+    section_label("What-if scenario — live score drives graphic")
     metro = st.slider("Metro distance km", 0.2, 10.0, 2.0)
     hwy = st.slider("Highway km", 0.2, 12.0, 3.0)
     hosp = st.slider("Hospitals", 0, 20, 5)
@@ -259,7 +259,24 @@ with t_dmaic:
     price = st.slider("Price ₹/sqft", 5000, 18000, 9000, 100)
     trend = st.slider("YoY trend %", 0.0, 20.0, 8.0)
     wi = what_if_score(metro, hwy, hosp, schools, malls, parks, flood_w, pop, price, trend)
-    st.metric("Live suitability prediction", f"{wi:.0f}/100")
+    baseline = float(zones["suitability_score"].median())
+    st.metric("Live suitability prediction", f"{wi:.0f}/100", delta=f"{wi - baseline:+.0f} vs median zone")
+
+    def _whatif_fig():
+        fig = px.bar(
+            x=["Median zone (baseline)", "Your what-if"],
+            y=[baseline, wi],
+            color=["Baseline", "What-if"],
+            color_discrete_map={"Baseline": "#58a6ff", "What-if": "#3dd68c" if wi >= 70 else "#f0b429" if wi >= 50 else "#ff4b4b"},
+        )
+        return _style(fig, f"What-if suitability · {wi:.0f}/100")
+
+    render_dynamic_figure(
+        "map_whatif",
+        _whatif_fig,
+        height=320,
+        scene=f"{metro}|{hwy}|{hosp}|{schools}|{malls}|{parks}|{flood_w}|{pop}|{price}|{trend}",
+    )
 
 with t_heat:
     generate_button("map_heat", "Refresh heatmap")

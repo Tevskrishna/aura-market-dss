@@ -61,4 +61,4 @@ def test_board_pack_pdf_bytes():
 def test_catalog_repository_wraps_adapter():
     repo = get_catalog_repository()
     assert not repo.projects().empty
-    assert repo.meta().mode in {"local", "live"}
+    assert repo.meta().mode in {"local", "live", "hybrid", "live-fallback"}

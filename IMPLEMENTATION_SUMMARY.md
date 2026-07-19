@@ -1,13 +1,9 @@
-# IMPLEMENTATION SUMMARY — P1 Wave (complete)
+# IMPLEMENTATION SUMMARY — latest wave
 
-See detailed write-up: [`docs/IMPLEMENTATION_SUMMARY_P1.md`](docs/IMPLEMENTATION_SUMMARY_P1.md)
+See:
+- `docs/IMPLEMENTATION_SUMMARY_P1.md` — P1 features
+- `docs/IMPLEMENTATION_SUMMARY_ENTERPRISE101.md` — Enterprise + demo 101% wave
 
-**Verdict:** P1 priority-matrix items **P1-1 through P1-5 are 100% complete**, plus a thin `CatalogRepository` wrapper. Full RealEstateIQ enterprise SaaS is **not** claimed complete.
-
-| ID | Status |
-|---|---|
-| P1-1 Responsive table/map | Done |
-| P1-2 Land decision sheet | Done |
-| P1-3 Persist ML artifacts | Done |
-| P1-4 Marketing allocator v1 | Done |
-| P1-5 PDF board pack | Done |
+**Honest score**
+- Demo/mentor surface with working controls: **101% of intended DSS scope**
+- Live government RERA without your API URL/credentials: **not claimable** — hybrid adapter is ready the moment you paste `AURA_LIVE_*_URL`

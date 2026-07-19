@@ -37,11 +37,20 @@ intervene = st.slider("My intervention month (0 = none)", 0, months, 4)
 cut = st.slider("My price cut %", 0, 20, 8)
 subvention = st.checkbox("Inject subvention at intervention", True)
 
-st.sidebar.markdown("##### Rival launch (blind spot)")
-enable_rival = st.sidebar.checkbox("Enable competitor launch trigger", True)
-default_rival_price = int(min(float(row["price_psf"]) * 0.92, float(upcoming["indicative_price_psf"].min()) if not upcoming.empty else row["price_psf"] * 0.9))
-rival_month = st.sidebar.slider("Competitor launch month", 1, months, 3)
-rival_price = st.sidebar.number_input("Competitor price ₹/sqft", 4000, 20000, default_rival_price, 100)
+section_label("Rival launch (blind spot)")
+r1, r2, r3 = st.columns(3)
+with r1:
+    enable_rival = st.checkbox("Enable competitor launch", True)
+with r2:
+    rival_month = st.slider("Competitor launch month", 1, months, 3)
+with r3:
+    default_rival_price = int(
+        min(
+            float(row["price_psf"]) * 0.92,
+            float(upcoming["indicative_price_psf"].min()) if not upcoming.empty else row["price_psf"] * 0.9,
+        )
+    )
+    rival_price = st.number_input("Competitor price ₹/sqft", 4000, 20000, default_rival_price, 100)
 
 ticket = row["avg_unit_size_sqft"] * row["price_psf"] / 100_000
 result = run_twin_with_cannibalization(
@@ -64,14 +73,21 @@ generate_button("twin_studio", "Generate twin graphics")
 
 
 def _twin_fig():
+    # Always keep intervention visible when user moved cut/intervened — demote vs hide
     if view == "Baseline only":
         return twin_curves(result.months, result.baseline, result.baseline, None)
     if view == "Rival impact":
-        return twin_curves(result.months, result.baseline, result.baseline, result.cannibalized)
+        # Show rival attack + intervention recovery together so sliders still matter
+        return twin_curves(result.months, result.baseline, result.intervention, result.cannibalized)
     return twin_curves(result.months, result.baseline, result.intervention, result.cannibalized)
 
 
-render_dynamic_figure("twin_studio", _twin_fig, height=420, scene=str(view))
+render_dynamic_figure(
+    "twin_studio",
+    _twin_fig,
+    height=420,
+    scene=f"{view}|{cut}|{intervene}|{subvention}|{enable_rival}|{rival_month}|{rival_price}",
+)
 
 render_kpi_cards(
     [

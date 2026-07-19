@@ -17,7 +17,7 @@ from services.data_loader import load_catalog
 from services.market_service import build_market_bundle, get_validation_report
 from services.sigma_service import market_kpis as sigma_kpis
 from utils.charts import booking_trend_chart, buyer_mix_chart
-from utils.dmaic_charts import absorption_band_chart, price_absorption_bubble, sold_unsold_donut
+from utils.dmaic_charts import absorption_band_chart, price_absorption_bubble
 from services.market_service import booking_trend_frame
 
 st.set_page_config(page_title="Market Overview", page_icon="📊", layout="wide")
@@ -78,12 +78,6 @@ def _mkt_fig():
 
 
 render_dynamic_figure("mkt_studio", _mkt_fig, height=420, scene=str(lens))
-
-c1, c2 = st.columns(2)
-with c1:
-    st.plotly_chart(sold_unsold_donut(sk["units_sold"], sk["units_unsold"]), width="stretch")
-with c2:
-    st.plotly_chart(absorption_band_chart(bundle.projects), width="stretch")
 
 section_label("Inventory detail")
 cols = [c for c in ["developer", "project", "total_units", "units_sold", "units_unsold", "absorption_pct", "price_psf", "status"] if c in bundle.projects.columns]

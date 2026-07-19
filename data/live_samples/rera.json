@@ -1,0 +1,110 @@
+[
+  {
+    "rera_id":"PRM\/KA\/RERA\/1251\/2021",
+    "project":"Brigade El Dorado",
+    "developer":"Brigade",
+    "approval_date":"2021-06-14",
+    "micro_market":"Bagaluru",
+    "units":1150,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/1410\/2022",
+    "project":"Godrej Ananda III",
+    "developer":"Godrej",
+    "approval_date":"2022-03-22",
+    "micro_market":"Bagaluru",
+    "units":1540,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/1588\/2022",
+    "project":"Provident Ecopolitan",
+    "developer":"Puravankara",
+    "approval_date":"2022-08-01",
+    "micro_market":"Bagaluru",
+    "units":1800,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/1672\/2023",
+    "project":"Kalyani Living Tree",
+    "developer":"Kalyani",
+    "approval_date":"2023-01-18",
+    "micro_market":"Bagaluru",
+    "units":720,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/1740\/2023",
+    "project":"Adarsh Palm Acres III",
+    "developer":"Adarsh",
+    "approval_date":"2023-05-09",
+    "micro_market":"Bagaluru",
+    "units":420,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/1811\/2023",
+    "project":"MJR North Park",
+    "developer":"MJR",
+    "approval_date":"2023-09-12",
+    "micro_market":"Bagaluru",
+    "units":360,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/1890\/2024",
+    "project":"NVG Rakshak",
+    "developer":"NVG",
+    "approval_date":"2024-02-20",
+    "micro_market":"Bagaluru",
+    "units":200,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/1955\/2024",
+    "project":"Kumar Plumeria",
+    "developer":"Kumar",
+    "approval_date":"2024-06-05",
+    "micro_market":"Bagaluru",
+    "units":180,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/2010\/2024",
+    "project":"Sri Sai Dev Enclave",
+    "developer":"Sri Sai Dev",
+    "approval_date":"2024-09-30",
+    "micro_market":"Bagaluru",
+    "units":140,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/2102\/2025",
+    "project":"Brigade Aurum Phase Ext",
+    "developer":"Brigade",
+    "approval_date":"2025-01-15",
+    "micro_market":"Bagaluru",
+    "units":280,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/2188\/2025",
+    "project":"Purva Atmosphere Phase",
+    "developer":"Puravankara",
+    "approval_date":"2025-04-11",
+    "micro_market":"Yelahanka fringe",
+    "units":560,
+    "status":"Approved"
+  },
+  {
+    "rera_id":"PRM\/KA\/RERA\/2250\/2025",
+    "project":"Sobha Dream Gardens North",
+    "developer":"Sobha",
+    "approval_date":"2025-07-08",
+    "micro_market":"Bagaluru",
+    "units":410,
+    "status":"Approved"
+  }
+]
