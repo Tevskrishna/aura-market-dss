@@ -1,0 +1,540 @@
+/* =========================================================
+   AURA-Market — Dark Enterprise UI
+   Reference: Bengaluru Real Estate AI Map Dashboard (accepted look)
+   Charcoal canvas · white type · red active accent · neon chart colors
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #0e1117;
+  --bg-2: #161b22;
+  --panel: #1c2128;
+  --panel-2: #222831;
+  --line: #30363d;
+  --line-soft: #21262d;
+  --text: #e6edf3;
+  --text-soft: #c9d1d9;
+  --muted: #8b949e;
+  --accent: #ff4b4b;
+  --accent-soft: rgba(255, 75, 75, 0.18);
+  --ok: #3dd68c;
+  --warn: #f0b429;
+  --blue: #58a6ff;
+  --cyan: #39d0d8;
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  --radius: 12px;
+}
+
+html, body, [class*="css"], .stMarkdown, .stText, .stSelectbox, input, textarea {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+  color: var(--text) !important;
+}
+
+.stApp {
+  background: var(--bg) !important;
+}
+
+header[data-testid="stHeader"] {
+  background: rgba(14, 17, 23, 0.85) !important;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+div[data-testid="stToolbar"] { display: none; }
+
+.block-container {
+  padding-top: 1.1rem !important;
+  padding-bottom: 3rem !important;
+  max-width: 1200px;
+  background: transparent !important;
+}
+
+h1, h2, h3 {
+  font-family: Inter, sans-serif !important;
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 1.7rem !important; }
+h2 { font-size: 1.2rem !important; }
+h3 { font-size: 1.05rem !important; }
+
+p, li, label, .stCaption, [data-testid="stCaption"] {
+  color: var(--text-soft) !important;
+}
+
+/* ---------- Sidebar (dark nav like reference) ---------- */
+section[data-testid="stSidebar"] {
+  background: var(--bg-2) !important;
+  border-right: 1px solid var(--line) !important;
+}
+
+section[data-testid="stSidebar"] * {
+  color: var(--text-soft) !important;
+}
+
+section[data-testid="stSidebar"] .stSelectbox label,
+section[data-testid="stSidebar"] .stDateInput label,
+section[data-testid="stSidebar"] .stNumberInput label,
+section[data-testid="stSidebar"] .stMultiSelect label,
+section[data-testid="stSidebar"] .stRadio label,
+section[data-testid="stSidebar"] .stSlider label {
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+  font-size: 0.78rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div,
+section[data-testid="stSidebar"] input,
+section[data-testid="stSidebar"] [data-baseweb="input"],
+section[data-testid="stSidebar"] textarea {
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--text) !important;
+  border-radius: 8px !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stSidebarNav"] a {
+  border-radius: 8px !important;
+  margin: 0.12rem 0.4rem !important;
+  padding: 0.55rem 0.7rem !important;
+  font-weight: 600 !important;
+  border-left: 3px solid transparent;
+}
+
+section[data-testid="stSidebar"] [data-testid="stSidebarNav"] a:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stSidebarNav"] a[aria-selected="true"] {
+  background: rgba(255, 75, 75, 0.12) !important;
+  border-left: 3px solid var(--accent) !important;
+  color: #fff !important;
+}
+
+section[data-testid="stSidebar"] .stButton > button {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border: none !important;
+  width: 100%;
+  font-weight: 700;
+}
+
+.dss-brand {
+  padding: 0.55rem 0.85rem 0.95rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0.65rem;
+}
+
+.dss-brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #ff4b4b, #c62828);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #fff !important;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.dss-brand-name {
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #fff !important;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.dss-brand-sub {
+  font-size: 0.72rem;
+  color: var(--muted) !important;
+  margin-top: 0.2rem;
+  font-style: italic;
+}
+
+.dss-brand-tag {
+  font-size: 0.68rem;
+  color: var(--text-soft) !important;
+  margin-top: 0.35rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.dss-user-card {
+  margin: 0.45rem 0.55rem 0.7rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.dss-user-card strong { color: #fff !important; }
+.dss-user-card span { color: var(--muted) !important; font-size: 0.72rem; }
+
+/* ---------- Hero ---------- */
+.dss-hero {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.2rem 1.35rem 1.1rem;
+  margin-bottom: 1.05rem;
+  box-shadow: var(--shadow);
+}
+
+.dss-kicker {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.dss-hero h1 {
+  margin: 0 !important;
+  font-size: 1.55rem !important;
+  color: #fff !important;
+  max-width: none;
+}
+
+.dss-subtitle {
+  color: var(--muted) !important;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0.4rem 0 0 0;
+  max-width: 70ch;
+}
+
+.dss-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+}
+
+.dss-chip {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.dss-chip.ok {
+  background: rgba(61, 214, 140, 0.12);
+  color: var(--ok);
+  border-color: rgba(61, 214, 140, 0.35);
+}
+
+.dss-chip.warn {
+  background: rgba(240, 180, 41, 0.12);
+  color: var(--warn);
+  border-color: rgba(240, 180, 41, 0.35);
+}
+
+/* ---------- KPI cards ---------- */
+.dss-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  gap: 0.7rem;
+  margin: 0.3rem 0 1rem;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .dss-kpi-grid { grid-template-columns: 1fr !important; }
+}
+
+.dss-kpi {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  box-shadow: none;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dss-kpi:hover {
+  border-color: #484f58;
+  transform: none;
+  box-shadow: none;
+}
+
+.dss-kpi::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 12px 0 0 12px;
+}
+
+.dss-kpi-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.dss-kpi-value {
+  font-family: Inter, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+}
+
+.dss-kpi-hint {
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+div[data-testid="stMetric"] {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+}
+
+div[data-testid="stMetric"] label { color: var(--muted) !important; }
+div[data-testid="stMetric"] [data-testid="stMetricValue"] { color: #fff !important; }
+
+/* ---------- Panels / modules ---------- */
+.dss-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  height: 100%;
+  box-shadow: none;
+}
+
+.dss-panel:hover { box-shadow: none; border-color: #484f58; }
+
+.dss-panel h4 {
+  margin: 0 0 0.4rem 0 !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+}
+
+.dss-panel p {
+  color: var(--muted) !important;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.dss-module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.65rem;
+  margin: 0.45rem 0 1.1rem;
+}
+
+.dss-module {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem 0.95rem;
+}
+
+.dss-module:hover {
+  border-color: var(--accent);
+  transform: none;
+}
+
+.dss-module-index {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.dss-module strong {
+  display: block;
+  color: #fff;
+  font-size: 0.92rem;
+  margin-bottom: 0.2rem;
+}
+
+.dss-module span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.dss-section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1rem 0 0.6rem;
+}
+
+.dss-section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--blue), transparent);
+}
+
+.dss-section-label h2 {
+  margin: 0 !important;
+  font-size: 1.1rem !important;
+  color: #fff !important;
+}
+
+/* ---------- Tabs / tables / buttons / inputs ---------- */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 0.3rem;
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+}
+
+.stTabs [data-baseweb="tab"] {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--muted) !important;
+  font-weight: 600;
+  padding: 0.5rem 0.85rem !important;
+}
+
+.stTabs [aria-selected="true"] {
+  background: transparent !important;
+  color: #fff !important;
+  border-bottom: 2px solid var(--accent) !important;
+}
+
+div[data-testid="stDataFrame"],
+div[data-testid="stDataEditor"] {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.stButton > button {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px;
+  font-weight: 700;
+  box-shadow: none !important;
+}
+
+.stButton > button:hover {
+  filter: brightness(1.08);
+  transform: none;
+  color: #fff !important;
+}
+
+.stDownloadButton > button {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line) !important;
+}
+
+.stAlert {
+  border-radius: 10px !important;
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--text) !important;
+}
+
+/* Multiselect pills — red like reference */
+span[data-baseweb="tag"] {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+}
+
+div[data-baseweb="select"] > div,
+[data-baseweb="input"] {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+  color: var(--text) !important;
+}
+
+/* Chart frames */
+div[data-testid="stPlotlyChart"],
+.stPlotlyChart {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.35rem;
+  margin-bottom: 0.55rem;
+  box-shadow: none;
+}
+
+/* Login */
+.dss-login-shell {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dss-login-wrap {
+  width: min(430px, 92vw);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.55rem 1.6rem 1.3rem;
+  box-shadow: var(--shadow);
+}
+
+.dss-login-wrap h2 {
+  margin: 0.15rem 0 0.35rem !important;
+  color: #fff !important;
+}
+
+.dss-login-creds {
+  margin-top: 0.8rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 8px;
+  background: var(--bg-2);
+  border: 1px dashed var(--line);
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.dss-footer {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-top: 1.4rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+/* Kill light-theme leftovers */
+[data-testid="stVerticalBlockBorderWrapper"] {
+  background: transparent !important;
+}
+
+div[data-testid="stExpander"] {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+hr {
+  border-color: var(--line) !important;
+}

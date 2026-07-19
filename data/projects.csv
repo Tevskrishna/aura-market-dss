@@ -1,0 +1,20 @@
+developer,project,tower,total_units,units_sold,price_psf,avg_unit_size_sqft,construction_delay_months,construction_progress_pct,brand_score,lat,lon,status,units_unsold,absorption_pct,segment,micro_market
+Brigade,El Dorado - Diora,Diora,420,420,8600,1450,0,100,9.2,13.149,77.675,Sold Out,0,100.0,Premium,Bagaluru / Aerospace Highway
+Brigade,El Dorado - Cobalt,Cobalt,380,361,9345,1520,2,95,9.2,13.15,77.676,Under Construction,19,95.0,Premium,Bagaluru / Aerospace Highway
+Brigade,El Dorado - Beryl,Beryl,350,298,9800,1680,4,78,9.2,13.151,77.677,Under Construction,52,85.1,Luxury,Bagaluru / Aerospace Highway
+Brigade,Aurum,Aurum,560,420,10200,1750,7,62,9.0,13.142,77.668,Under Construction,140,75.0,Luxury,Bagaluru / Aerospace Highway
+Brigade,Emerald & Luminaire,E&L,480,288,11000,2100,9,55,9.0,13.138,77.67,Under Construction,192,60.0,Luxury,Bagaluru / Aerospace Highway
+Godrej,Ananda III - H/K,H-K,640,512,9200,1380,3,85,9.4,13.155,77.682,Under Construction,128,80.0,Premium,Bagaluru / Aerospace Highway
+Godrej,Ananda III - P,P,320,240,9450,1420,5,72,9.4,13.156,77.683,Under Construction,80,75.0,Premium,Bagaluru / Aerospace Highway
+Godrej,Ananda III - M,M,280,154,9900,1550,8,48,9.4,13.157,77.684,Under Construction,126,55.0,Luxury,Bagaluru / Aerospace Highway
+Godrej,Ananda III - L,L,300,210,9700,1480,4,70,9.4,13.158,77.685,Under Construction,90,70.0,Luxury,Bagaluru / Aerospace Highway
+Kalyani,Living Tree T1-T2,T1-T2,220,198,7800,1280,1,96,7.5,13.145,77.69,Under Construction,22,90.0,Value,Bagaluru / Aerospace Highway
+Kalyani,Living Tree T3-T4,T3-T4,240,156,8100,1320,6,60,7.5,13.146,77.691,Under Construction,84,65.0,Premium,Bagaluru / Aerospace Highway
+Kalyani,Living Tree T5-T6,T5-T6,260,130,8450,1400,10,40,7.5,13.147,77.692,Under Construction,130,50.0,Premium,Bagaluru / Aerospace Highway
+Puravankara,Provident Ecopolitan,Eco,1800,1497,7200,980,2,90,8.6,13.152,77.695,Under Construction,303,83.2,Value,Bagaluru / Aerospace Highway
+Puravankara,Ecopolitan V,EcoV,640,288,7600,1050,5,55,8.6,13.153,77.696,Under Construction,352,45.0,Value,Bagaluru / Aerospace Highway
+Adarsh,Palm Acres III,PA3,420,294,8800,1600,6,65,8.0,13.14,77.66,Under Construction,126,70.0,Premium,Bagaluru / Aerospace Highway
+Kumar,Plumeria,Plu,180,99,10500,1850,11,35,6.8,13.135,77.665,Under Construction,81,55.0,Luxury,Bagaluru / Aerospace Highway
+MJR,North Park,NP,360,252,8500,1500,4,75,7.2,13.16,77.67,Under Construction,108,70.0,Premium,Bagaluru / Aerospace Highway
+NVG,Rakshak,Rak,200,110,6900,1200,8,50,6.5,13.148,77.7,Under Construction,90,55.0,Value,Bagaluru / Aerospace Highway
+Sri Sai Dev,Dev Enclave,DE,140,70,6500,1150,12,30,6.0,13.13,77.68,Under Construction,70,50.0,Value,Bagaluru / Aerospace Highway
