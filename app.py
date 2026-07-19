@@ -1,8 +1,7 @@
 """
-AURA-Market — Launch Decision Co-pilot
+AURA-Market — Launch Decision Co-pilot (v1 polish: CEO 10-second Hub)
 
-Product (not a dashboard): one real-world question —
-Can I launch / reprice at ₹X this month in Bagaluru?
+One question: Should we launch / reprice at ₹X this month?
 """
 from __future__ import annotations
 
@@ -15,19 +14,19 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from components.copilot_ui import action_cards, factor_bars, threat_gauge, verdict_banner
+from components.copilot_ui import action_cards, factor_bars, threat_gauge
 from components.executive_sheet import render_executive_sheet
 from components.layout import require_login, section_label
 from components.states import data_honesty_banner, empty_state, page_hub_label
 from components.touch_nav import render_touch_hub
-from components.viz_studio import generate_button, render_dynamic_figure
+from components.viz_studio import render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_launch
 from services.launch_copilot_service import evaluate_launch, verdict_markdown
+from services.twin_service import run_twin_with_cannibalization
 from utils.charts import _style
 from utils.dmaic_charts import twin_curves
-from services.twin_service import run_twin_with_cannibalization
 
 st.set_page_config(
     page_title="Executive Hub · RealEstateIQ",
@@ -39,35 +38,12 @@ st.set_page_config(
 require_login("Executive Hub")
 adapter = get_adapter()
 projects = adapter.projects()
-upcoming = adapter.upcoming()
 
-from components.media import data_uri
+page_hub_label("RealEstateIQ", "Executive Hub")
 
-page_hub_label("RealEstateIQ", "Executive Hub · Launch Decision")
-data_honesty_banner()
-
-_banner = data_uri("hero-bagaluru-day.jpg")
-st.html(
-    f"""
-    <div style="
-      position:relative;border-radius:16px;overflow:hidden;margin:0 0 1rem;
-      border:1px solid #30363d;min-height:190px;
-      background:linear-gradient(100deg,rgba(8,10,14,.88) 20%,rgba(8,10,14,.35) 70%),
-                 url('{_banner}') center/cover no-repeat;">
-      <div style="padding:1.2rem 1.25rem 1.3rem;max-width:46rem;">
-        <div class="dss-kicker">EXECUTIVE HUB · BAGALURU / AEROSPACE HIGHWAY</div>
-        <h1 style="margin:0.2rem 0 0.4rem;color:#fff;">Should we launch at this price?</h1>
-        <p style="margin:0;color:#d7dee8;font-size:0.98rem;line-height:1.45;">
-          Move the price slider — Launch Threat Score and ₹ Cr blind-spot exposure update live.
-          Evidence modules stay one tap away in the hub menu.
-        </p>
-      </div>
-    </div>
-    """
-)
-
-section_label("Workspaces · tap to open")
-render_touch_hub(title="Graphical module launch pad")
+# Trust detail — collapsed so it doesn't compete with the decision
+with st.expander("Data contract · what is measured vs seed", expanded=False):
+    data_honesty_banner()
 
 if projects.empty:
     empty_state(
@@ -77,15 +53,25 @@ if projects.empty:
     )
     st.stop()
 
-# --- Controls that recompute in real time on every change ---
+# --- 10-second question ---
+st.html(
+    """
+    <div class="iq-hub-ask" role="heading" aria-level="1">
+      <div class="iq-hub-ask-kicker">Bagaluru · Aerospace Highway</div>
+      <h1>Should we launch at this price?</h1>
+      <p>Set project + ₹/sqft. Verdict, risk, and ₹ Cr exposure update live.</p>
+    </div>
+    """
+)
+
 c_proj, c_price = st.columns([1.2, 1])
 with c_proj:
-    project = st.selectbox("My project", projects["project"].tolist(), key="cp_project")
+    project = st.selectbox("Project", projects["project"].tolist(), key="cp_project")
 with c_price:
     row0 = projects[projects["project"] == project].iloc[0]
     default_price = int(row0["price_psf"])
     my_price = st.slider(
-        "Planned launch / list price (₹/sqft)",
+        "Launch / list price (₹/sqft)",
         5000,
         20000,
         default_price,
@@ -93,21 +79,26 @@ with c_price:
         key="cp_price",
     )
 
-a1, a2, a3, a4, a5 = st.columns(5)
-with a1:
-    cut = st.slider("If I intervene: price cut %", 0, 20, 8, key="cp_cut")
-with a2:
-    sub = st.toggle("Add subvention", value=True, key="cp_sub")
-with a3:
-    intervene_m = st.slider("My intervene month", 1, 12, 4, key="cp_intervene_m")
-with a4:
-    rival_m = st.slider("Rival launch month", 1, 12, 3, key="cp_rival_m")
-with a5:
-    months = st.slider("Horizon (months)", 6, 18, 12, key="cp_months")
+with st.expander("Stress-test controls (cut · rival · horizon)", expanded=False):
+    a1, a2, a3, a4, a5 = st.columns(5)
+    with a1:
+        cut = st.slider("Price cut %", 0, 20, 8, key="cp_cut")
+    with a2:
+        sub = st.toggle("Subvention", value=True, key="cp_sub")
+    with a3:
+        intervene_m = st.slider("Intervene month", 1, 12, 4, key="cp_intervene_m")
+    with a4:
+        rival_m = st.slider("Rival month", 1, 12, 3, key="cp_rival_m")
+    with a5:
+        months = st.slider("Horizon (mo)", 6, 18, 12, key="cp_months")
 
-generate_button("copilot", "Recalculate live verdict")
+# Defaults if expander never opened still need variables — sliders keep session state
+cut = int(st.session_state.get("cp_cut", 8))
+sub = bool(st.session_state.get("cp_sub", True))
+intervene_m = int(st.session_state.get("cp_intervene_m", 4))
+rival_m = int(st.session_state.get("cp_rival_m", 3))
+months = int(st.session_state.get("cp_months", 12))
 
-# Live evaluate on every interaction (slider move = new world state)
 verdict = evaluate_launch(
     project=project,
     my_price_psf=float(my_price),
@@ -117,30 +108,29 @@ verdict = evaluate_launch(
     horizon_months=int(months),
 )
 
+# --- Decision story (primary) ---
 render_executive_sheet(brief_from_launch(verdict), key="hub_eds")
 
-left, right = st.columns([1, 1.15])
+left, right = st.columns([1, 1.15], gap="large")
 with left:
     threat_gauge(verdict.threat_score, verdict.verdict, verdict.verdict_color)
-    verdict_banner(verdict)
     st.html(
         f"""
         <div class="copilot-loss">
           <div class="copilot-loss-card"><span>Blind-spot loss</span><strong>₹ {verdict.blind_spot_loss_cr}</strong><span>Cr if rival unchecked</span></div>
-          <div class="copilot-loss-card"><span>Recovery</span><strong>₹ {verdict.recovery_cr}</strong><span>Cr with your intervene</span></div>
+          <div class="copilot-loss-card"><span>Recovery</span><strong>₹ {verdict.recovery_cr}</strong><span>Cr with intervene</span></div>
           <div class="copilot-loss-card"><span>Nearest rival</span><strong>₹ {verdict.rival_price_psf:,.0f}</strong><span>{verdict.rival_name}</span></div>
           <div class="copilot-loss-card"><span>Margin</span><strong>{verdict.margin_pct}%</strong><span>{verdict.margin_label}</span></div>
         </div>
         """
     )
-
 with right:
-    section_label("Why this score (live factors)")
+    section_label("Why this score")
     factor_bars(verdict)
-    section_label("Do this next — 3 actions")
-    action_cards(verdict.actions)
+    section_label("Do this week")
+    action_cards(verdict.actions[:3])
 
-section_label("Money path — twin graphic (regenerates with controls)")
+# --- Supporting evidence (secondary) ---
 row = projects[projects["project"] == project].iloc[0]
 ticket = float(row["avg_unit_size_sqft"]) * float(my_price) / 100_000
 base_rate = max(int(row["units_sold"] / 24), 6)
@@ -157,15 +147,16 @@ twin = run_twin_with_cannibalization(
     competitor_price_psf=float(verdict.rival_price_psf),
 )
 
-render_dynamic_figure(
-    "copilot",
-    lambda: _style(
-        twin_curves(twin.months, twin.baseline, twin.intervention, twin.cannibalized),
-        f"{project} · ₹{my_price:,.0f}/sqft · {verdict.verdict}",
-    ),
-    height=400,
-    scene=f"{project}|{my_price}|{cut}|{sub}|{intervene_m}|{rival_m}|{months}",
-)
+with st.expander("₹ Cr money path (digital twin)", expanded=True):
+    render_dynamic_figure(
+        "copilot",
+        lambda: _style(
+            twin_curves(twin.months, twin.baseline, twin.intervention, twin.cannibalized),
+            f"{project} · ₹{my_price:,.0f}/sqft · {verdict.verdict}",
+        ),
+        height=360,
+        scene=f"{project}|{my_price}|{cut}|{sub}|{intervene_m}|{rival_m}|{months}",
+    )
 
 md = verdict_markdown(verdict)
 d1, d2 = st.columns(2)
@@ -179,12 +170,14 @@ with d1:
     )
 with d2:
     st.caption(
-        f"War-room modules (depth): use Modules menu → Competition / Map / SMC. "
-        f"Zone tip: **{verdict.zone_tip}** · SMC: {verdict.smc_tip}"
+        f"{settings.MICRO_MARKET_DEFAULT} · Zone: {verdict.zone_tip} · {verdict.smc_tip}"
     )
 
+with st.expander("Evidence workspaces (optional depth)", expanded=False):
+    st.caption("Use after the launch call is clear — Competition, Twin, Map, Reports.")
+    render_touch_hub(title="Open a workspace")
+
 st.markdown(
-    f'<p class="dss-footer">Launch Co-pilot · {settings.MICRO_MARKET_DEFAULT} · '
-    f"Threat Score is a proprietary composite — not a vanity KPI.</p>",
+    f'<p class="dss-footer">Launch Co-pilot · Threat Score is a proprietary composite — not a vanity KPI.</p>',
     unsafe_allow_html=True,
 )

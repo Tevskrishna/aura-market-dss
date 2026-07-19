@@ -134,6 +134,34 @@ html[data-theme="light"] {
   color: var(--iq-text);
 }
 
+/* Hub CEO ask — 10-second hierarchy */
+.iq-hub-ask {
+  margin: 0.15rem 0 0.85rem;
+}
+.iq-hub-ask-kicker {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--iq-accent, #ff4b4b);
+  margin-bottom: 0.25rem;
+}
+.iq-hub-ask h1 {
+  margin: 0 0 0.35rem !important;
+  color: #fff !important;
+  font-size: clamp(1.35rem, 3vw, 1.85rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.15 !important;
+}
+.iq-hub-ask p {
+  margin: 0;
+  color: #9aa7b5;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  max-width: 36rem;
+}
+
 /* Executive Decision Sheet — CEO 10s understanding */
 .iq-eds {
   border: 1px solid var(--iq-border, #30363d);
