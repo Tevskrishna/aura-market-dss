@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import html
+from pathlib import Path
 
 import streamlit as st
 
@@ -9,6 +10,23 @@ from config import settings
 from config.auth import SESSION_AUTH_KEY, SESSION_USER_KEY, verify_credentials
 
 CSS_PATH = settings.ASSETS_DIR / "styles.css"
+
+# Mobile-safe module jump list (does not rely on the Streamlit sidebar)
+MODULE_NAV: list[tuple[str, str]] = [
+    ("Home", "app.py"),
+    ("Market Overview", "pages/1_Market_Overview.py"),
+    ("Competition Intelligence", "pages/2_Competition_Intelligence.py"),
+    ("Audience Demographics", "pages/3_Buyer_Analytics.py"),
+    ("Marketing Intelligence", "pages/4_Marketing_Intelligence.py"),
+    ("DMAIC Workspace", "pages/5_DMAIC_Workspace.py"),
+    ("Builder Deep Dive", "pages/6_Builder_Deep_Dive.py"),
+    ("Digital Twin", "pages/7_Digital_Twin.py"),
+    ("AI Recommendations", "pages/8_AI_Recommendations.py"),
+    ("SPC Control Chart", "pages/9_SPC_Control_Chart.py"),
+    ("Map Decision Support", "pages/10_Map_Decision_Support.py"),
+    ("Executive Reports", "pages/11_Executive_Reports.py"),
+    ("Forecasting", "pages/12_Forecasting.py"),
+]
 
 
 def inject_theme() -> None:
@@ -20,6 +38,7 @@ def require_login() -> dict:
     inject_theme()
     if st.session_state.get(SESSION_AUTH_KEY) and st.session_state.get(SESSION_USER_KEY):
         _sidebar_chrome()
+        render_module_nav()
         return st.session_state[SESSION_USER_KEY]
 
     st.html(
@@ -52,6 +71,56 @@ def require_login() -> dict:
     return {}
 
 
+def _current_nav_label() -> str:
+    """Best-effort match of the running script to MODULE_NAV labels."""
+    try:
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+        ctx = get_script_run_ctx()
+        raw = str(getattr(ctx, "main_script_path", "") or "")
+        name = Path(raw.replace("\\", "/")).name.lower()
+        for label, path in MODULE_NAV:
+            if Path(path).name.lower() == name:
+                return label
+            if path.replace("\\", "/").lower() in raw.replace("\\", "/").lower():
+                return label
+    except Exception:
+        pass
+    return st.session_state.get("dss_nav_label", MODULE_NAV[0][0])
+
+
+def render_module_nav() -> None:
+    """Top-of-page module switcher — works when the sidebar cannot be opened on mobile."""
+    labels = [label for label, _ in MODULE_NAV]
+    path_by = dict(MODULE_NAV)
+    current = _current_nav_label()
+    if current not in labels:
+        current = labels[0]
+    idx = labels.index(current)
+
+    st.html(
+        '<div class="dss-mobile-nav">'
+        '<div class="dss-mobile-nav-label">Modules · tap to open any page (mobile friendly)</div>'
+        "</div>"
+    )
+    choice = st.selectbox(
+        "Go to module",
+        labels,
+        index=idx,
+        key="dss_module_nav",
+        label_visibility="collapsed",
+        help="Use this if the left sidebar is closed on your phone. On desktop you can also use the sidebar.",
+    )
+    st.session_state["dss_nav_label"] = choice
+    target = path_by[choice]
+    prev = st.session_state.get("dss_nav_target")
+    if prev is None:
+        st.session_state["dss_nav_target"] = target
+    elif target != prev:
+        st.session_state["dss_nav_target"] = target
+        st.switch_page(target)
+
+
 def _sidebar_chrome() -> None:
     user = st.session_state.get(SESSION_USER_KEY) or {}
     st.sidebar.html(
@@ -69,6 +138,7 @@ def _sidebar_chrome() -> None:
         st.session_state[SESSION_USER_KEY] = None
         st.rerun()
     st.sidebar.markdown("---")
+    st.sidebar.caption("Phone tip: use the red menu button top-left, or the Modules dropdown on the page.")
 
 
 def page_hero(
