@@ -1,10 +1,13 @@
 """
-Dynamic visualization studio — click chips / generate buttons to rebuild charts.
+Dynamic visualization studio — lenses and generate actually remount charts.
 
-Benchmarks: Zillow/Redfin live filter refresh + proptech map-first decision surfaces.
+Streamlit keeps Plotly widgets glued to a stable `key`. If only the lens
+changes and the key stays the same, the old figure can appear "stuck".
+We bake scene + nonce into the chart key so options visibly switch.
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from typing import Any
 
@@ -24,13 +27,17 @@ def graphic_html(relative_path: str, css_class: str = "dss-graphic") -> None:
         st.image(str(path), use_container_width=True)
 
 
+def _slug(text: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9]+", "_", str(text)).strip("_")[:48] or "default"
+
+
 def scenario_bar(
     key: str,
     label: str,
     options: list[str],
     default: str | None = None,
 ) -> str:
-    """Segmented scenario control — changing it rebuilds charts on next generate/rerun."""
+    """Segmented scenario control — changing it must change the chart on the same run."""
     default = default or options[0]
     st.caption(label)
     choice = st.segmented_control(
@@ -41,18 +48,26 @@ def scenario_bar(
         label_visibility="collapsed",
         width="stretch",
     )
-    return choice or default
+    picked = choice or default
+    # Persist for generate / caption feedback
+    st.session_state[f"{key}_scene"] = picked
+    return picked
 
 
 def generate_button(key: str, text: str = "Generate live graphics") -> bool:
-    """Primary CTA — bumps a nonce so charts regenerate with motion seed."""
+    """Bump nonce so Plotly remounts; show toast so the click never feels dead."""
     c1, c2 = st.columns([1.4, 2])
     with c1:
         clicked = st.button(text, key=f"{key}_gen", type="primary", width="stretch")
     with c2:
-        st.caption("Click to regenerate charts for the selected scenario · works on phone & desktop")
+        st.caption("Lens = switch graphic · Generate = force remount / refresh")
     if clicked:
         st.session_state[f"{key}_nonce"] = int(st.session_state.get(f"{key}_nonce", 0)) + 1
+        st.session_state[f"{key}_flash"] = True
+        try:
+            st.toast("Graphics refreshed", icon="✅")
+        except Exception:
+            pass
     return clicked
 
 
@@ -112,12 +127,27 @@ def render_dynamic_figure(
     builder: Callable[[], Any],
     *,
     height: int | None = None,
+    scene: str | None = None,
 ) -> None:
-    """Rebuild Plotly figure whenever nonce changes; inject animation-ish transition."""
-    _ = viz_nonce(key)  # dependency for Streamlit rerun semantics
+    """
+    Rebuild Plotly whenever nonce OR scene changes.
+    `scene` must be the lens / tab selection string so switches remount.
+    """
+    nonce = viz_nonce(key)
+    scene_val = scene if scene is not None else str(st.session_state.get(f"{key}_scene", ""))
     fig = builder()
     if height and hasattr(fig, "update_layout"):
         fig.update_layout(height=height)
     if hasattr(fig, "update_layout"):
-        fig.update_layout(transition_duration=400)
-    st.plotly_chart(fig, width="stretch", key=f"{key}_chart_{viz_nonce(key)}")
+        # Visible title stamp so user sees regenerates even when shape is similar
+        stamp = f" · live #{nonce}" if nonce else ""
+        title = fig.layout.title.text if fig.layout.title and fig.layout.title.text else ""
+        if stamp and title and "live #" not in str(title):
+            fig.update_layout(title=f"{title}{stamp}")
+        elif stamp and not title and scene_val:
+            fig.update_layout(title=f"{scene_val}{stamp}")
+        fig.update_layout(transition_duration=350)
+    if st.session_state.pop(f"{key}_flash", None):
+        st.success(f"Refreshed · {scene_val or 'current view'} · pass #{nonce}")
+    chart_key = f"{key}_chart_{nonce}_{_slug(scene_val)}"
+    st.plotly_chart(fig, width="stretch", key=chart_key)

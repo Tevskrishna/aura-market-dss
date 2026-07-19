@@ -103,7 +103,7 @@ with t_home:
                          color="flood_risk", hover_name="zone", color_discrete_sequence=PALETTE)
         return _style(fig, "Metro access vs suitability")
 
-    render_dynamic_figure("map_home", _map_home_fig, height=400)
+    render_dynamic_figure("map_home", _map_home_fig, height=400, scene=str(scene))
     top5 = zones.sort_values("suitability_score", ascending=False).head(5)
     st.dataframe(
         top5[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "price_trend_yoy_pct"]],
@@ -119,7 +119,9 @@ with t_map:
     with f2:
         min_score = st.slider("Minimum AI score", 0, 100, 50, key="map_min_score")
     generate_button("map_folium", "Refresh interactive map")
-    _ = st.session_state.get("map_folium_nonce", 0)
+    nonce = int(st.session_state.get("map_folium_nonce", 0))
+    if st.session_state.pop("map_folium_flash", None):
+        st.success(f"Map refreshed · pass #{nonce}")
     view = zones[(zones["flood_risk"].isin(flood)) & (zones["suitability_score"] >= min_score)]
     m = folium.Map(location=[12.98, 77.60], zoom_start=10, tiles="CartoDB dark_matter")
     for _, z in view.iterrows():
@@ -145,7 +147,13 @@ with t_map:
             fill=True,
             popup=f"Metro: {s['station']} ({s['line']})",
         ).add_to(m)
-    st_folium(m, width=None, height=420, key=f"folium_{st.session_state.get('map_folium_nonce', 0)}")
+    flood_key = "-".join(sorted(flood)) if flood else "none"
+    st_folium(
+        m,
+        width=None,
+        height=420,
+        key=f"folium_{nonce}_{flood_key}_{min_score}_{len(view)}",
+    )
     st.caption("Map height adapts via design tokens (≈280px phone · 340px tablet · 420px+ desktop).")
     st.dataframe(
         view[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "highway_km"]],
@@ -166,7 +174,12 @@ with t_ai:
         for label, val, klass in explain_zone(row):
             st.write(f"- **{label}:** {val}")
     with c2:
-        render_dynamic_figure("map_ai", lambda: radar_chart(radar_values(row), f"{zone} radar"), height=400)
+        render_dynamic_figure(
+            "map_ai",
+            lambda: radar_chart(radar_values(row), f"{zone} radar"),
+            height=400,
+            scene=str(zone),
+        )
 
 with t_price:
     lens = scenario_bar("map_price_lens", "Price studio", ["Price Overview", "Trend Analysis", "Correlation"])
@@ -186,7 +199,7 @@ with t_price:
             return _style(fig, "YoY price trend %")
         return correlation_heatmap(zones)
 
-    render_dynamic_figure("map_price", _price_fig, height=420)
+    render_dynamic_figure("map_price", _price_fig, height=420, scene=str(lens))
 
 with t_cmp:
     picks = st.multiselect(
@@ -216,6 +229,7 @@ with t_cmp:
             "map_cmp",
             lambda: dual_radar(radar_values(a), radar_values(b), a["zone"], b["zone"]),
             height=400,
+            scene="|".join(picks),
         )
     else:
         st.info("Pick at least two areas.")
@@ -231,7 +245,7 @@ with t_dmaic:
         fig.update_layout(xaxis_tickangle=-30)
         return _style(fig, "Lower suitability concentration")
 
-    render_dynamic_figure("map_dmaic", _dmaic_fig, height=360)
+    render_dynamic_figure("map_dmaic", _dmaic_fig, height=360, scene="pareto")
     st.plotly_chart(importance_chart(feature_importance(zones)), width="stretch")
     section_label("What-if scenario")
     metro = st.slider("Metro distance km", 0.2, 10.0, 2.0)
@@ -249,7 +263,7 @@ with t_dmaic:
 
 with t_heat:
     generate_button("map_heat", "Refresh heatmap")
-    render_dynamic_figure("map_heat", lambda: heatmap_scatter(zones), height=480)
+    render_dynamic_figure("map_heat", lambda: heatmap_scatter(zones), height=480, scene="heatmap")
     st.dataframe(
         zones.sort_values("suitability_score", ascending=False)[
             ["zone", "suitability_score", "avg_price_psf", "price_trend_yoy_pct", "flood_risk", "metro_km", "suitability_label"]

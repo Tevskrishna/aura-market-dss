@@ -77,7 +77,7 @@ def _mkt_fig():
     return buyer_mix_chart(bundle.kpis.buyer_distribution)
 
 
-render_dynamic_figure("mkt_studio", _mkt_fig, height=420)
+render_dynamic_figure("mkt_studio", _mkt_fig, height=420, scene=str(lens))
 
 c1, c2 = st.columns(2)
 with c1:

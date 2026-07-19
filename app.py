@@ -154,6 +154,7 @@ render_dynamic_figure(
         f"{project} · ₹{my_price:,.0f}/sqft · {verdict.verdict}",
     ),
     height=400,
+    scene=f"{project}|{my_price}|{cut}|{sub}|{rival_m}|{months}",
 )
 
 md = verdict_markdown(verdict)

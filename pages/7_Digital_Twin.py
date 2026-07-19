@@ -71,7 +71,7 @@ def _twin_fig():
     return twin_curves(result.months, result.baseline, result.intervention, result.cannibalized)
 
 
-render_dynamic_figure("twin_studio", _twin_fig, height=420)
+render_dynamic_figure("twin_studio", _twin_fig, height=420, scene=str(view))
 
 render_kpi_cards(
     [

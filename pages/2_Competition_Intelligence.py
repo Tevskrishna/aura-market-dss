@@ -113,7 +113,7 @@ def _comp_fig():
     return _style(fig, "No data for lens")
 
 
-render_dynamic_figure("comp_studio", _comp_fig, height=400)
+render_dynamic_figure("comp_studio", _comp_fig, height=400, scene=str(comp_lens))
 
 t1, t2, t3, t4, t5 = st.tabs(
     ["RERA Pipeline", "Pre-Launch / Coming Soon", "Under Construction", "Land Arbitrage", "Margin Viability"]
