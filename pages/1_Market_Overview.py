@@ -10,8 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
+from components.executive_sheet import render_executive_sheet
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.viz_studio import generate_button, graphic_html, live_kpi_strip, render_dynamic_figure, scenario_bar
+from services.decision_brief_service import brief_from_market
 from services.data_loader import load_catalog
 from services.market_service import booking_trend_frame, build_market_bundle, get_validation_report
 from services.sigma_service import market_kpis as sigma_kpis
@@ -37,6 +39,16 @@ filters = render_global_filters("market")
 bundle = build_market_bundle(filters, load_catalog())
 sk = sigma_kpis(bundle.projects)
 projects = bundle.projects
+
+render_executive_sheet(
+    brief_from_market(
+        absorption_pct=float(sk["absorption_pct"]),
+        at_risk=int(sk["at_risk_projects"]),
+        dpmo=float(sk["dpmo"]),
+        unsold=int(sk["units_unsold"]),
+    ),
+    key="mkt_eds",
+)
 
 section_label("Six Sigma scorecard — tap to focus")
 live_kpi_strip(

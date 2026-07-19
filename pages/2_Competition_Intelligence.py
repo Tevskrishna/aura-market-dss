@@ -11,6 +11,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.states import data_honesty_banner, page_hub_label
@@ -18,6 +19,7 @@ from components.viz_studio import generate_button, live_kpi_strip, render_dynami
 from config import settings
 from services.adapters import get_adapter
 from services.competition_service import build_competition_snapshot, launch_price_pressure
+from services.decision_brief_service import brief_from_land
 from services.margin_service import build_margin_viability, evaluate_land_decision, margin_kpis
 from utils.charts import PALETTE, _style
 
@@ -27,6 +29,7 @@ require_login("Competition & Land")
 snap = build_competition_snapshot()
 margins = build_margin_viability()
 mk = margin_kpis(margins)
+land_preview = evaluate_land_decision(assumed_sale_psf=9000.0)
 
 page_hub_label("Intelligence", "Competition & Land")
 data_honesty_banner(
@@ -37,6 +40,7 @@ data_honesty_banner(
         "Margin index uses configurable construction cost & FSI load from settings.",
     ],
 )
+render_executive_sheet(brief_from_land(land_preview), key="comp_eds")
 
 page_hero(
     kicker="AURA-Market · Competition blind spot",

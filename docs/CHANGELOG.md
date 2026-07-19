@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-20 — CTO Wave 1: Executive Decision Sheet
+
+### Added
+- Shared `DecisionBrief` model + adapters (launch / land / market / twin / recs)
+- `render_executive_sheet` — CEO 10s sheet + guided **Continue →** journey CTA
+- Mounted on Hub, Market, Competition, Twin, AI Recs, Reports
+- Tests: `tests/test_executive_sheet.py`
+
+### Docs
+- `docs/IMPLEMENTATION_SUMMARY_EXECUTIVE_SHEET.md`
+
 ## 2026-07-20 — Enterprise + demo 101% wave
 
 ### Added

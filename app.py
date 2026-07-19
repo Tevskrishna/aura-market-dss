@@ -16,12 +16,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from components.copilot_ui import action_cards, factor_bars, threat_gauge, verdict_banner
+from components.executive_sheet import render_executive_sheet
 from components.layout import require_login, section_label
 from components.states import data_honesty_banner, empty_state, page_hub_label
 from components.touch_nav import render_touch_hub
 from components.viz_studio import generate_button, render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
+from services.decision_brief_service import brief_from_launch
 from services.launch_copilot_service import evaluate_launch, verdict_markdown
 from utils.charts import _style
 from utils.dmaic_charts import twin_curves
@@ -114,6 +116,8 @@ verdict = evaluate_launch(
     rival_month=int(rival_m),
     horizon_months=int(months),
 )
+
+render_executive_sheet(brief_from_launch(verdict), key="hub_eds")
 
 left, right = st.columns([1, 1.15])
 with left:

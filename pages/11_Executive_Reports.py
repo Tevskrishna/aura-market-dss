@@ -9,10 +9,14 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from dataclasses import replace
+
 from components.filters import render_global_filters
+from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.competition_service import build_competition_snapshot
+from services.decision_brief_service import brief_from_market
 from services.dmaic_service import build_dmaic_snapshot
 from services.report_service import (
     build_executive_html,
@@ -42,6 +46,27 @@ except Exception as exc:  # pragma: no cover
     pdf_err = str(exc)
 dmaic = build_dmaic_snapshot(filters)
 comp = build_competition_snapshot()
+
+render_executive_sheet(
+    replace(
+        brief_from_market(
+            absorption_pct=float(dmaic.kpis["absorption_pct"]),
+            at_risk=int(dmaic.kpis["at_risk_projects"]),
+            dpmo=float(dmaic.kpis.get("dpmo", 0) or 0),
+            unsold=int(dmaic.kpis["unsold_units"]),
+        ),
+        module="Reports",
+        executive_summary="Board pack consolidates Hub + market + competition into mentor-ready downloads.",
+        ai_recommendation="Download PDF board pack and walk Priority actions in the IC / mentor review.",
+        next_step=None,
+        suggested_actions=[
+            "Download PDF board pack for the review room.",
+            "Attach Competition land verdict and Twin ₹ Cr figures.",
+            "Do not claim live KRERA unless AURA_LIVE_*_URL is active.",
+        ],
+    ),
+    key="report_eds",
+)
 
 section_label("Brief scorecard")
 render_kpi_cards(

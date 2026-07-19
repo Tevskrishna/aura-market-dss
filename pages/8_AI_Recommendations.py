@@ -10,7 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import page_hero, require_login, section_label
+from components.executive_sheet import render_executive_sheet
 from services.adapters import get_adapter
+from services.decision_brief_service import brief_from_recommendations
 from services.recommendation_engine import recommendations_for_row
 from services.twin_service import run_segmented_twin
 from utils.dmaic_charts import twin_curves
@@ -39,10 +41,18 @@ project = st.selectbox("Project needing recommendations", df["project"].tolist()
 row = df[df["project"] == project].iloc[0]
 recs = recommendations_for_row(row, sold_out)
 
+total_recover = sum(r["recoverable_units"] for r in recs)
+render_executive_sheet(
+    brief_from_recommendations(
+        project=str(project),
+        actions=[f"{r['issue']} → {r['action']}" for r in recs],
+        recoverable_units=int(total_recover),
+    ),
+    key="recs_eds",
+)
+
 section_label(f"Recommendations for {project}")
-total_recover = 0
 for r in recs:
-    total_recover += r["recoverable_units"]
     with st.container(border=True):
         st.markdown(f"**{r['issue']}** → {r['action']}")
         st.write(r["detail"])

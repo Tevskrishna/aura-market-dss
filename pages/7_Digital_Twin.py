@@ -10,9 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
+from components.executive_sheet import render_executive_sheet
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.viz_studio import generate_button, graphic_html, render_dynamic_figure, scenario_bar
 from services.adapters import get_adapter
+from services.decision_brief_service import brief_from_twin
 from services.twin_service import run_twin_with_cannibalization
 from utils.dmaic_charts import twin_curves
 
@@ -64,6 +66,16 @@ result = run_twin_with_cannibalization(
     subvention=subvention,
     competitor_launch_month=rival_month if enable_rival else None,
     competitor_price_psf=float(rival_price) if enable_rival else None,
+)
+
+render_executive_sheet(
+    brief_from_twin(
+        project=str(project),
+        cannibal_loss_cr=float(result.cannibal_loss_cr),
+        recovery_cr=float(result.recovery_cr),
+        enable_rival=bool(enable_rival),
+    ),
+    key="twin_eds",
 )
 
 section_label("Simulate · regenerate twin curves")

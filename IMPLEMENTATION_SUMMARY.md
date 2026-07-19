@@ -1,9 +1,7 @@
-# IMPLEMENTATION SUMMARY — latest wave
+# IMPLEMENTATION SUMMARY — latest
 
-See:
-- `docs/IMPLEMENTATION_SUMMARY_P1.md` — P1 features
-- `docs/IMPLEMENTATION_SUMMARY_ENTERPRISE101.md` — Enterprise + demo 101% wave
+**Latest shipped (CTO Wave 1):** Shared **Executive Decision Sheet** + guided journey CTA.
 
-**Honest score**
-- Demo/mentor surface with working controls: **101% of intended DSS scope**
-- Live government RERA without your API URL/credentials: **not claimable** — hybrid adapter is ready the moment you paste `AURA_LIVE_*_URL`
+See `docs/IMPLEMENTATION_SUMMARY_EXECUTIVE_SHEET.md` for full detail.
+
+Prior waves: P0 / P1 / Enterprise101 docs under `docs/`.
