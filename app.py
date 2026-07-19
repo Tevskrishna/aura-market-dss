@@ -37,15 +37,25 @@ adapter = get_adapter()
 projects = adapter.projects()
 upcoming = adapter.upcoming()
 
+from components.media import data_uri
+
+_banner = data_uri("hero-bagaluru-day.jpg")
 st.html(
-    """
-    <div class="dss-kicker" style="margin-top:0.2rem;">OUT-OF-BOX PRODUCT · NOT A DASHBOARD</div>
-    <h1 style="margin:0.15rem 0 0.35rem;">Launch Decision Co-pilot</h1>
-    <p class="dss-subtitle" style="margin-bottom:0.8rem;">
-      One question the market actually asks: <b>Can I launch at this price this month?</b>
-      We fuse rival supply + simulated ₹ Cr loss + margin + SMC into a GO / HOLD / NO-GO verdict —
-      a launch OS Indian mid-market developers do not have today.
-    </p>
+    f"""
+    <div style="
+      position:relative;border-radius:16px;overflow:hidden;margin:0 0 1rem;
+      border:1px solid #30363d;min-height:190px;
+      background:linear-gradient(100deg,rgba(8,10,14,.88) 20%,rgba(8,10,14,.35) 70%),
+                 url('{_banner}') center/cover no-repeat;">
+      <div style="padding:1.2rem 1.25rem 1.3rem;max-width:46rem;">
+        <div class="dss-kicker">REAL ASSET SURFACE · BAGALURU / AEROSPACE HIGHWAY</div>
+        <h1 style="margin:0.2rem 0 0.4rem;color:#fff;">Launch Decision Co-pilot</h1>
+        <p style="margin:0;color:#d7dee8;font-size:0.98rem;line-height:1.45;">
+          One question builders actually ask: <b>Can I launch at this price this month?</b>
+          Move the price slider — threat score and ₹ Cr exposure update live.
+        </p>
+      </div>
+    </div>
     """
 )
 

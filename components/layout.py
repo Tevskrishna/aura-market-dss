@@ -46,22 +46,97 @@ def require_login() -> dict:
         render_module_nav()
         return st.session_state[SESSION_USER_KEY]
 
+    from components.media import data_uri
+
+    night = data_uri("hero-bengaluru-night.jpg")
+    day = data_uri("hero-bagaluru-day.jpg")
     st.html(
-        '<div class="dss-login-shell"><div class="dss-login-wrap">'
-        '<div class="dss-brand-mark">AM</div>'
-        '<div class="dss-kicker">AI-Powered Construction Suitability</div>'
-        "<h2>AURA-Market</h2>"
-        '<p class="dss-subtitle">Bengaluru Real Estate Decision Support — competition, margins, '
-        "demand personas, map suitability, and launch interventions.</p>"
-        "</div></div>"
+        f"""
+        <style>
+          .prop-login {{
+            position: relative;
+            min-height: 88vh;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #30363d;
+            margin: 0.2rem 0 1rem;
+            background:
+              linear-gradient(105deg, rgba(8,10,14,0.92) 28%, rgba(8,10,14,0.55) 55%, rgba(8,10,14,0.25) 100%),
+              url('{night}') center/cover no-repeat;
+          }}
+          .prop-login-grid {{
+            display: grid;
+            grid-template-columns: 1.15fr 0.95fr;
+            gap: 1rem;
+            padding: 1.4rem 1.3rem 1.5rem;
+            min-height: 88vh;
+            align-items: center;
+          }}
+          @media (max-width: 900px) {{
+            .prop-login-grid {{ grid-template-columns: 1fr; min-height: auto; padding: 1rem; }}
+            .prop-login {{ min-height: auto; background-position: 70% center; }}
+          }}
+          .prop-login-copy h1 {{
+            font-size: clamp(1.7rem, 4vw, 2.4rem) !important;
+            margin: 0.25rem 0 0.55rem !important;
+            color: #fff !important;
+            text-shadow: 0 8px 28px rgba(0,0,0,0.45);
+          }}
+          .prop-login-copy p {{
+            color: #d7dee8 !important;
+            font-size: 1rem;
+            line-height: 1.5;
+            max-width: 36rem;
+          }}
+          .prop-thumb {{
+            margin-top: 1rem;
+            width: min(420px, 100%);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+          }}
+          .prop-login-card {{
+            background: rgba(22,27,34,0.88);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 1.15rem 1.15rem 0.85rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+          }}
+          .prop-login-card h3 {{
+            margin: 0 0 0.35rem !important;
+            color: #fff !important;
+            font-size: 1.2rem !important;
+          }}
+        </style>
+        <div class="prop-login">
+          <div class="prop-login-grid">
+            <div class="prop-login-copy">
+              <div class="dss-kicker">BENGALURU · REAL ASSET INTELLIGENCE</div>
+              <h1>Launch decisions on real market ground — not a blank terminal.</h1>
+              <p>
+                AURA-Market Launch Co-pilot turns Bagaluru competition, inventory, and marketing signal
+                into a GO / HOLD / NO-GO call before brochure print.
+              </p>
+              <img class="prop-thumb" src="{day}" alt="Bagaluru residential project" />
+            </div>
+            <div class="prop-login-card">
+              <div class="dss-brand-mark">AM</div>
+              <h3>Sign in to Launch Co-pilot</h3>
+              <p class="dss-subtitle" style="margin:0 0 0.4rem;">Demo access for mentors & company review</p>
+            </div>
+          </div>
+        </div>
+        """
     )
 
-    _, center, _ = st.columns([0.2, 1.2, 0.2])
-    with center:
+    # Form aligned under the glass card column on desktop via nested columns
+    _left, right = st.columns([1.15, 0.95])
+    with right:
         with st.form("login_form"):
             username = st.text_input("Username", placeholder="admin or demo")
             password = st.text_input("Password", type="password", placeholder="••••••••")
-            submitted = st.form_submit_button("Sign in", width="stretch")
+            submitted = st.form_submit_button("Enter Launch Co-pilot", width="stretch")
             if submitted:
                 user = verify_credentials(username, password)
                 if user:
