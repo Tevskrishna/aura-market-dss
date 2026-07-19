@@ -100,11 +100,35 @@ def require_login() -> dict:
             .prop-login-grid {{ grid-template-columns: 1fr; min-height: auto; padding: 1rem; }}
             .prop-login {{ min-height: auto; background-position: 70% center; }}
           }}
-          .prop-login-copy h1 {{
-            font-size: clamp(1.7rem, 4vw, 2.4rem) !important;
-            margin: 0.25rem 0 0.55rem !important;
+          .prop-login-copy .prop-brand {{
+            margin: 0 0 0.35rem !important;
+            font-size: clamp(2.15rem, 5.2vw, 3.35rem) !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.03em;
+            line-height: 1.05 !important;
             color: #fff !important;
-            text-shadow: 0 8px 28px rgba(0,0,0,0.45);
+            text-shadow: 0 10px 32px rgba(0,0,0,0.5);
+          }}
+          .prop-login-copy .prop-brand span {{
+            color: #ff4b4b;
+          }}
+          .prop-login-copy h1 {{
+            font-size: clamp(1.15rem, 2.4vw, 1.55rem) !important;
+            font-weight: 600 !important;
+            margin: 0.15rem 0 0.65rem !important;
+            color: #e8eef6 !important;
+            line-height: 1.35 !important;
+            text-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            max-width: 34rem;
+          }}
+          .prop-login-copy .prop-place {{
+            display: inline-block;
+            margin: 0 0 0.55rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #9aa7b5;
           }}
           .prop-login-copy p {{
             color: #d7dee8 !important;
@@ -136,18 +160,19 @@ def require_login() -> dict:
         <div class="prop-login">
           <div class="prop-login-grid">
             <div class="prop-login-copy">
-              <div class="dss-kicker">BENGALURU · REAL ASSET INTELLIGENCE</div>
-              <h1>Launch decisions on real market ground — not a blank terminal.</h1>
+              <div class="prop-brand">AURA<span>-Market</span></div>
+              <div class="prop-place">Bagaluru · Launch Decision Co-pilot</div>
+              <h1>GO / HOLD / NO-GO before brochure print — not a blank terminal.</h1>
               <p>
-                AURA-Market Launch Co-pilot turns Bagaluru competition, inventory, and marketing signal
-                into a GO / HOLD / NO-GO call before brochure print.
+                Competition, land margin, inventory twin, and marketing ROI fold into one
+                executive call for the Aerospace Highway corridor.
               </p>
               <img class="prop-thumb" src="{day}" alt="Bagaluru residential project" />
             </div>
             <div class="prop-login-card">
               <div class="dss-brand-mark">AM</div>
               <h3>Sign in · Executive Hub</h3>
-              <p class="dss-subtitle" style="margin:0 0 0.4rem;">RealEstateIQ preview · AURA-Market engine</p>
+              <p class="dss-subtitle" style="margin:0 0 0.4rem;">AURA-Market · RealEstateIQ preview</p>
             </div>
           </div>
         </div>
