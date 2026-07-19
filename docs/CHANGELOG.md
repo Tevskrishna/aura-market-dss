@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-20 — Cinematic gate (RealEstateIQ entrance)
+
+### Changed
+- Login gate rebuild: RealEstateIQ brand hero, layered 3D photo stage, glass sign-in, Living Enterprise calm (not arcade)
+
 ## 2026-07-20 — Living Enterprise UI
 
 ### Changed

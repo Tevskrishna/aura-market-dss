@@ -67,8 +67,19 @@ def inject_theme(*, gate: bool = False) -> None:
               background: transparent !important;
             }
             .block-container {
-              padding-top: 0.75rem !important;
-              max-width: 1100px !important;
+              padding-top: 0.5rem !important;
+              max-width: 1240px !important;
+            }
+            div[data-testid="stForm"] {
+              background: rgba(10, 14, 22, 0.72);
+              border: 1px solid rgba(61, 224, 208, 0.2);
+              border-radius: 14px;
+              padding: 1rem 1.1rem 0.85rem;
+              backdrop-filter: blur(14px);
+              box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+              margin-top: -4.5rem;
+              position: relative;
+              z-index: 5;
             }
             div[data-testid="stForm"] input {
               min-height: 48px !important;
@@ -79,6 +90,14 @@ def inject_theme(*, gate: bool = False) -> None:
               min-height: 52px !important;
               font-size: 1.05rem !important;
               font-weight: 800 !important;
+            }
+            .dss-login-creds {
+              margin-top: 0.65rem;
+              color: #8a9bb0;
+              font-size: 0.85rem;
+            }
+            @media (max-width: 900px) {
+              div[data-testid="stForm"] { margin-top: 0.5rem; }
             }
             """
         )
@@ -138,122 +157,241 @@ def require_login(active_module: str | None = None) -> dict:
     st.html(
         f"""
         <style>
-          .prop-login {{
+          .iq-gate {{
             position: relative;
-            min-height: 92vh;
-            border-radius: 20px;
+            min-height: min(88vh, 820px);
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid #30363d;
-            margin: 0;
+            margin: 0 0 0.75rem;
+            border: 1px solid rgba(61, 224, 208, 0.2);
             background:
-              linear-gradient(105deg, rgba(8,10,14,0.94) 22%, rgba(8,10,14,0.55) 55%, rgba(8,10,14,0.2) 100%),
-              url('{night}') center/cover no-repeat;
+              radial-gradient(900px 420px at 15% 20%, rgba(255, 138, 26, 0.18), transparent 55%),
+              radial-gradient(700px 380px at 85% 70%, rgba(61, 224, 208, 0.12), transparent 50%),
+              linear-gradient(115deg, rgba(5,7,10,0.94) 0%, rgba(5,7,10,0.55) 48%, rgba(5,7,10,0.25) 100%),
+              url('{night}') 62% center / cover no-repeat;
+            box-shadow: 0 28px 80px rgba(0,0,0,0.55);
+            perspective: 1400px;
           }}
-          .prop-login-grid {{
+          .iq-gate-grid {{
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 1.25rem;
-            padding: clamp(1.2rem, 3vw, 2rem);
-            min-height: 92vh;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: clamp(1rem, 3vw, 2rem);
+            padding: clamp(1.25rem, 3.5vw, 2.4rem);
+            min-height: min(88vh, 820px);
             align-items: center;
+            position: relative;
+            z-index: 1;
           }}
           @media (max-width: 900px) {{
-            .prop-login-grid {{ grid-template-columns: 1fr; min-height: auto; padding: 1rem; }}
-            .prop-login {{ min-height: auto; background-position: 70% center; }}
-            .prop-thumb {{ display: none; }}
+            .iq-gate {{ min-height: auto; }}
+            .iq-gate-grid {{ grid-template-columns: 1fr; min-height: auto; padding: 1.1rem; }}
+            .iq-gate-float {{ display: none; }}
           }}
-          .prop-login-copy .prop-brand {{
+          .iq-gate-kicker {{
+            font-family: "Exo 2", sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #ffc048;
+            margin-bottom: 0.55rem;
+          }}
+          .iq-gate-brand {{
             margin: 0 0 0.35rem !important;
-            font-size: clamp(2.3rem, 6vw, 3.5rem) !important;
+            font-family: "Exo 2", sans-serif !important;
+            font-size: clamp(2.4rem, 6.2vw, 3.6rem) !important;
             font-weight: 800 !important;
             letter-spacing: -0.03em;
-            line-height: 1.05 !important;
+            line-height: 1.02 !important;
             color: #fff !important;
-            text-shadow: 0 10px 32px rgba(0,0,0,0.5);
+            text-shadow: 0 12px 40px rgba(0,0,0,0.45);
           }}
-          .prop-login-copy .prop-brand span {{ color: #ff4b4b; }}
-          .prop-login-copy h1 {{
-            font-size: clamp(1.15rem, 2.6vw, 1.55rem) !important;
-            font-weight: 600 !important;
-            margin: 0.15rem 0 0.65rem !important;
-            color: #e8eef6 !important;
-            line-height: 1.35 !important;
-            max-width: 34rem;
+          .iq-gate-brand span {{
+            background: linear-gradient(90deg, #ffc048, #ff8a1a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
           }}
-          .prop-login-copy .prop-place {{
-            display: inline-block;
-            margin: 0 0 0.55rem;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #9aa7b5;
+          .iq-gate-subbrand {{
+            font-size: 0.82rem;
+            color: #8a9bb0;
+            margin-bottom: 0.85rem;
+            letter-spacing: 0.04em;
           }}
-          .prop-login-copy p {{
-            color: #d7dee8 !important;
-            font-size: 1rem;
-            line-height: 1.5;
+          .iq-gate-copy h1 {{
+            font-family: "Exo 2", sans-serif !important;
+            font-size: clamp(1.2rem, 2.8vw, 1.65rem) !important;
+            font-weight: 700 !important;
+            margin: 0 0 0.7rem !important;
+            color: #f2f6fb !important;
+            line-height: 1.28 !important;
             max-width: 36rem;
           }}
-          .prop-thumb {{
-            margin-top: 1rem;
-            width: min(420px, 100%);
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+          .iq-gate-copy p {{
+            color: #c5d0dc !important;
+            font-size: 1.02rem;
+            line-height: 1.55;
+            max-width: 38rem;
+            margin: 0 0 1rem !important;
           }}
-          .prop-login-card {{
-            background: rgba(22,27,34,0.92);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.14);
-            border-radius: 18px;
-            padding: 1.35rem 1.25rem 0.5rem;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+          .iq-gate-pills {{
+            display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0 0 1.1rem;
           }}
-          .prop-login-card h3 {{
-            margin: 0 0 0.35rem !important;
-            color: #fff !important;
-            font-size: 1.35rem !important;
-          }}
-          .prop-feature-row {{
-            display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.85rem 0 0.2rem;
-          }}
-          .prop-feature-row span {{
-            border: 1px solid rgba(255,255,255,0.14);
-            background: rgba(255,255,255,0.05);
-            color: #c9d1d9;
-            border-radius: 999px;
-            padding: 0.35rem 0.7rem;
+          .iq-gate-pills span {{
+            border: 1px solid rgba(61, 224, 208, 0.28);
+            background: rgba(8, 14, 22, 0.55);
+            color: #d7e6ef;
+            border-radius: 6px;
+            padding: 0.4rem 0.75rem;
             font-size: 0.72rem;
             font-weight: 700;
+            font-family: "Exo 2", sans-serif;
+            letter-spacing: 0.04em;
+          }}
+          .iq-gate-stage {{
+            position: relative;
+            width: min(460px, 100%);
+            height: 220px;
+            margin-top: 0.35rem;
+            transform-style: preserve-3d;
+          }}
+          .iq-gate-float {{
+            position: absolute;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.16);
+            box-shadow: 0 22px 50px rgba(0,0,0,0.45);
+            overflow: hidden;
+            background: #0a0e14;
+          }}
+          .iq-gate-float img {{
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }}
+          .iq-gate-float-a {{
+            width: 78%;
+            height: 170px;
+            left: 0;
+            top: 28px;
+            transform: rotateY(8deg) rotateX(4deg) translateZ(12px);
+            z-index: 1;
+          }}
+          .iq-gate-float-b {{
+            width: 52%;
+            height: 120px;
+            right: 0;
+            top: 0;
+            transform: rotateY(-10deg) rotateX(6deg) translateZ(40px);
+            z-index: 2;
+            border-color: rgba(255, 192, 72, 0.35);
+          }}
+          .iq-gate-stat {{
+            position: absolute;
+            left: 8%;
+            bottom: 0;
+            z-index: 3;
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            background: rgba(12, 18, 28, 0.88);
+            border: 1px solid rgba(61, 224, 208, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            transform: translateZ(60px);
+          }}
+          .iq-gate-stat strong {{
+            display: block;
+            font-family: "Exo 2", sans-serif;
+            font-size: 1.05rem;
+            color: #ffc048;
+          }}
+          .iq-gate-stat span {{
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #8a9bb0;
+          }}
+          .iq-gate-card {{
+            background: rgba(10, 14, 22, 0.72);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(61, 224, 208, 0.22);
+            border-radius: 14px;
+            padding: 1.35rem 1.25rem 1rem;
+            box-shadow:
+              0 28px 70px rgba(0,0,0,0.55),
+              inset 0 1px 0 rgba(255,255,255,0.06);
+            transform: rotateY(-4deg);
+            animation: iq-gate-in 0.55s ease both;
+          }}
+          @keyframes iq-gate-in {{
+            from {{ opacity: 0; transform: rotateY(-4deg) translateY(14px); }}
+            to {{ opacity: 1; transform: rotateY(-4deg) translateY(0); }}
+          }}
+          .iq-gate-mark {{
+            width: 2.4rem; height: 2.4rem;
+            border-radius: 8px;
+            display: grid; place-items: center;
+            font-family: "Exo 2", sans-serif;
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: #140c04;
+            background: linear-gradient(145deg, #ffc048, #ff8a1a);
+            margin-bottom: 0.75rem;
+            box-shadow: 0 0 20px rgba(255, 138, 26, 0.35);
+          }}
+          .iq-gate-card h3 {{
+            margin: 0 0 0.3rem !important;
+            color: #fff !important;
+            font-family: "Exo 2", sans-serif !important;
+            font-size: 1.35rem !important;
+          }}
+          .iq-gate-card .iq-gate-card-sub {{
+            margin: 0 0 0.25rem !important;
+            color: #8a9bb0 !important;
+            font-size: 0.9rem !important;
+          }}
+          @media (prefers-reduced-motion: reduce) {{
+            .iq-gate-card {{ animation: none; transform: none; }}
+            .iq-gate-float-a, .iq-gate-float-b, .iq-gate-stat {{ transform: none; }}
           }}
         </style>
-        <div class="prop-login">
-          <div class="prop-login-grid">
-            <div class="prop-login-copy">
-              <div class="prop-brand">AURA<span>-Market</span></div>
-              <div class="prop-place">Bagaluru · Launch Decision Co-pilot</div>
-              <h1>GO / HOLD / NO-GO before brochure print — not a blank terminal.</h1>
+        <div class="iq-gate" role="banner">
+          <div class="iq-gate-grid">
+            <div class="iq-gate-copy">
+              <div class="iq-gate-kicker">India · Bagaluru · Aerospace Highway</div>
+              <div class="iq-gate-brand">RealEstate<span>IQ</span></div>
+              <div class="iq-gate-subbrand">AURA-Market Decision Intelligence · Launch Co-pilot</div>
+              <h1>GO / HOLD / NO-GO before brochure print — one executive call for the corridor.</h1>
               <p>
-                Competition, land margin, inventory twin, and marketing ROI fold into one
-                executive call for the Aerospace Highway corridor.
+                Competition blind spot, land margin, inventory twin, and marketing ROI —
+                composed into a living decision OS for Indian residential developers.
               </p>
-              <div class="prop-feature-row">
-                <span>Touch module hub</span><span>Live threat score</span><span>Board PDF</span>
+              <div class="iq-gate-pills">
+                <span>Executive sheet</span>
+                <span>Threat score</span>
+                <span>Digital twin</span>
+                <span>Board pack</span>
               </div>
-              <img class="prop-thumb" src="{day}" alt="Bagaluru residential project" />
+              <div class="iq-gate-stage" aria-hidden="true">
+                <div class="iq-gate-float iq-gate-float-a"><img src="{day}" alt="" /></div>
+                <div class="iq-gate-float iq-gate-float-b"><img src="{night}" alt="" /></div>
+                <div class="iq-gate-stat">
+                  <strong>GO · HOLD · NO-GO</strong>
+                  <span>Morning decision loop</span>
+                </div>
+              </div>
             </div>
-            <div class="prop-login-card">
-              <div class="dss-brand-mark">AM</div>
-              <h3>Sign in · Executive Hub</h3>
-              <p class="dss-subtitle" style="margin:0 0 0.55rem;">One gate — then a graphical workspace. Sidebar page list is hidden.</p>
+            <div class="iq-gate-card" id="iq-gate-signin">
+              <div class="iq-gate-mark">IQ</div>
+              <h3>Sign in</h3>
+              <p class="iq-gate-card-sub">Enter the Executive Hub. One gate — modules unlock after.</p>
             </div>
           </div>
         </div>
         """
     )
 
-    _left, right = st.columns([1.1, 0.9])
+    _left, right = st.columns([1.15, 0.85], gap="large")
     with right:
         with st.form("login_form", clear_on_submit=False):
             username = st.text_input("Username", placeholder="admin or demo")
