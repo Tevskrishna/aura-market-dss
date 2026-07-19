@@ -1,8 +1,6 @@
 # IMPLEMENTATION SUMMARY — latest
 
-**CTO Wave 1:** Executive Decision Sheet + journey CTA  
-**CTO Wave 2:** EDS mounted on **all** modules  
+**Mode:** v1.0 polish — no new business modules
 
-Details:
-- `docs/IMPLEMENTATION_SUMMARY_EXECUTIVE_SHEET.md`
-- `docs/IMPLEMENTATION_SUMMARY_EDS_WAVE2.md`
+1. Hub CEO 10s clarity — `docs/IMPLEMENTATION_SUMMARY_V1_HUB_CLARITY.md`  
+2. Global consistency — `docs/IMPLEMENTATION_SUMMARY_V1_GLOBAL_CONSISTENCY.md`

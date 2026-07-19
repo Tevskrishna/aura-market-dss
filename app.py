@@ -40,10 +40,7 @@ adapter = get_adapter()
 projects = adapter.projects()
 
 page_hub_label("RealEstateIQ", "Executive Hub")
-
-# Trust detail — collapsed so it doesn't compete with the decision
-with st.expander("Data contract · what is measured vs seed", expanded=False):
-    data_honesty_banner()
+data_honesty_banner()
 
 if projects.empty:
     empty_state(

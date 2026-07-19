@@ -321,7 +321,7 @@ def render_module_nav() -> None:
 
     st.html(
         '<div class="dss-mobile-nav">'
-        '<div class="dss-mobile-nav-label">Quick jump · tap sidebar Workspaces or change this list</div>'
+        '<div class="dss-mobile-nav-label">Jump</div>'
         "</div>"
     )
 
@@ -361,7 +361,7 @@ def _sidebar_chrome() -> None:
         st.session_state[SESSION_USER_KEY] = None
         st.rerun()
     st.sidebar.markdown("---")
-    st.sidebar.caption("Use Workspaces below · Streamlit page list is hidden on purpose.")
+    st.sidebar.caption("Workspaces · page list hidden")
 
 
 def page_hero(

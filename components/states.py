@@ -8,21 +8,30 @@ import streamlit as st
 
 def data_honesty_banner(
     *,
-    title: str = "Data honesty",
+    title: str = "Data contract",
     lines: list[str] | None = None,
+    compact: bool = True,
 ) -> None:
-    """Enterprise trust label — seed vs measured data (P0-1)."""
+    """Enterprise trust label — seed vs measured data (P0-1).
+
+    compact=True (default): collapsed expander so it never steals the 10s decision.
+    """
     lines = lines or [
         "Competition RERA / upcoming / UC / land layers use curated seed CSVs until live adapters are connected.",
         "Bookings + SMC spends are from provided project Excels (measured).",
         "Map suitability ML uses illustrative pseudo-labels — not cadastral PropStack truth.",
     ]
     items = "".join(f"<li>{html.escape(x)}</li>" for x in lines)
-    st.html(
+    body = (
         f'<div class="iq-honesty" role="note">'
         f'<div class="iq-honesty-kicker">{html.escape(title)}</div>'
         f"<ul>{items}</ul></div>"
     )
+    if compact:
+        with st.expander(f"{title} · measured vs seed", expanded=False):
+            st.html(body)
+    else:
+        st.html(body)
 
 
 def empty_state(title: str, detail: str = "", action_hint: str = "") -> None:
