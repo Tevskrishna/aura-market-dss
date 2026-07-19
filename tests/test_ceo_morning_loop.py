@@ -1,10 +1,13 @@
 """CEO Morning Loop — decision context + board pack Section 0."""
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from services.decision_context import (
     CONTEXT_KEY,
     clear_decision_context,
     context_banner_text,
+    format_relative_age,
     get_decision_context,
     has_decision_context,
     save_decision_context,
@@ -35,9 +38,25 @@ def test_save_and_get_decision_context():
     assert got is not None
     assert got["my_price_psf"] == 9200.0
     assert has_decision_context(bag)
-    assert "Continuing Hub" in (context_banner_text(got) or "")
+    banner = context_banner_text(got) or ""
+    assert "Continuing Hub" in banner
+    assert "Updated" in banner
     clear_decision_context(bag)
     assert not has_decision_context(bag)
+
+
+def test_format_relative_age():
+    now = datetime(2026, 7, 20, 12, 0, 0, tzinfo=timezone.utc)
+    assert format_relative_age(None) == "No open decision yet"
+    assert format_relative_age("not-a-date") == "No open decision yet"
+    just = (now - timedelta(seconds=10)).isoformat()
+    assert format_relative_age(just, now=now) == "Updated just now"
+    mins = (now - timedelta(minutes=4)).isoformat()
+    assert format_relative_age(mins, now=now) == "Updated 4m ago"
+    hours = (now - timedelta(hours=2)).isoformat()
+    assert format_relative_age(hours, now=now) == "Updated 2h ago"
+    days = (now - timedelta(days=3)).isoformat()
+    assert format_relative_age(days, now=now) == "Updated 3d ago"
 
 
 def test_twin_prefers_hub_params_in_presets():

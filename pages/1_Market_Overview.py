@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 from components.filters import render_global_filters
 from components.executive_sheet import render_executive_sheet
 from components.layout import page_hero, require_login, section_label
+from components.states import empty_state, error_state
 from components.viz_studio import generate_button, graphic_html, live_kpi_strip, render_dynamic_figure, scenario_bar
 from services.decision_brief_service import brief_from_market
 from services.data_loader import load_catalog
@@ -32,13 +33,24 @@ page_hero(
 )
 
 if not report or not report.ready_for_market_overview:
-    st.error("Core datasets failed validation.")
+    error_state(
+        "Core datasets failed validation",
+        "Market overview cannot load until catalog validation passes.",
+    )
     st.stop()
 
 filters = render_global_filters("market")
 bundle = build_market_bundle(filters, load_catalog())
 sk = sigma_kpis(bundle.projects)
 projects = bundle.projects
+
+if projects.empty:
+    empty_state(
+        "No projects in filtered market view",
+        "Widen filters or reset to all builders / projects.",
+        "Clear filters in the control strip above.",
+    )
+    st.stop()
 
 render_executive_sheet(
     brief_from_market(

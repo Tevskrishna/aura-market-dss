@@ -86,7 +86,59 @@ def context_banner_text(ctx: dict[str, Any] | None) -> str | None:
     price = float(ctx.get("my_price_psf") or 0)
     verdict = ctx.get("verdict") or "—"
     project = ctx.get("project") or "—"
-    return f"Continuing Hub decision: {project} @ ₹{price:,.0f}/sqft · {verdict}"
+    age = format_relative_age(ctx.get("updated_at"))
+    return f"Continuing Hub decision: {project} @ ₹{price:,.0f}/sqft · {verdict} · {age}"
+
+
+def format_relative_age(
+    iso: str | None,
+    *,
+    now: datetime | None = None,
+) -> str:
+    """Human freshness for open decision — Bloomberg-style honesty."""
+    if not iso:
+        return "No open decision yet"
+    try:
+        raw = str(iso).strip()
+        if raw.endswith("Z"):
+            raw = raw[:-1] + "+00:00"
+        then = datetime.fromisoformat(raw)
+        if then.tzinfo is None:
+            then = then.replace(tzinfo=timezone.utc)
+        current = now or datetime.now(timezone.utc)
+        if current.tzinfo is None:
+            current = current.replace(tzinfo=timezone.utc)
+        seconds = max(0, int((current - then.astimezone(timezone.utc)).total_seconds()))
+    except (TypeError, ValueError):
+        return "No open decision yet"
+    if seconds < 45:
+        return "Updated just now"
+    if seconds < 3600:
+        mins = max(1, seconds // 60)
+        return f"Updated {mins}m ago"
+    if seconds < 86400:
+        hours = max(1, seconds // 3600)
+        return f"Updated {hours}h ago"
+    days = max(1, seconds // 86400)
+    return f"Updated {days}d ago"
+
+
+def context_signature(ctx: dict[str, Any] | None) -> str:
+    if not ctx:
+        return ""
+    return (
+        f"{ctx.get('project')}|{float(ctx.get('my_price_psf') or 0):.0f}|"
+        f"{ctx.get('verdict')}|{ctx.get('threat_score')}"
+    )
+
+
+def safe_toast(message: str, *, icon: str = "✅") -> None:
+    try:
+        import streamlit as st
+
+        st.toast(message, icon=icon)
+    except Exception:
+        pass
 
 
 def _session(session: dict[str, Any] | None) -> dict[str, Any]:

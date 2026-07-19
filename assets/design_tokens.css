@@ -6,14 +6,14 @@
   --iq-space-4: 1rem;
   --iq-space-5: 1.5rem;
   --iq-space-6: 2rem;
-  --iq-radius: 6px;
-  --iq-radius-lg: 8px;
+  --iq-radius: 8px;
+  --iq-radius-lg: 10px;
   --iq-tap: 44px;
   --iq-font: "Rajdhani", "Exo 2", "Segoe UI", sans-serif;
-  /* Dark asphalt HUD (default) — realtime race language */
+  /* Living enterprise dark (default) */
   --iq-bg: #07090d;
   --iq-surface: #0c121c;
-  --iq-border: rgba(61, 224, 208, 0.22);
+  --iq-border: rgba(61, 224, 208, 0.18);
   --iq-text: #f2f6fb;
   --iq-muted: #8a9bb0;
   --iq-accent: #ff8a1a;

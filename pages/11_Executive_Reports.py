@@ -17,8 +17,15 @@ from components.kpi_cards import render_kpi_cards
 from components.layout import page_hero, require_login, section_label
 from services.competition_service import build_competition_snapshot
 from services.decision_brief_service import brief_from_launch
-from services.decision_context import has_decision_context
+from services.decision_context import (
+    context_signature,
+    format_relative_age,
+    get_decision_context,
+    has_decision_context,
+    safe_toast,
+)
 from services.dmaic_service import build_dmaic_snapshot
+from components.states import error_state
 from services.report_service import (
     build_executive_html,
     build_executive_markdown,
@@ -38,18 +45,29 @@ page_hero(
 )
 
 filters = render_global_filters("report")
-md = build_executive_markdown(filters)
-html = build_executive_html(filters)
+try:
+    md = build_executive_markdown(filters)
+    html = build_executive_html(filters)
+except Exception as exc:
+    error_state("Board pack could not be built", str(exc))
+    st.stop()
+
 try:
     pdf_bytes = build_executive_pdf(filters)
     pdf_err = None
 except Exception as exc:  # pragma: no cover
     pdf_bytes = b""
     pdf_err = str(exc)
+
 dmaic = build_dmaic_snapshot(filters)
 comp = build_competition_snapshot()
 
-verdict, from_hub = resolve_open_launch()
+try:
+    verdict, from_hub = resolve_open_launch()
+except Exception as exc:
+    error_state("Could not resolve open launch decision", str(exc))
+    st.stop()
+
 base_brief = brief_from_launch(verdict)
 if from_hub:
     brief = replace(
@@ -77,10 +95,19 @@ else:
         ],
     )
 
+ctx = get_decision_context()
+age = format_relative_age(ctx.get("updated_at") if ctx else None)
 if has_decision_context():
-    st.success(f"Board pack locked to Hub: {verdict.verdict} · {verdict.project} @ ₹{verdict.my_price_psf:,.0f}/sqft")
+    st.success(
+        f"Board pack locked to Hub: {verdict.verdict} · {verdict.project} "
+        f"@ ₹{verdict.my_price_psf:,.0f}/sqft · {age}"
+    )
+    sig = context_signature(ctx)
+    if st.session_state.get("_iq_reports_toast_sig") != sig:
+        st.session_state["_iq_reports_toast_sig"] = sig
+        safe_toast("Board pack matches Hub")
 else:
-    st.caption("Using catalog defaults — open Executive Hub to lock today’s call.")
+    st.caption(f"Using catalog defaults — open Executive Hub to lock today’s call. ({age})")
 
 render_executive_sheet(brief, key="report_eds")
 

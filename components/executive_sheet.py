@@ -11,6 +11,7 @@ import streamlit as st
 
 from components.kpi_cards import render_kpi_cards
 from models.decision import DecisionBrief, JourneyStep
+from services.decision_context import format_relative_age, get_decision_context
 
 
 _RISK_COLOR = {
@@ -40,13 +41,16 @@ def render_executive_sheet(brief: DecisionBrief, *, key: str = "eds") -> None:
             f"<strong>{brief.financial_impact_cr:,.1f}</strong></div>"
         )
 
+    ctx = get_decision_context()
+    freshness = format_relative_age(ctx.get("updated_at") if ctx else None)
+
     st.html(
         f"""
         <div class="iq-eds" role="region" aria-label="Executive decision sheet">
           <div class="iq-live-strip" style="margin:0 0 0.75rem;padding:0.35rem 0.55rem;">
             <span class="iq-live-dot" aria-hidden="true"></span>
             <span class="iq-live-label">Open decision</span>
-            <span class="iq-live-meta">{html.escape(brief.module)} · risk telemetry</span>
+            <span class="iq-live-meta">{html.escape(brief.module)} · {html.escape(freshness)}</span>
           </div>
           <div class="iq-eds-top">
             <div>

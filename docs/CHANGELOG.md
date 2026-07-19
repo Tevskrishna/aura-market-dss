@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-07-20 — Living Enterprise UI
+
+### Changed
+- Softened Race HUD into calm enterprise telemetry (`realtime_hud.css`) — no arcade infinite loops; `prefers-reduced-motion`
+- Honest relative freshness (`format_relative_age`) on Hub / EDS / Twin / Reports
+- Continuity toasts: Hub lock, Twin preset, Reports Hub-match
+- Wired empty/error states on Market, Twin, Reports; skeleton helper
+- Quiet one-shot KPI settle motion
+
+### Docs
+- `docs/IMPLEMENTATION_SUMMARY_LIVING_ENTERPRISE.md`
+
 ## 2026-07-20 — Realtime Race HUD (visual OS)
 
 ### Changed

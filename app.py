@@ -23,7 +23,13 @@ from components.viz_studio import render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_launch
-from services.decision_context import save_decision_context
+from services.decision_context import (
+    context_signature,
+    format_relative_age,
+    get_decision_context,
+    safe_toast,
+    save_decision_context,
+)
 from services.launch_copilot_service import evaluate_launch, verdict_markdown
 from services.twin_service import run_twin_with_cannibalization
 from utils.charts import _style
@@ -51,18 +57,21 @@ if projects.empty:
     )
     st.stop()
 
-# --- 10-second question ---
+# Freshness for status strip (updated after save below)
+_prior = get_decision_context()
+_fresh = format_relative_age(_prior.get("updated_at") if _prior else None)
+
 st.html(
-    """
+    f"""
     <div class="iq-live-strip" aria-live="polite">
       <span class="iq-live-dot" aria-hidden="true"></span>
-      <span class="iq-live-label">Realtime decision link</span>
-      <span class="iq-live-meta">Bagaluru · Aerospace Highway · telemetry active</span>
+      <span class="iq-live-label">Decision intelligence · Bagaluru</span>
+      <span class="iq-live-meta">{_fresh} · Aerospace Highway</span>
     </div>
     <div class="iq-hub-ask" role="heading" aria-level="1">
-      <div class="iq-hub-ask-kicker">Mission · Launch call</div>
+      <div class="iq-hub-ask-kicker">Executive decision · Launch call</div>
       <h1>Should we launch at this price?</h1>
-      <p>Lock project + ₹/sqft. Threat, ₹ Cr exposure, and intervene path update live — like a race engineer HUD, not a report.</p>
+      <p>Set project and ₹/sqft. Verdict, risk, and ₹ Cr exposure update with your open decision — carried into Twin and the board pack.</p>
     </div>
     """
 )
@@ -112,7 +121,7 @@ verdict = evaluate_launch(
 )
 
 # Carry open decision into Twin / Recs / Board pack (CEO morning loop)
-save_decision_context(
+_ctx = save_decision_context(
     project=project,
     my_price_psf=float(my_price),
     cut_pct=float(cut),
@@ -125,6 +134,10 @@ save_decision_context(
     blind_spot_loss_cr=float(verdict.blind_spot_loss_cr),
     recovery_cr=float(verdict.recovery_cr),
 )
+_sig = context_signature(_ctx)
+if st.session_state.get("_iq_last_ctx_sig") != _sig:
+    st.session_state["_iq_last_ctx_sig"] = _sig
+    safe_toast(f"Open decision locked · {verdict.verdict} · {project}")
 
 # --- Decision story (primary) ---
 render_executive_sheet(brief_from_launch(verdict), key="hub_eds")

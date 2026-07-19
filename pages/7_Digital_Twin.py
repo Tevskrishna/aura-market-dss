@@ -12,10 +12,11 @@ sys.path.insert(0, str(ROOT))
 from components.kpi_cards import render_kpi_cards
 from components.executive_sheet import render_executive_sheet
 from components.layout import page_hero, require_login, section_label
+from components.states import empty_state
 from components.viz_studio import generate_button, graphic_html, render_dynamic_figure, scenario_bar
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_twin
-from services.decision_context import context_banner_text, get_decision_context
+from services.decision_context import context_banner_text, get_decision_context, safe_toast
 from services.twin_service import TWIN_PRESET_NAMES, run_twin_with_cannibalization, twin_preset_params
 from utils.dmaic_charts import twin_curves
 
@@ -43,6 +44,7 @@ if PENDING_PRESET in st.session_state:
     st.session_state["twin_cut"] = int(params["cut_pct"])
     st.session_state["twin_subvention"] = params["subvention"]
     st.session_state["twin_preset_label"] = preset_name
+    safe_toast(f"Scenario applied: {preset_name}")
 
 # Seed from Hub once per session so CEO does not re-key
 if "_twin_ctx_seeded" not in st.session_state and ctx:
@@ -72,6 +74,14 @@ else:
     st.caption("Open Executive Hub first to lock today’s project and price — or set levers below.")
 
 df = get_adapter().projects()
+if df.empty:
+    empty_state(
+        "No projects to simulate",
+        "Catalog has no projects — open Executive Hub after seeding data.",
+        "Load data/projects.csv or reconnect the adapter.",
+    )
+    st.stop()
+
 upcoming = get_adapter().upcoming()
 projects = df["project"].tolist()
 if "twin_project" not in st.session_state:

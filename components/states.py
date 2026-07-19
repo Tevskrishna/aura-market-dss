@@ -58,6 +58,14 @@ def loading_state(label: str = "Loading…") -> None:
     )
 
 
+def skeleton_block(*, height_rem: float = 4.5, label: str = "") -> None:
+    """Lightweight composed-arrival placeholder (CSS shimmer)."""
+    lab = f' aria-label="{html.escape(label)}"' if label else ""
+    st.html(
+        f'<div class="iq-skeleton" style="min-height:{height_rem}rem;"{lab}></div>'
+    )
+
+
 def page_hub_label(hub: str, title: str) -> None:
     """Consistent hub eyebrow for nested IA (P0-2)."""
     st.html(
