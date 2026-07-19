@@ -13,17 +13,28 @@ sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.states import data_honesty_banner, page_hub_label
 from components.viz_studio import generate_button, live_kpi_strip, render_dynamic_figure, scenario_bar
 from services.competition_service import build_competition_snapshot, launch_price_pressure
 from services.margin_service import build_margin_viability, margin_kpis
 from utils.charts import PALETTE, _style
 
-st.set_page_config(page_title="Competition Intelligence", page_icon="🏢", layout="wide")
+st.set_page_config(page_title="Competition & Land · RealEstateIQ", page_icon="🏢", layout="wide")
 require_login()
 
 snap = build_competition_snapshot()
 margins = build_margin_viability()
 mk = margin_kpis(margins)
+
+page_hub_label("Intelligence", "Competition & Land")
+data_honesty_banner(
+    title="Competition data contract",
+    lines=[
+        "RERA / upcoming / under-construction / land tables are curated seed CSVs for Bagaluru demo.",
+        "Live KRERA / registry adapters are stubbed — do not treat counts as production market truth.",
+        "Margin index uses configurable construction cost & FSI load from settings.",
+    ],
+)
 
 page_hero(
     kicker="AURA-Market · Competition blind spot",

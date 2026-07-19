@@ -17,6 +17,7 @@ if str(ROOT) not in sys.path:
 
 from components.copilot_ui import action_cards, factor_bars, threat_gauge, verdict_banner
 from components.layout import require_login, section_label
+from components.states import data_honesty_banner, empty_state, page_hub_label
 from components.viz_studio import generate_button, render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
@@ -26,7 +27,7 @@ from utils.dmaic_charts import twin_curves
 from services.twin_service import run_twin_with_cannibalization
 
 st.set_page_config(
-    page_title="Launch Decision Co-pilot · AURA-Market",
+    page_title="Executive Hub · RealEstateIQ",
     page_icon=settings.PAGE_ICON,
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -39,6 +40,9 @@ upcoming = adapter.upcoming()
 
 from components.media import data_uri
 
+page_hub_label("RealEstateIQ", "Executive Hub · Launch Decision")
+data_honesty_banner()
+
 _banner = data_uri("hero-bagaluru-day.jpg")
 st.html(
     f"""
@@ -48,16 +52,24 @@ st.html(
       background:linear-gradient(100deg,rgba(8,10,14,.88) 20%,rgba(8,10,14,.35) 70%),
                  url('{_banner}') center/cover no-repeat;">
       <div style="padding:1.2rem 1.25rem 1.3rem;max-width:46rem;">
-        <div class="dss-kicker">REAL ASSET SURFACE · BAGALURU / AEROSPACE HIGHWAY</div>
-        <h1 style="margin:0.2rem 0 0.4rem;color:#fff;">Launch Decision Co-pilot</h1>
+        <div class="dss-kicker">EXECUTIVE HUB · BAGALURU / AEROSPACE HIGHWAY</div>
+        <h1 style="margin:0.2rem 0 0.4rem;color:#fff;">Should we launch at this price?</h1>
         <p style="margin:0;color:#d7dee8;font-size:0.98rem;line-height:1.45;">
-          One question builders actually ask: <b>Can I launch at this price this month?</b>
-          Move the price slider — threat score and ₹ Cr exposure update live.
+          Move the price slider — Launch Threat Score and ₹ Cr blind-spot exposure update live.
+          Evidence modules stay one tap away in the hub menu.
         </p>
       </div>
     </div>
     """
 )
+
+if projects.empty:
+    empty_state(
+        "No projects in catalog",
+        "Load data/projects.csv or run seed scripts.",
+        "Contact admin if this is a tenant workspace.",
+    )
+    st.stop()
 
 # --- Controls that recompute in real time on every change ---
 c_proj, c_price = st.columns([1.2, 1])

@@ -6,3 +6,5 @@ venv/
 .DS_Store
 *.xlsx
 ~$*
+
+assets/graphics/*.png

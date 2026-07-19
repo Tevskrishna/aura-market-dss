@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.states import data_honesty_banner, page_hub_label
 from components.viz_studio import (
     generate_button,
     graphic_html,
@@ -39,8 +40,18 @@ from utils.map_charts import (
 )
 from utils.charts import PALETTE, _style
 
-st.set_page_config(page_title="Map Decision Support", page_icon="🗺️", layout="wide")
+st.set_page_config(page_title="Map Intelligence · RealEstateIQ", page_icon="🗺️", layout="wide")
 require_login()
+
+page_hub_label("Intelligence", "Map · Where to build")
+data_honesty_banner(
+    title="Map ML contract",
+    lines=[
+        "Zone suitability uses Random Forest on amenity/price features with illustrative pseudo-labels.",
+        "Use for relative ranking in demo — not cadastral / PropStack-grade site selection.",
+        "Metro stations are a curated overlay list, not a live GTFS feed.",
+    ],
+)
 
 page_hero(
     kicker="Phase 2 · Location DSS",
