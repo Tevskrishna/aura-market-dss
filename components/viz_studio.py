@@ -37,19 +37,25 @@ def scenario_bar(
     options: list[str],
     default: str | None = None,
 ) -> str:
-    """Segmented scenario control — changing it must change the chart on the same run."""
-    default = default or options[0]
+    """Layer / lens control that must remount charts when the selection changes.
+
+    Prefer radio over segmented_control: Streamlit often ignores clicks when both
+    ``default=`` and ``key=`` are passed to segmented_control / pills.
+    """
+    fallback = default if default in options else options[0]
+    if key not in st.session_state or st.session_state.get(key) not in options:
+        st.session_state[key] = fallback
+
     st.caption(label)
-    choice = st.segmented_control(
+    # Horizontal radio is the most reliable "tab" widget across Streamlit versions.
+    choice = st.radio(
         label,
         options=options,
-        default=default,
         key=key,
+        horizontal=True,
         label_visibility="collapsed",
-        width="stretch",
     )
-    picked = choice or default
-    # Persist for generate / caption feedback
+    picked = choice if choice in options else fallback
     st.session_state[f"{key}_scene"] = picked
     return picked
 
@@ -76,19 +82,22 @@ def viz_nonce(key: str) -> int:
 
 
 def action_pills(key: str, options: list[str], default: str | None = None) -> str:
-    default = default or options[0]
-    picked = st.pills(
+    pill_key = f"{key}_pills"
+    fallback = default if default in options else options[0]
+    if pill_key not in st.session_state or st.session_state.get(pill_key) not in options:
+        st.session_state[pill_key] = fallback
+    picked = st.radio(
         "Focus",
         options=options,
-        default=default,
-        key=f"{key}_pills",
+        key=pill_key,
+        horizontal=True,
         label_visibility="collapsed",
     )
-    return picked or default
+    return picked if picked in options else fallback
 
 
 def live_kpi_strip(cards: list[dict[str, Any]]) -> None:
-    """Animated KPI HTML strip — feels dynamic vs static st.metric."""
+    """Animated KPI HTML strip — display only (not clickable)."""
     bits = []
     for card in cards:
         bits.append(
@@ -99,6 +108,31 @@ def live_kpi_strip(cards: list[dict[str, Any]]) -> None:
             f"</div>"
         )
     st.html(f'<div class="dss-live-kpi-grid">{"".join(bits)}</div>')
+
+
+def linked_kpi_lens_strip(
+    cards: list[dict[str, Any]],
+    *,
+    lens_key: str,
+    pending_key: str = "_pending_lens",
+) -> None:
+    """Scorecard figures as buttons — tap a KPI to switch the graphics layer."""
+    cols = st.columns(len(cards))
+    for col, card in zip(cols, cards):
+        lens = str(card.get("lens") or "")
+        active = st.session_state.get(lens_key) == lens
+        label = f"{card.get('label', '')}\n{card.get('display', card.get('value', ''))}"
+        with col:
+            if st.button(
+                label,
+                key=f"{lens_key}_kpi_{_slug(lens or str(card.get('label', '')))}",
+                type="primary" if active else "secondary",
+                width="stretch",
+                help=str(card.get("hint") or f"Show {lens}"),
+                disabled=not lens,
+            ):
+                st.session_state[pending_key] = lens
+                st.rerun()
 
 
 def cockpit_hero(

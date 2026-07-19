@@ -15,7 +15,12 @@ from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.states import data_honesty_banner, page_hub_label
-from components.viz_studio import generate_button, live_kpi_strip, render_dynamic_figure, scenario_bar
+from components.viz_studio import (
+    generate_button,
+    linked_kpi_lens_strip,
+    render_dynamic_figure,
+    scenario_bar,
+)
 from config import settings
 from services.adapters import get_adapter
 from services.competition_service import build_competition_snapshot, launch_price_pressure
@@ -25,6 +30,16 @@ from utils.charts import PALETTE, _style
 
 st.set_page_config(page_title="Competition & Land · RealEstateIQ", page_icon="🏢", layout="wide")
 require_login("Competition & Land")
+
+COMP_LENS_KEY = "comp_lens"
+COMP_LENS_PENDING = "_pending_comp_lens"
+COMP_LAYERS = ["RERA density", "Upcoming launches", "UC unsold", "Land prices", "Margins"]
+
+# Apply scorecard → layer switch before the radio widget mounts (avoids StreamlitAPIException).
+if COMP_LENS_PENDING in st.session_state:
+    pending = st.session_state.pop(COMP_LENS_PENDING)
+    if pending in COMP_LAYERS:
+        st.session_state[COMP_LENS_KEY] = pending
 
 snap = build_competition_snapshot()
 margins = build_margin_viability()
@@ -55,22 +70,21 @@ page_hero(
 )
 
 section_label("Supply & land scorecard")
-live_kpi_strip(
+st.caption("Tap a figure to open that layer in the graphics studio below.")
+linked_kpi_lens_strip(
     [
-        {"label": "RERA", "display": str(snap.rera_count), "hint": "projects"},
-        {"label": "Upcoming", "display": str(snap.upcoming_count), "hint": "ads"},
-        {"label": "UC", "display": str(snap.uc_projects), "hint": "sites"},
-        {"label": "UC unsold", "display": f"{snap.unsold_uc_units:,}", "hint": "units"},
-        {"label": "Avg margin", "display": f"{mk['avg_margin_pct']}%", "hint": "viability"},
-    ]
+        {"label": "RERA", "display": str(snap.rera_count), "hint": "projects", "lens": "RERA density"},
+        {"label": "Upcoming", "display": str(snap.upcoming_count), "hint": "ads", "lens": "Upcoming launches"},
+        {"label": "UC", "display": str(snap.uc_projects), "hint": "sites", "lens": "UC unsold"},
+        {"label": "UC unsold", "display": f"{snap.unsold_uc_units:,}", "hint": "units", "lens": "UC unsold"},
+        {"label": "Avg margin", "display": f"{mk['avg_margin_pct']}%", "hint": "viability", "lens": "Margins"},
+    ],
+    lens_key=COMP_LENS_KEY,
+    pending_key=COMP_LENS_PENDING,
 )
 
 section_label("Competition graphics studio")
-comp_lens = scenario_bar(
-    "comp_lens",
-    "Layer",
-    ["RERA density", "Upcoming launches", "UC unsold", "Land prices", "Margins"],
-)
+comp_lens = scenario_bar(COMP_LENS_KEY, "Layer", COMP_LAYERS)
 generate_button("comp_studio", "Generate competition graphics")
 
 
