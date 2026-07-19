@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <circle cx="60" cy="60" r="54" stroke="#30363d" stroke-width="2"/>
+  <circle cx="60" cy="60" r="38" stroke="#21262d" stroke-width="2"/>
+  <path d="M60 60 L60 18" stroke="#58a6ff" stroke-width="3" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="3.5s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="60" cy="60" r="5" fill="#ff4b4b"/>
+  <circle cx="60" cy="22" r="4" fill="#3dd68c"/>
+</svg>

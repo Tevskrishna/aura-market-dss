@@ -13,9 +13,10 @@ sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.viz_studio import generate_button, live_kpi_strip, render_dynamic_figure, scenario_bar
 from services.competition_service import build_competition_snapshot, launch_price_pressure
 from services.margin_service import build_margin_viability, margin_kpis
-from utils.charts import PALETTE
+from utils.charts import PALETTE, _style
 
 st.set_page_config(page_title="Competition Intelligence", page_icon="🏢", layout="wide")
 require_login()
@@ -37,16 +38,70 @@ page_hero(
 )
 
 section_label("Supply & land scorecard")
-render_kpi_cards(
+live_kpi_strip(
     [
-        {"label": "RERA projects", "value": snap.rera_count, "format": "int"},
-        {"label": "Upcoming / advertised", "value": snap.upcoming_count, "format": "int"},
-        {"label": "Under construction", "value": snap.uc_projects, "format": "int"},
-        {"label": "Unsold UC units", "value": snap.unsold_uc_units, "format": "int"},
-        {"label": "Avg margin %", "value": mk["avg_margin_pct"], "format": "pct"},
-    ],
-    columns=5,
+        {"label": "RERA", "display": str(snap.rera_count), "hint": "projects"},
+        {"label": "Upcoming", "display": str(snap.upcoming_count), "hint": "ads"},
+        {"label": "UC", "display": str(snap.uc_projects), "hint": "sites"},
+        {"label": "UC unsold", "display": f"{snap.unsold_uc_units:,}", "hint": "units"},
+        {"label": "Avg margin", "display": f"{mk['avg_margin_pct']}%", "hint": "viability"},
+    ]
 )
+
+section_label("Competition graphics studio")
+comp_lens = scenario_bar(
+    "comp_lens",
+    "Layer",
+    ["RERA density", "Upcoming launches", "UC unsold", "Land prices", "Margins"],
+)
+generate_button("comp_studio", "Generate competition graphics")
+
+
+def _comp_fig():
+    if comp_lens == "RERA density" and not snap.rera.empty:
+        tmp = snap.rera.copy()
+        tmp["year"] = pd.to_datetime(tmp["approval_date"], errors="coerce").dt.year
+        fig = px.bar(tmp.groupby("year").size().reset_index(name="approvals"), x="year", y="approvals", color_discrete_sequence=PALETTE)
+        return _style(fig, "RERA approvals by year")
+    if comp_lens == "Upcoming launches" and not snap.upcoming.empty:
+        fig = px.scatter(
+            snap.upcoming,
+            x="indicative_price_psf",
+            y="planned_units",
+            size="planned_units",
+            color="developer",
+            hover_name="project",
+            color_discrete_sequence=PALETTE,
+        )
+        return _style(fig, "Upcoming competitive launches")
+    if comp_lens == "UC unsold" and not snap.under_construction.empty:
+        fig = px.bar(
+            snap.under_construction.sort_values("unsold_units", ascending=False),
+            x="project",
+            y="unsold_units",
+            color="developer",
+            color_discrete_sequence=PALETTE,
+        )
+        fig.update_layout(xaxis_tickangle=-35)
+        return _style(fig, "Under-construction unsold units")
+    if comp_lens == "Land prices" and not snap.land.empty:
+        fig = px.bar(snap.land.sort_values("land_price_psf"), x="land_price_psf", y="micro_market", orientation="h", color_discrete_sequence=PALETTE)
+        return _style(fig, "Land price ₹/sqft")
+    if not margins.empty:
+        fig = px.bar(
+            margins,
+            x="margin_pct",
+            y="project",
+            color="viability",
+            orientation="h",
+            color_discrete_map={"Viable": "#3dd68c", "Stressed": "#f0b429", "Unviable": "#ff4b4b"},
+        )
+        return _style(fig, "Developer Margin Viability")
+    fig = px.scatter(x=[0], y=[0])
+    return _style(fig, "No data for lens")
+
+
+render_dynamic_figure("comp_studio", _comp_fig, height=400)
 
 t1, t2, t3, t4, t5 = st.tabs(
     ["RERA Pipeline", "Pre-Launch / Coming Soon", "Under Construction", "Land Arbitrage", "Margin Viability"]

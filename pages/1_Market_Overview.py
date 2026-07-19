@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 from components.filters import render_global_filters
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.viz_studio import generate_button, graphic_html, live_kpi_strip, render_dynamic_figure, scenario_bar
 from services.data_loader import load_catalog
 from services.market_service import build_market_bundle, get_validation_report
 from services.sigma_service import market_kpis as sigma_kpis
@@ -39,15 +40,14 @@ bundle = build_market_bundle(filters, load_catalog())
 sk = sigma_kpis(bundle.projects)
 
 section_label("Six Sigma scorecard")
-render_kpi_cards(
+live_kpi_strip(
     [
-        {"label": "Total Units Launched", "value": sk["total_units"], "format": "int"},
-        {"label": "Units Sold", "value": sk["units_sold"], "format": "int"},
-        {"label": "Units Unsold", "value": sk["units_unsold"], "format": "int"},
-        {"label": "Sigma Level (σ)", "value": sk["sigma_level"], "format": "float"},
-        {"label": "At-Risk Projects", "value": sk["at_risk_projects"], "format": "int", "help": "Absorption < 70%"},
-    ],
-    columns=5,
+        {"label": "Launched", "display": f"{sk['total_units']:,}", "hint": "units"},
+        {"label": "Sold", "display": f"{sk['units_sold']:,}", "hint": "units"},
+        {"label": "Unsold", "display": f"{sk['units_unsold']:,}", "hint": "defect pool"},
+        {"label": "Sigma", "display": str(sk["sigma_level"]), "hint": "DPMO-based"},
+        {"label": "At-risk", "display": str(sk["at_risk_projects"]), "hint": "<70% abs."},
+    ]
 )
 st.caption(f"DPMO = (unsold ÷ launched) × 1,000,000 → **{sk['dpmo']:,.0f}**")
 
@@ -61,21 +61,29 @@ decision_action(
     tone="warn" if sk["at_risk_projects"] else "ok",
 )
 
-section_label("Absorption & mix")
-c1, c2 = st.columns([1.3, 1])
+section_label("Interactive market graphics")
+graphic_html("trend-pulse.svg", "dss-graphic")
+lens = scenario_bar("mkt_lens", "Chart lens", ["Absorption bands", "Price bubble", "Bookings pulse", "Buyer mix"])
+generate_button("mkt_studio", "Regenerate market graphics")
+
+
+def _mkt_fig():
+    if lens == "Absorption bands":
+        return absorption_band_chart(bundle.projects)
+    if lens == "Price bubble":
+        return price_absorption_bubble(bundle.projects)
+    if lens == "Bookings pulse":
+        return booking_trend_chart(booking_trend_frame(bundle.bookings))
+    return buyer_mix_chart(bundle.kpis.buyer_distribution)
+
+
+render_dynamic_figure("mkt_studio", _mkt_fig, height=420)
+
+c1, c2 = st.columns(2)
 with c1:
-    st.plotly_chart(absorption_band_chart(bundle.projects), width="stretch")
-with c2:
     st.plotly_chart(sold_unsold_donut(sk["units_sold"], sk["units_unsold"]), width="stretch")
-
-st.plotly_chart(price_absorption_bubble(bundle.projects), width="stretch")
-
-section_label("Bookings pulse")
-a, b = st.columns([1.25, 1])
-with a:
-    st.plotly_chart(booking_trend_chart(booking_trend_frame(bundle.bookings)), width="stretch")
-with b:
-    st.plotly_chart(buyer_mix_chart(bundle.kpis.buyer_distribution), width="stretch")
+with c2:
+    st.plotly_chart(absorption_band_chart(bundle.projects), width="stretch")
 
 section_label("Inventory detail")
 cols = [c for c in ["developer", "project", "total_units", "units_sold", "units_unsold", "absorption_pct", "price_psf", "status"] if c in bundle.projects.columns]

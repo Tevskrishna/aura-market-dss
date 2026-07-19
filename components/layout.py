@@ -30,8 +30,13 @@ MODULE_NAV: list[tuple[str, str]] = [
 
 
 def inject_theme() -> None:
-    css = CSS_PATH.read_text(encoding="utf-8") if CSS_PATH.exists() else ""
-    st.html(f"<style>{css}</style>")
+    chunks: list[str] = []
+    for name in ("styles.css", "dynamic.css"):
+        path = settings.ASSETS_DIR / name
+        if path.exists():
+            chunks.append(path.read_text(encoding="utf-8"))
+    if chunks:
+        st.html(f"<style>{''.join(chunks)}</style>")
 
 
 def require_login() -> dict:

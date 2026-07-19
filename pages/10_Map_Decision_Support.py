@@ -1,11 +1,10 @@
-"""AI Map Decision Support — Phase-2 (tabs cover original Map DSS pages)."""
+"""AI Map Decision Support — dynamic proptech map-first UX."""
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
 import folium
-import pandas as pd
 import plotly.express as px
 import streamlit as st
 from streamlit_folium import st_folium
@@ -13,8 +12,14 @@ from streamlit_folium import st_folium
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.viz_studio import (
+    generate_button,
+    graphic_html,
+    live_kpi_strip,
+    render_dynamic_figure,
+    scenario_bar,
+)
 from services.map_service import (
     METRO_STATIONS,
     explain_zone,
@@ -40,43 +45,70 @@ require_login()
 page_hero(
     kicker="Phase 2 · Location DSS",
     title="AI Map Decision Support System",
-    subtitle="Score 25 Bengaluru zones for construction suitability — map, radar, price analytics, compare, what-if.",
-    chips=[("25 zones", "ok"), ("ML suitability", "ok"), ("Metro overlay", "")],
+    subtitle="Map-first Bengaluru suitability — change filters & scenarios, regenerate graphics live (phone + desktop).",
+    chips=[("25 zones", "ok"), ("Live regenerate", "ok"), ("Metro overlay", "")],
 )
 
 zones = scored_zones()
 kpis = map_home_kpis(zones)
+
+live_kpi_strip(
+    [
+        {"label": "Areas", "display": str(kpis["areas_covered"]), "hint": "scored"},
+        {"label": "Avg ₹/sqft", "display": f"{kpis['avg_price_psf']:,.0f}", "hint": "market"},
+        {"label": "Top pick", "display": str(kpis["ai_top_pick"]), "hint": "AI"},
+        {"label": "High-risk", "display": str(kpis["high_risk_zones"]), "hint": "score <50"},
+    ]
+)
 
 t_home, t_map, t_ai, t_price, t_cmp, t_dmaic, t_heat = st.tabs(
     ["Home", "Interactive Map", "AI Analyzer", "Price Analytics", "Compare", "DMAIC / What-If", "Heatmap"]
 )
 
 with t_home:
-    section_label("Location scorecard")
-    render_kpi_cards(
-        [
-            {"label": "Areas Covered", "value": kpis["areas_covered"], "format": "int"},
-            {"label": "Avg Price/sqft", "value": kpis["avg_price_psf"], "format": "float"},
-            {"label": "High-Risk Zones", "value": kpis["high_risk_zones"], "format": "int"},
-        ],
-        columns=3,
-    )
-    st.info(f"Highest growth area: **{kpis['highest_growth_area']}** · AI top-pick: **{kpis['ai_top_pick']}**")
+    graphic_html("radar-orb.svg")
     decision_action(
         "Where to build / diligence next",
         [
-            f"Prioritize land and construction diligence in **{kpis['ai_top_pick']}** (AI top-pick).",
-            f"Defer or redesign zones counted in high-risk ({kpis['high_risk_zones']}) — flood or score <50.",
-            "Use Compare + What-If tabs before committing acquisition terms.",
+            f"Prioritize land diligence in **{kpis['ai_top_pick']}**.",
+            f"Defer high-risk zones ({kpis['high_risk_zones']}).",
+            "Use Compare + What-If before acquisition terms.",
         ],
     )
+    scene = scenario_bar("map_home_scene", "Home graphics", ["Top suitability", "Flood vs price", "Metro access"])
+    generate_button("map_home", "Generate map-home graphics")
+
+    def _map_home_fig():
+        if scene == "Top suitability":
+            d = zones.sort_values("suitability_score", ascending=False).head(10)
+            fig = px.bar(d, x="suitability_score", y="zone", orientation="h", color="suitability_score",
+                         color_continuous_scale=["#ff4b4b", "#f0b429", "#3dd68c"])
+            return _style(fig, "Top construction-ready areas")
+        if scene == "Flood vs price":
+            fig = px.scatter(zones, x="flood_risk", y="avg_price_psf", color="suitability_score",
+                             hover_name="zone", color_continuous_scale="Tealgrn")
+            return _style(fig, "Flood risk vs price")
+        fig = px.scatter(zones, x="metro_km", y="suitability_score", size="avg_price_psf",
+                         color="flood_risk", hover_name="zone", color_discrete_sequence=PALETTE)
+        return _style(fig, "Metro access vs suitability")
+
+    render_dynamic_figure("map_home", _map_home_fig, height=400)
     top5 = zones.sort_values("suitability_score", ascending=False).head(5)
-    st.dataframe(top5[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "price_trend_yoy_pct"]], width="stretch", hide_index=True)
-    st.caption("ML inputs: price, trend, metro, highway, hospitals, schools, malls, parks, flood, AQI, population growth")
+    st.dataframe(
+        top5[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "price_trend_yoy_pct"]],
+        width="stretch",
+        hide_index=True,
+    )
 
 with t_map:
-    flood = st.sidebar.multiselect("Flood risk", ["Low", "Medium", "High"], default=["Low", "Medium", "High"])
-    min_score = st.sidebar.slider("Minimum AI score", 0, 100, 50)
+    section_label("Live map filters (mobile-friendly)")
+    f1, f2 = st.columns(2)
+    with f1:
+        flood = st.multiselect("Flood risk", ["Low", "Medium", "High"], default=["Low", "Medium", "High"], key="map_flood")
+    with f2:
+        min_score = st.slider("Minimum AI score", 0, 100, 50, key="map_min_score")
+    generate_button("map_folium", "Refresh interactive map")
+    _ = st.session_state.get("map_folium_nonce", 0)
     view = zones[(zones["flood_risk"].isin(flood)) & (zones["suitability_score"] >= min_score)]
     m = folium.Map(location=[12.98, 77.60], zoom_start=10, tiles="CartoDB dark_matter")
     for _, z in view.iterrows():
@@ -102,57 +134,92 @@ with t_map:
             fill=True,
             popup=f"Metro: {s['station']} ({s['line']})",
         ).add_to(m)
-    st_folium(m, width=None, height=380)
-    st.dataframe(view[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "highway_km"]], width="stretch", hide_index=True)
+    st_folium(m, width=None, height=380, key=f"folium_{st.session_state.get('map_folium_nonce', 0)}")
+    st.dataframe(
+        view[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "highway_km"]],
+        width="stretch",
+        hide_index=True,
+    )
 
 with t_ai:
     zone = st.selectbox("Analyse area", zones["zone"].tolist(), key="ai_zone")
     row = zones[zones["zone"] == zone].iloc[0]
     score = int(row["suitability_score"])
-    badge = "🟢" if score >= 75 else ("🟡" if score >= 50 else "🔴")
+    badge = "GREEN" if score >= 75 else ("WATCH" if score >= 50 else "RISK")
+    generate_button("map_ai", "Regenerate radar graphic")
     c1, c2 = st.columns([1, 1.1])
     with c1:
-        st.markdown(f"### {badge} {score}/100 — {row['suitability_label']}")
+        st.markdown(f"### {badge} · {score}/100 — {row['suitability_label']}")
         st.write(f"**Price:** ₹{int(row['avg_price_psf']):,}/sqft · **Trend YoY:** {row['price_trend_yoy_pct']}%")
         for label, val, klass in explain_zone(row):
             st.write(f"- **{label}:** {val}")
     with c2:
-        st.plotly_chart(radar_chart(radar_values(row), f"{zone} radar"), width="stretch")
+        render_dynamic_figure("map_ai", lambda: radar_chart(radar_values(row), f"{zone} radar"), height=400)
 
 with t_price:
-    p1, p2, p3 = st.tabs(["Price Overview", "Trend Analysis", "Correlation"])
-    with p1:
-        st.plotly_chart(price_bar(zones), width="stretch")
-    with p2:
-        fig = px.scatter(zones, x="flood_risk", y="avg_price_psf", color="suitability_score", hover_name="zone", color_continuous_scale="Tealgrn")
-        st.plotly_chart(_style(fig, "Flood risk vs price"), width="stretch")
-        fig2 = px.bar(zones.sort_values("price_trend_yoy_pct"), x="zone", y="price_trend_yoy_pct", color_discrete_sequence=PALETTE)
-        fig2.update_layout(xaxis_tickangle=-35)
-        st.plotly_chart(_style(fig2, "YoY price trend %"), width="stretch")
-    with p3:
-        st.plotly_chart(correlation_heatmap(zones), width="stretch")
+    lens = scenario_bar("map_price_lens", "Price studio", ["Price Overview", "Trend Analysis", "Correlation"])
+    generate_button("map_price", "Generate price graphics")
+
+    def _price_fig():
+        if lens == "Price Overview":
+            return price_bar(zones)
+        if lens == "Trend Analysis":
+            fig = px.bar(
+                zones.sort_values("price_trend_yoy_pct"),
+                x="zone",
+                y="price_trend_yoy_pct",
+                color_discrete_sequence=PALETTE,
+            )
+            fig.update_layout(xaxis_tickangle=-35)
+            return _style(fig, "YoY price trend %")
+        return correlation_heatmap(zones)
+
+    render_dynamic_figure("map_price", _price_fig, height=420)
 
 with t_cmp:
-    picks = st.multiselect("Select 2–3 areas", zones["zone"].tolist(), default=["Bagaluru / KIADB", "Whitefield", "Electronic City"][:2])
+    picks = st.multiselect(
+        "Select 2–3 areas",
+        zones["zone"].tolist(),
+        default=["Bagaluru / KIADB", "Whitefield", "Electronic City"][:2],
+    )
+    generate_button("map_cmp", "Generate comparison radar")
     if len(picks) >= 2:
         cmp = zones[zones["zone"].isin(picks)].copy()
         best = cmp["suitability_score"].max()
-        cmp["recommendation"] = cmp["suitability_score"].apply(lambda s: "⭐ Best Choice" if s == best else "Review")
-        show_cols = ["zone", "suitability_score", "flood_risk", "avg_price_psf", "metro_km", "highway_km", "price_trend_yoy_pct", "recommendation"]
-        st.dataframe(cmp[show_cols].set_index("zone").T, width="stretch")
+        cmp["recommendation"] = cmp["suitability_score"].apply(lambda s: "Best Choice" if s == best else "Review")
+        show_cols = [
+            "zone",
+            "suitability_score",
+            "flood_risk",
+            "avg_price_psf",
+            "metro_km",
+            "highway_km",
+            "price_trend_yoy_pct",
+            "recommendation",
+        ]
+        st.dataframe(cmp[show_cols], width="stretch", hide_index=True)
         a = cmp.iloc[0]
         b = cmp.iloc[1]
-        st.plotly_chart(dual_radar(radar_values(a), radar_values(b), a["zone"], b["zone"]), width="stretch")
+        render_dynamic_figure(
+            "map_cmp",
+            lambda: dual_radar(radar_values(a), radar_values(b), a["zone"], b["zone"]),
+            height=400,
+        )
     else:
         st.info("Pick at least two areas.")
 
 with t_dmaic:
-    section_label("Pareto — high-risk / lower-score inventory proxy")
+    section_label("Pareto — lower suitability concentration")
+    generate_button("map_dmaic", "Regenerate DMAIC graphics")
     pareto = zones.sort_values("suitability_score").copy()
     pareto["risk_weight"] = 100 - pareto["suitability_score"]
-    fig = px.bar(pareto.head(12), x="zone", y="risk_weight", color="flood_risk", color_discrete_sequence=PALETTE)
-    fig.update_layout(xaxis_tickangle=-30)
-    st.plotly_chart(_style(fig, "Lower suitability concentration"), width="stretch")
+
+    def _dmaic_fig():
+        fig = px.bar(pareto.head(12), x="zone", y="risk_weight", color="flood_risk", color_discrete_sequence=PALETTE)
+        fig.update_layout(xaxis_tickangle=-30)
+        return _style(fig, "Lower suitability concentration")
+
+    render_dynamic_figure("map_dmaic", _dmaic_fig, height=360)
     st.plotly_chart(importance_chart(feature_importance(zones)), width="stretch")
     section_label("What-if scenario")
     metro = st.slider("Metro distance km", 0.2, 10.0, 2.0)
@@ -169,7 +236,8 @@ with t_dmaic:
     st.metric("Live suitability prediction", f"{wi:.0f}/100")
 
 with t_heat:
-    st.plotly_chart(heatmap_scatter(zones), width="stretch")
+    generate_button("map_heat", "Refresh heatmap")
+    render_dynamic_figure("map_heat", lambda: heatmap_scatter(zones), height=480)
     st.dataframe(
         zones.sort_values("suitability_score", ascending=False)[
             ["zone", "suitability_score", "avg_price_psf", "price_trend_yoy_pct", "flood_risk", "metro_km", "suitability_label"]

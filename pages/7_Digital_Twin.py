@@ -10,7 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
-from components.layout import page_hero, require_login, section_label
+from components.layout import decision_action, page_hero, require_login, section_label
+from components.viz_studio import generate_button, graphic_html, render_dynamic_figure, scenario_bar
 from services.adapters import get_adapter
 from services.twin_service import run_twin_with_cannibalization
 from utils.dmaic_charts import twin_curves
@@ -56,11 +57,21 @@ result = run_twin_with_cannibalization(
     competitor_price_psf=float(rival_price) if enable_rival else None,
 )
 
-section_label("Cumulative units — baseline vs cannibalization vs intervention")
-st.plotly_chart(
-    twin_curves(result.months, result.baseline, result.intervention, result.cannibalized),
-    width="stretch",
-)
+section_label("Simulate · regenerate twin curves")
+graphic_html("trend-pulse.svg")
+view = scenario_bar("twin_view", "Curve focus", ["Full story", "Baseline only", "Rival impact"])
+generate_button("twin_studio", "Generate twin graphics")
+
+
+def _twin_fig():
+    if view == "Baseline only":
+        return twin_curves(result.months, result.baseline, result.baseline, None)
+    if view == "Rival impact":
+        return twin_curves(result.months, result.baseline, result.baseline, result.cannibalized)
+    return twin_curves(result.months, result.baseline, result.intervention, result.cannibalized)
+
+
+render_dynamic_figure("twin_studio", _twin_fig, height=420)
 
 render_kpi_cards(
     [
@@ -70,7 +81,17 @@ render_kpi_cards(
         {"label": "Recovery vs rival", "value": result.recovery_cr, "format": "cr"},
     ]
 )
+
+decision_action(
+    "Prescribe before brochure print",
+    [
+        f"Blind-spot loss ≈ ₹{result.cannibal_loss_cr} Cr if rival launches unchecked.",
+        f"Recovery ≈ ₹{result.recovery_cr} Cr with cut {cut}%{' + subvention' if subvention else ''}.",
+        "Lock the winning intervention, then MONITOR on SPC after launch.",
+    ],
+    tone="warn" if result.cannibal_loss_cr > 0 else "ok",
+)
 st.info(
-    "When a cheaper rival launches, **budget buyers divert first**, then a share of normal demand. "
-    "Prescriptive interventions (cut + subvention) push recovery while the rival is active."
+    "When a cheaper rival launches, budget buyers divert first, then a share of normal demand. "
+    "Prescriptive interventions push recovery while the rival is active."
 )

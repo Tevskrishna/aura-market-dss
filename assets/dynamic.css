@@ -1,0 +1,175 @@
+/* =========================================================
+   AURA-Market DYNAMIC UI — proptech decision cockpit
+   Patterns: map-first (Zillow/Redfin), live filters, motion for hierarchy
+   ========================================================= */
+
+@keyframes dss-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dss-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.45); }
+  70% { box-shadow: 0 0 0 14px rgba(255, 75, 75, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); }
+}
+@keyframes dss-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.dss-cockpit {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1rem;
+  margin: 0.2rem 0 1.1rem;
+  animation: dss-fade-up 0.55s ease both;
+}
+
+@media (max-width: 900px) {
+  .dss-cockpit { grid-template-columns: 1fr; }
+}
+
+.dss-cockpit-visual {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0e1117;
+  min-height: 200px;
+}
+
+.dss-cockpit-visual svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.dss-cockpit-copy {
+  background: linear-gradient(160deg, #1c2128 0%, #161b22 100%);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.15rem 1.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dss-cockpit-copy::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ff4b4b, #58a6ff, #3dd68c);
+}
+
+.dss-cockpit-copy h1 {
+  margin: 0.2rem 0 0.45rem !important;
+  font-size: 1.55rem !important;
+}
+
+.dss-cockpit-list {
+  margin: 0.7rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--text-soft);
+}
+
+.dss-cockpit-list li {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.dss-graphic {
+  margin: 0.4rem 0 0.8rem;
+}
+.dss-graphic svg { width: 100%; max-width: 160px; height: auto; }
+
+.dss-live-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.65rem;
+  margin: 0.35rem 0 1rem;
+}
+
+.dss-live-kpi {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 0.9rem;
+  animation: dss-fade-up 0.45s ease both;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.dss-live-kpi:hover {
+  transform: translateY(-2px);
+  border-color: #ff4b4b;
+  animation: dss-pulse-ring 1.6s ease infinite;
+}
+
+.dss-live-kpi-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.dss-live-kpi-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0.2rem 0;
+  background: linear-gradient(90deg, #fff, #58a6ff, #3dd68c, #fff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: dss-shimmer 4s linear infinite;
+}
+
+.dss-live-kpi-hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* Stronger primary buttons — feel clickable on mobile */
+.stButton > button[kind="primary"],
+.stButton > button[data-testid="stBaseButton-primary"] {
+  background: linear-gradient(135deg, #ff4b4b, #c62828) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  min-height: 2.75rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 22px rgba(255, 75, 75, 0.28) !important;
+}
+
+.stButton > button[kind="primary"]:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Segmented / pills touch targets */
+div[data-testid="stSegmentedControl"] label,
+div[data-testid="stPills"] button {
+  min-height: 2.4rem !important;
+  border-radius: 999px !important;
+}
+
+/* Studio frame around generate zones */
+.dss-studio-frame {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 0.85rem 0.9rem 0.35rem;
+  margin: 0.35rem 0 1rem;
+  background:
+    radial-gradient(600px 120px at 10% 0%, rgba(88,166,255,0.08), transparent),
+    var(--panel);
+  animation: dss-fade-up 0.4s ease both;
+}
+
+@media (max-width: 640px) {
+  .dss-live-kpi-value { font-size: 1.2rem; }
+  .dss-cockpit-copy h1 { font-size: 1.3rem !important; }
+  .stButton > button {
+    min-height: 2.85rem !important;
+    font-size: 0.95rem !important;
+  }
+}
