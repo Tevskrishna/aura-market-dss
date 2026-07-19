@@ -1,6 +1,10 @@
 """
 Touch-first module navigation — graphical tiles + sidebar buttons.
 Streamlit's auto pages list is hidden; these controls are the only jump UX.
+
+IMPORTANT: never assign `st.session_state["dss_module_nav"]` AFTER the selectbox
+with that key is created in the same run — Streamlit raises StreamlitAPIException.
+Use navigate_to() which stashes a pending label for the next run instead.
 """
 from __future__ import annotations
 
@@ -11,6 +15,7 @@ import streamlit as st
 
 from components.layout import MODULE_NAV, _current_nav_label
 
+PENDING_MODULE_NAV = "_dss_pending_module_nav"
 
 TOUCH_TILES: list[tuple[str, str, str, str]] = [
     ("🎯", "Executive Hub", "app.py", "GO / HOLD / NO-GO threat score"),
@@ -29,11 +34,19 @@ TOUCH_TILES: list[tuple[str, str, str, str]] = [
 ]
 
 
-def _go(label: str, path: str) -> None:
+def apply_pending_module_nav() -> None:
+    """Must run before selectbox(key='dss_module_nav') is instantiated."""
+    pending = st.session_state.pop(PENDING_MODULE_NAV, None)
+    if pending is not None:
+        st.session_state["dss_module_nav"] = pending
+
+
+def navigate_to(label: str, path: str) -> None:
+    """Safe page jump — does not mutate the live selectbox widget key."""
     st.session_state["dss_nav_label"] = label
     st.session_state["dss_nav_label_committed"] = label
     st.session_state["dss_nav_target"] = path
-    st.session_state["dss_module_nav"] = label
+    st.session_state[PENDING_MODULE_NAV] = label
     st.switch_page(path)
 
 
@@ -58,14 +71,16 @@ def render_touch_hub(*, title: str = "Tap a workspace") -> None:
 
 def _tile_row(items: list[tuple[str, str, str, str]], current: str) -> None:
     cols = st.columns(3, gap="small")
+    path_by = dict(MODULE_NAV)
     for col, (mark, label, path, blurb) in zip(cols, items):
         with col:
             if not path:
                 st.write("")
                 continue
-            active = label == current or Path(path).name == Path(
-                dict(MODULE_NAV).get(current, "")
-            ).name
+            cur_path = path_by.get(current, "")
+            active = label == current or (
+                bool(cur_path) and Path(path).name == Path(cur_path).name
+            )
             st.html(
                 f'<div class="iq-tile-preview {"iq-tile-active" if active else ""}">'
                 f'<span class="iq-tile-mark">{html.escape(mark)}</span>'
@@ -73,13 +88,15 @@ def _tile_row(items: list[tuple[str, str, str, str]], current: str) -> None:
                 f'<span class="iq-tile-blurb">{html.escape(blurb)}</span>'
                 f"</div>"
             )
-            if st.button(
-                ("✓ " if active else "") + f"Open {label.split()[0]}",
-                key=f"touch_tile_{path}",
+            clicked = st.button(
+                ("You are here · " if active else "Open ") + label.split()[0],
+                key=f"touch_tile_{Path(path).stem}",
                 type="primary" if active else "secondary",
                 width="stretch",
-            ):
-                _go(label, path)
+                disabled=active,
+            )
+            if clicked and not active:
+                navigate_to(label, path)
 
 
 def render_sidebar_touch_nav() -> None:
@@ -96,4 +113,4 @@ def render_sidebar_touch_nav() -> None:
             disabled=is_here,
         )
         if clicked and not is_here:
-            _go(label, path)
+            navigate_to(label, path)

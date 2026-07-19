@@ -109,8 +109,6 @@ def _render_next_cta(step: JourneyStep | None, *, key: str) -> None:
         width="stretch",
         key=f"{key}_next_{step.path}",
     ):
-        st.session_state["dss_nav_label"] = step.label
-        st.session_state["dss_nav_label_committed"] = step.label
-        st.session_state["dss_nav_target"] = step.path
-        st.session_state["dss_module_nav"] = step.label
-        st.switch_page(step.path)
+        from components.touch_nav import navigate_to
+
+        navigate_to(step.label, step.path)

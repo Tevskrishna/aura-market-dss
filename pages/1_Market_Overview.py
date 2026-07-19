@@ -93,19 +93,19 @@ else:
 a1, a2, a3 = st.columns(3)
 with a1:
     if st.button("→ Open AI Recommendations", width="stretch", key="mkt_go_recs"):
-        st.session_state["dss_nav_label_committed"] = "AI Recommendations"
-        st.session_state["dss_module_nav"] = "AI Recommendations"
-        st.switch_page("pages/8_AI_Recommendations.py")
+        from components.touch_nav import navigate_to
+
+        navigate_to("AI Recommendations", "pages/8_AI_Recommendations.py")
 with a2:
     if st.button("→ Open Builder Deep Dive", width="stretch", key="mkt_go_builder"):
-        st.session_state["dss_nav_label_committed"] = "Project Deep Dive"
-        st.session_state["dss_module_nav"] = "Project Deep Dive"
-        st.switch_page("pages/6_Builder_Deep_Dive.py")
+        from components.touch_nav import navigate_to
+
+        navigate_to("Project Deep Dive", "pages/6_Builder_Deep_Dive.py")
 with a3:
     if st.button("→ Open Digital Twin", width="stretch", key="mkt_go_twin"):
-        st.session_state["dss_nav_label_committed"] = "Digital Twin"
-        st.session_state["dss_module_nav"] = "Digital Twin"
-        st.switch_page("pages/7_Digital_Twin.py")
+        from components.touch_nav import navigate_to
+
+        navigate_to("Digital Twin", "pages/7_Digital_Twin.py")
 
 decision_action(
     "This week's market moves",

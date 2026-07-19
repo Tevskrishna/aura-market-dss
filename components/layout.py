@@ -301,6 +301,10 @@ def _current_nav_label() -> str:
 
 def render_module_nav() -> None:
     """Top jump list — switches ONLY when the user changes the selectbox."""
+    from components.touch_nav import apply_pending_module_nav
+
+    apply_pending_module_nav()
+
     labels = [label for label, _ in MODULE_NAV]
     path_by = dict(MODULE_NAV)
     current = _current_nav_label()
@@ -312,7 +316,7 @@ def render_module_nav() -> None:
     elif st.session_state.get("dss_nav_label_committed") and st.session_state[
         "dss_module_nav"
     ] != st.session_state["dss_nav_label_committed"]:
-        # Keep widget in sync when page was opened via sidebar tile
+        # Keep widget in sync when page was opened via sidebar / tile (pre-widget only)
         st.session_state["dss_module_nav"] = st.session_state["dss_nav_label_committed"]
 
     st.html(
