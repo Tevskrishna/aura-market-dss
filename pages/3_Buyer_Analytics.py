@@ -18,7 +18,7 @@ from services.data_loader import load_catalog
 from utils.charts import PALETTE
 
 st.set_page_config(page_title="Audience Demographics", page_icon="👥", layout="wide")
-require_login()
+require_login("Buyer Intelligence")
 
 page_hero(
     kicker="AURA-Market · Lead & Audience",

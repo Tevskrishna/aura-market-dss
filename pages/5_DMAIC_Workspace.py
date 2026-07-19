@@ -16,7 +16,7 @@ from components.layout import decision_action, page_hero, require_login, section
 from services.dmaic_service import build_dmaic_snapshot
 
 st.set_page_config(page_title="DMAIC Workspace", page_icon="🧭", layout="wide")
-require_login()
+require_login("DMAIC Quality")
 
 page_hero(
     kicker="Six Sigma · DEFINE + MEASURE",

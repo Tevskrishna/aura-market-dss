@@ -19,7 +19,7 @@ from utils.charts import _style
 from utils.dmaic_charts import imr_i_chart, imr_mr_chart
 
 st.set_page_config(page_title="SPC Control Chart", page_icon="📉", layout="wide")
-require_login()
+require_login("SPC Control")
 
 page_hero(
     kicker="Phase 1 · CONTROL",

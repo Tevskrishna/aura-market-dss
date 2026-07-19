@@ -17,7 +17,7 @@ from services.marketing_service import build_marketing_insights, weekly_budget_a
 from utils.charts import marketing_efficiency_chart
 
 st.set_page_config(page_title="Marketing Intelligence", page_icon="📣", layout="wide")
-require_login()
+require_login("Marketing Intelligence")
 
 page_hero(
     kicker="MEASURE · Marketing efficiency",

@@ -18,7 +18,7 @@ from services.spc_service import forecast_linear_seasonal
 from utils.charts import _style
 
 st.set_page_config(page_title="Forecasting", page_icon="🔮", layout="wide")
-require_login()
+require_login("Demand Forecast")
 
 page_hero(
     kicker="IMPROVE · Short-horizon predictive",

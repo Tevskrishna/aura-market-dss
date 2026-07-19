@@ -22,7 +22,7 @@ from services.report_service import (
 )
 
 st.set_page_config(page_title="Executive Reports", page_icon="📄", layout="wide")
-require_login()
+require_login("Reports")
 
 page_hero(
     kicker="CONTROL · Submission pack",

@@ -23,7 +23,7 @@ from services.sigma_service import market_kpis
 from utils.dmaic_charts import ml_vs_actual_chart, stacked_sold_unsold
 
 st.set_page_config(page_title="Builder Deep Dive", page_icon="🏗️", layout="wide")
-require_login()
+require_login("Project Deep Dive")
 
 page_hero(
     kicker="Phase 1 · ANALYZE",

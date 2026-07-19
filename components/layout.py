@@ -87,7 +87,19 @@ def _running_under_pages() -> bool:
     return False
 
 
-def require_login() -> dict:
+def require_login(active_module: str | None = None) -> dict:
+    """
+    Auth gate. Pass active_module (exact MODULE_NAV label) so sidebar/hub
+    highlight the real page — critical on Streamlit Cloud deep links.
+    """
+    if active_module:
+        st.session_state["dss_nav_label"] = active_module
+        st.session_state["dss_nav_label_committed"] = active_module
+        for label, path in MODULE_NAV:
+            if label == active_module:
+                st.session_state["dss_nav_target"] = path
+                break
+
     if st.session_state.get(SESSION_AUTH_KEY) and st.session_state.get(SESSION_USER_KEY):
         inject_theme(gate=False)
         _sidebar_chrome()
@@ -256,16 +268,31 @@ def require_login() -> dict:
 
 def _current_nav_label() -> str:
     """Best-effort match of the running script to MODULE_NAV labels."""
+    committed = st.session_state.get("dss_nav_label_committed")
+    if committed and committed in {label for label, _ in MODULE_NAV}:
+        return committed
+
+    import inspect
+
+    for fr in inspect.stack():
+        fname = fr.filename.replace("\\", "/").lower()
+        for label, path in MODULE_NAV:
+            pname = Path(path).name.lower()
+            if fname.endswith("/" + pname) or fname.endswith(pname):
+                return label
+        if fname.endswith("/app.py") or fname.endswith("\\app.py"):
+            return MODULE_NAV[0][0]
+
     try:
         from streamlit.runtime.scriptrunner import get_script_run_ctx
 
         ctx = get_script_run_ctx()
-        raw = str(getattr(ctx, "main_script_path", "") or "")
-        name = Path(raw.replace("\\", "/")).name.lower()
+        raw = str(getattr(ctx, "main_script_path", "") or "").replace("\\", "/").lower()
+        name = Path(raw).name.lower()
         for label, path in MODULE_NAV:
             if Path(path).name.lower() == name:
                 return label
-            if path.replace("\\", "/").lower() in raw.replace("\\", "/").lower():
+            if path.replace("\\", "/").lower() in raw:
                 return label
     except Exception:
         pass
@@ -273,35 +300,44 @@ def _current_nav_label() -> str:
 
 
 def render_module_nav() -> None:
-    """Top-of-page module switcher — works when the sidebar cannot be opened on mobile."""
+    """Top jump list — switches ONLY when the user changes the selectbox."""
     labels = [label for label, _ in MODULE_NAV]
     path_by = dict(MODULE_NAV)
     current = _current_nav_label()
     if current not in labels:
         current = labels[0]
-    idx = labels.index(current)
+
+    if "dss_module_nav" not in st.session_state:
+        st.session_state["dss_module_nav"] = current
+    elif st.session_state.get("dss_nav_label_committed") and st.session_state[
+        "dss_module_nav"
+    ] != st.session_state["dss_nav_label_committed"]:
+        # Keep widget in sync when page was opened via sidebar tile
+        st.session_state["dss_module_nav"] = st.session_state["dss_nav_label_committed"]
 
     st.html(
         '<div class="dss-mobile-nav">'
-        '<div class="dss-mobile-nav-label">Quick jump · or use touch tiles on Hub</div>'
+        '<div class="dss-mobile-nav-label">Quick jump · tap sidebar Workspaces or change this list</div>'
         "</div>"
     )
-    choice = st.selectbox(
+
+    def _on_nav_change() -> None:
+        label = st.session_state.get("dss_module_nav")
+        if not label or label not in path_by:
+            return
+        st.session_state["dss_nav_label"] = label
+        st.session_state["dss_nav_label_committed"] = label
+        st.session_state["dss_nav_target"] = path_by[label]
+        st.switch_page(path_by[label])
+
+    st.selectbox(
         "Go to module",
         labels,
-        index=idx,
         key="dss_module_nav",
         label_visibility="collapsed",
-        help="Phone-safe jump list. Prefer graphical tiles on Executive Hub.",
+        on_change=_on_nav_change,
+        help="Change module. Prefer sidebar Workspaces or Hub tiles.",
     )
-    st.session_state["dss_nav_label"] = choice
-    target = path_by[choice]
-    prev = st.session_state.get("dss_nav_target")
-    if prev is None:
-        st.session_state["dss_nav_target"] = target
-    elif target != prev:
-        st.session_state["dss_nav_target"] = target
-        st.switch_page(target)
 
 
 def _sidebar_chrome() -> None:

@@ -22,7 +22,7 @@ from services.margin_service import build_margin_viability, evaluate_land_decisi
 from utils.charts import PALETTE, _style
 
 st.set_page_config(page_title="Competition & Land · RealEstateIQ", page_icon="🏢", layout="wide")
-require_login()
+require_login("Competition & Land")
 
 snap = build_competition_snapshot()
 margins = build_margin_viability()

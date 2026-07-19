@@ -41,7 +41,7 @@ from utils.map_charts import (
 from utils.charts import PALETTE, _style
 
 st.set_page_config(page_title="Map Intelligence · RealEstateIQ", page_icon="🗺️", layout="wide")
-require_login()
+require_login("Map Intelligence")
 
 page_hub_label("Intelligence", "Map · Where to build")
 data_honesty_banner(

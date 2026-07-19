@@ -17,7 +17,7 @@ from services.twin_service import run_twin_with_cannibalization
 from utils.dmaic_charts import twin_curves
 
 st.set_page_config(page_title="Digital Twin", page_icon="🕹️", layout="wide")
-require_login()
+require_login("Digital Twin")
 
 page_hero(
     kicker="AURA-Market · PRESCRIBE",

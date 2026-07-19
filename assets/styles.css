@@ -170,11 +170,25 @@ section[data-testid="stSidebar"] [data-testid="stSidebarNav"] a[aria-selected="t
 }
 
 section[data-testid="stSidebar"] .stButton > button {
+  background: #161b22 !important;
+  color: #e6edf3 !important;
+  border: 1px solid #30363d !important;
+  width: 100%;
+  font-weight: 650;
+  min-height: 44px !important;
+  margin-bottom: 0.25rem !important;
+}
+section[data-testid="stSidebar"] .stButton > button:hover {
+  border-color: rgba(255, 75, 75, 0.55) !important;
+  background: #1c2128 !important;
+  color: #fff !important;
+}
+section[data-testid="stSidebar"] .stButton > button[kind="primary"],
+section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"] {
   background: var(--accent) !important;
   color: #fff !important;
-  border: none !important;
-  width: 100%;
-  font-weight: 700;
+  border-color: var(--accent) !important;
+  font-weight: 800 !important;
 }
 
 .dss-brand {

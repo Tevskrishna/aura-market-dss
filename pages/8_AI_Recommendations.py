@@ -16,7 +16,7 @@ from services.twin_service import run_segmented_twin
 from utils.dmaic_charts import twin_curves
 
 st.set_page_config(page_title="AI Recommendations", page_icon="💡", layout="wide")
-require_login()
+require_login("AI Recommendations")
 
 page_hero(
     kicker="Phase 1 · IMPROVE (prescribe)",

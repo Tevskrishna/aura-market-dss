@@ -34,7 +34,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-require_login()
+require_login("Executive Hub")
 adapter = get_adapter()
 projects = adapter.projects()
 upcoming = adapter.upcoming()
