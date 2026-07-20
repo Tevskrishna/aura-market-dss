@@ -1,29 +1,29 @@
-# Copilot Design — Executive Guide
+# Copilot Design
 
-## Intent
+## Role
 
-A **quiet product guide** for executives — not a sci-fi HUD.
+Enterprise **product guide** and business assistant.  
+Not theatrical. Not a second recommendation engine.
 
-## Explicitly avoided (credibility)
+## Answers
 
-- Rotating 3D / holograms / Iron Man HUD  
-- Floating FAB pulse, radar sweeps, waveforms, particle fields  
-- Neon cyberpunk chrome  
-- Continuous or ambient audio  
+- What does this metric mean?  
+- Why is this recommendation HOLD / GO / NO-GO?  
+- What should I do next?  
+- Explain this page simply  
+- Summarize for a CEO / Sales Head  
 
-## Surfaces
+## Context
 
-1. Sidebar — Open / Close Copilot  
-2. On-page panel when open — questions, personas, answers  
-3. Standard Streamlit spinner while answering  
+Uses current module label + open Hub decision session (project, verdict, risk, ₹/sqft).
 
-## Behaviour
+## UI
 
-- Page-aware rule guide (`copilot_guide_service`)  
-- Personas: Default · CEO · Sales Head · Simple  
-- Optional one-shot sound (off by default; never looping)  
-- Does **not** issue a second GO / HOLD / NO-GO  
+Sidebar Open/Close · quiet on-page panel · personas · Streamlit spinner.  
+No FAB pulse, radar, waveforms, or particle fields.
 
-## Future
+## Honesty
 
-Grounded LLM with citations; feedback log — still no decorative theater.
+Rule/template guide for reliable demos.  
+Optional one-shot sound only if the user enables it (off by default).  
+Does not recompute Twin/DMAIC/SPC.

@@ -1,54 +1,42 @@
-# Decision Flow — RealEstateIQ
+# Decision Flow
 
-One continuous executive journey. Every step answers one business question and supports the **single** Hub launch call.
+One journey. One Hub decision. Everything else is evidence.
 
 ```
-Project Selection (Hub)
-        ↓
-Executive Decision          Should we launch this project?
-        ↓
-Market Evidence             Is market demand strong enough?
-        ↓
-Competition Evidence        Can competitors affect our launch?
-        ↓
-Buyer Evidence              Who will buy this project?
-        ↓
-Marketing Evidence          Can marketing achieve the sales target?
-        ↓
-DMAIC Validation            What is causing this business problem?
-        ↓
-Financial Validation        Is this project financially healthy?
-        ↓
-Digital Twin                What happens if strategy changes?
-        ↓
-Decision Explanation        Why did AI recommend this?
-        ↓
-SPC Confidence              Can we trust these insights?
-        ↓
-Executive Report            Board decision pack
+Project Selection
+      ↓
+Executive Hub          Should we proceed / launch at this price?
+      ↓                  (ONLY GO / HOLD / NO-GO)
+Market Intelligence    Is market demand strong enough?
+      ↓
+Competition & Land     Can competitors affect our launch?
+      ↓
+Buyer Intelligence     Who will buy this project?
+      ↓
+Marketing Intelligence Can marketing achieve the target?
+      ↓
+DMAIC                  What is causing this business problem?
+      ↓
+Project Deep Dive      Is this project financially healthy?
+      ↓
+Digital Twin           What happens if strategy changes?
+      ↓
+Decision Explanation   Why did AI reach this decision?
+      ↓
+SPC Validation         Can we trust this recommendation?
+      ↓
+Executive Report       Board paper (not a dashboard)
 ```
 
-## Progress chrome (every step)
+## Progress chrome
 
-- Current step / total  
-- Completed · remaining (pipeline dots)  
-- Estimated minutes remaining (~10 min full path)  
-- Purpose strip: Why · Question · Outcome · Supports Hub · Do next  
+- Step X of 11  
+- Completed · remaining  
+- Estimated minutes left  
+- Purpose: Why · Question · Outcome · Supports Hub · Do next  
 
 ## Rule
 
-| Location | May show GO / HOLD / NO-GO? |
-|----------|------------------------------|
-| Executive Hub | **Yes — only here** |
-| Decision Explanation | No — evidence story only |
-| All other modules | No — supporting evidence |
-| Reports | Locked reprint of Hub call |
-
-## Timeboxes
-
-| Gate | Target |
-|------|--------|
-| Understand the product | ≤ 2 min (tour) |
-| Know status | ≤ 30 s (Hub) |
-| Understand why | ≤ 3–5 min (Continue) |
-| Board pack | ≤ 10 min (Reports) |
+Final launch recommendation appears **only** on Executive Hub.  
+Reports reprint the locked Hub call.  
+Decision Explanation never invents a second verdict.

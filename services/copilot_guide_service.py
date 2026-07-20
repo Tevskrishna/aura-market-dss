@@ -26,7 +26,7 @@ MODULE_PURPOSE: dict[str, dict[str, str]] = {
     "Competition & Land": {
         "question": "Will competitors hurt us?",
         "solves": "Rival supply, RERA density, and land margin evidence for the Hub call.",
-        "next": "Continue to Buyer Intelligence.",
+        "next": "Continue to Scenario Engine.",
     },
     "Buyer Intelligence": {
         "question": "Who will buy?",
@@ -46,9 +46,9 @@ MODULE_PURPOSE: dict[str, dict[str, str]] = {
     "Project Deep Dive": {
         "question": "Is the project financially healthy?",
         "solves": "Builder / project absorption and forecast health.",
-        "next": "Continue to Digital Twin.",
+        "next": "Continue to Scenario Engine.",
     },
-    "Digital Twin": {
+    "Scenario Engine": {
         "question": "What happens if strategy changes?",
         "solves": "What-if ₹ Cr outcomes for price, rival, and intervene.",
         "next": "Continue to Decision Explanation.",
@@ -206,7 +206,7 @@ def answer_copilot(question: str, *, module: str | None = None) -> str:
     if any(x in q for x in ("demand decrease", "demand drop", "market slows", "if demand")):
         return (
             "If demand softens: check **Market** absorption and **SPC** stability, "
-            "stress price/marketing on **Digital Twin**, then return to **Hub** and re-read GO / HOLD / NO-GO. "
+            "stress price/marketing on **Scenario Engine**, then return to **Hub** and re-read GO / HOLD / NO-GO. "
             "Do not invent a second verdict on other pages."
         )
 

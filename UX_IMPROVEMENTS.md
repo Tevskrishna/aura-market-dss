@@ -1,29 +1,28 @@
-# UX Improvements — Executive Assistant Pass
+# UX Improvements — Commercial polish pass
 
-**Lens:** Clarity and trust over spectacle.  
-**Constraint:** No ML / Twin / DMAIC / SPC / calculation changes.
+## What changed
 
-## Design guardrails (do not ship)
+| Change | Why | Business value |
+|--------|-----|----------------|
+| **Today's Executive Brief** on Hub | CEOs need a 30s briefing, not a hunt | Faster IC alignment |
+| Journey shows done / remaining / ETA | Always know where you are | Reduces “which page?” anxiety |
+| Purpose strip on every step | Why / question / outcome / supports Hub / next | Coherent story |
+| Mobile: wrap pipeline, no horizontal scroll | Executives review on phones | Usable on the go |
+| Sticky brief on narrow screens | Decision stays visible while scrolling | Mobile executive review |
+| Calm Copilot (no HUD) | Credibility over spectacle | Trust |
+| Decision Explanation = why only | No second GO/HOLD | Clean decision rights |
 
-| Avoid | Why |
-|-------|-----|
-| Rotating 3D buildings / holograms | Looks like a demo toy, not IC software |
-| Iron Man / JARVIS HUD effects | Undermines enterprise credibility |
-| Constant background audio | Distracting; fails quiet offices |
-| Neon cyberpunk themes | Not how developers buy software |
-| Decorative particle overload | Noise without decision value |
+## What did **not** change
 
-## What we keep (substance)
+ML · Twin math · DMAIC · SPC · forecasting · repositories · scoring engines.
 
-| Area | Improvement |
-|------|-------------|
-| Journey | Pipeline + ETA (calm, readable) |
-| Purpose strips | Why · Question · Outcome · Supports Hub · Do next |
-| Copilot | Sidebar open + quiet on-page panel + personas |
-| Tour | Welcome → problem → start → journey → ready |
-| Sound | Optional, muted by default, one-shot only |
-| Reports | Business story framing |
+## Guardrails
 
-## Tone
+No cyberpunk, neon, radar, particles, Iron Man HUD, ambient audio, decorative 3D.
 
-Microsoft Fabric / Power BI / Bloomberg calm — not cinema UI.
+## Remaining future enhancements
+
+- Expand ⓘ help to every primary KPI  
+- Optional grounded LLM Copilot with citations  
+- CEO-only layout that hides analyst filters  
+- Live KRERA adapters when contracts allow (labelled honestly)

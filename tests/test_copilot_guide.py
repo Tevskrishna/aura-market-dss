@@ -13,7 +13,7 @@ from services.copilot_guide_service import answer_copilot
 def test_copilot_start_and_purpose():
     a = answer_copilot("Where should I start?", module="Market Intelligence")
     assert "Executive Hub" in a
-    b = answer_copilot("Summarize this page", module="Digital Twin")
+    b = answer_copilot("Summarize this page", module="Scenario Engine")
     assert "strategy" in b.lower() or "Twin" in b or "what" in b.lower()
 
 

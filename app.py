@@ -16,10 +16,11 @@ if str(ROOT) not in sys.path:
 
 from components.help_kit import HUB_HELP, help_tip
 from components.copilot_ui import action_cards, factor_bars, threat_gauge
+from components.data_contract import render_data_contract
+from components.executive_brief import render_executive_brief
 from components.executive_sheet import (
     render_executive_sheet,
     render_journey_progress,
-    render_open_project_chip,
 )
 from components.layout import require_login, section_label
 from components.states import data_honesty_banner, empty_state, page_hub_label
@@ -52,6 +53,7 @@ adapter = get_adapter()
 projects = adapter.projects()
 
 page_hub_label("RealEstateIQ", "Executive Hub")
+render_data_contract()
 data_honesty_banner()
 
 if projects.empty:
@@ -76,7 +78,7 @@ st.html(
     <div class="iq-hub-ask" role="heading" aria-level="1">
       <div class="iq-hub-ask-kicker">Executive decision · Launch call</div>
       <h1>Should we launch at this price?</h1>
-      <p>Set project and ₹/sqft. Verdict, risk, and ₹ Cr exposure update with your open decision — carried into Twin and the board pack.</p>
+      <p>Set project and ₹/sqft. Verdict, risk, and ₹ Cr exposure update with your open decision — carried into Scenario Engine and the board pack.</p>
     </div>
     """
 )
@@ -144,35 +146,29 @@ if st.session_state.get("_iq_last_ctx_sig") != _sig:
     st.session_state["_iq_last_ctx_sig"] = _sig
     safe_toast(f"Open decision locked · {verdict.verdict} · {project}")
 
-# --- Decision story (primary) — ONLY final GO/HOLD/NO-GO lives here ---
+# --- Decision story (primary) — ONE surface: Brief + EDS (no duplicate verdict bar) ---
 render_journey_progress("Executive Hub")
-st.html(
-    f"""
-    <div class="iq-hub-verdict" role="status" aria-label="Final launch recommendation">
-      <span class="iq-hub-verdict-kicker">Final recommendation · Hub only</span>
-      <strong class="iq-hub-verdict-call" style="color:{verdict.verdict_color}">{verdict.verdict}</strong>
-      <span>Risk {verdict.threat_score}/100 · Blind-spot ₹{verdict.blind_spot_loss_cr} Cr · Recovery ₹{verdict.recovery_cr} Cr</span>
-    </div>
-    """
-)
+render_executive_brief(verdict, updated_at=_ctx.get("updated_at"))
 render_executive_sheet(brief_from_launch(verdict), key="hub_eds", mode="final")
 
-h1, h2, h3 = st.columns(3)
-with h1:
-    help_tip("Launch Threat Score", key="hub_help_threat", **HUB_HELP["threat_score"])
-with h2:
-    help_tip("Blind-spot loss (₹ Cr)", key="hub_help_blind", **HUB_HELP["blind_spot"])
-with h3:
-    help_tip("Recovery (₹ Cr)", key="hub_help_rec", **HUB_HELP["recovery"])
+with st.expander("What do these metrics mean? (CEO glossary)", expanded=False):
+    h1, h2, h3 = st.columns(3)
+    with h1:
+        help_tip("Launch risk index (Threat Score)", key="hub_help_threat", **HUB_HELP["threat_score"])
+    with h2:
+        help_tip("Unmitigated rival impact (Blind-spot ₹ Cr)", key="hub_help_blind", **HUB_HELP["blind_spot"])
+    with h3:
+        help_tip("Counter-offer recovery (₹ Cr)", key="hub_help_rec", **HUB_HELP["recovery"])
 
 left, right = st.columns([1, 1.15], gap="large")
 with left:
     threat_gauge(verdict.threat_score, verdict.verdict, verdict.verdict_color)
+    st.caption("Launch risk index · 0 clear → 100 abort")
     st.html(
         f"""
         <div class="copilot-loss">
-          <div class="copilot-loss-card"><span>Blind-spot loss</span><strong>₹ {verdict.blind_spot_loss_cr}</strong><span>Cr if rival unchecked</span></div>
-          <div class="copilot-loss-card"><span>Recovery</span><strong>₹ {verdict.recovery_cr}</strong><span>Cr with intervene</span></div>
+          <div class="copilot-loss-card"><span>Unmitigated rival impact</span><strong>₹ {verdict.blind_spot_loss_cr}</strong><span>Cr if rival unchecked (directional)</span></div>
+          <div class="copilot-loss-card"><span>Counter-offer recovery</span><strong>₹ {verdict.recovery_cr}</strong><span>Cr with intervene package</span></div>
           <div class="copilot-loss-card"><span>Nearest rival</span><strong>₹ {verdict.rival_price_psf:,.0f}</strong><span>{verdict.rival_name}</span></div>
           <div class="copilot-loss-card"><span>Margin</span><strong>{verdict.margin_pct}%</strong><span>{verdict.margin_label}</span></div>
         </div>
@@ -206,7 +202,7 @@ twin = get_simulation_engine().run(
     competitor_price_psf=float(verdict.rival_price_psf),
 )
 
-with st.expander("₹ Cr money path (digital twin)", expanded=False):
+with st.expander("₹ Cr money path (scenario engine · directional)", expanded=False):
     render_dynamic_figure(
         "copilot",
         lambda: _style(
@@ -233,7 +229,7 @@ with d2:
     )
 
 with st.expander("Evidence workspaces (optional depth)", expanded=False):
-    st.caption("Use after the launch call is clear — Competition, Twin, Map, Reports.")
+    st.caption("Use after the launch call is clear — Competition, Scenario Engine, Map, Reports.")
     render_touch_hub(title="Open a workspace")
 
 st.markdown(

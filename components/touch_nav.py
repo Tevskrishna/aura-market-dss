@@ -1,10 +1,5 @@
 """
 Touch-first module navigation — graphical tiles + sidebar buttons.
-Streamlit's auto pages list is hidden; these controls are the only jump UX.
-
-IMPORTANT: never assign `st.session_state["dss_module_nav"]` AFTER the selectbox
-with that key is created in the same run — Streamlit raises StreamlitAPIException.
-Use navigate_to() which stashes a pending label for the next run instead.
 """
 from __future__ import annotations
 
@@ -13,8 +8,12 @@ from pathlib import Path
 
 import streamlit as st
 
-from components.nav_config import MODULE_NAV, NAV_SECTIONS
-from components.layout import _current_nav_label
+from components.nav_config import (
+    IC_DEMO_LABELS,
+    MODULE_NAV,
+    modules_for_mode,
+    sections_for_mode,
+)
 
 PENDING_MODULE_NAV = "_dss_pending_module_nav"
 
@@ -26,7 +25,7 @@ TOUCH_TILES: list[tuple[str, str, str, str]] = [
     ("📣", "Marketing Intelligence", "pages/4_Marketing_Intelligence.py", "Can marketing hit target?"),
     ("🔬", "DMAIC Quality", "pages/5_DMAIC_Workspace.py", "Why are problems occurring?"),
     ("🏗️", "Project Deep Dive", "pages/6_Builder_Deep_Dive.py", "Is the project healthy?"),
-    ("🕹️", "Digital Twin", "pages/7_Digital_Twin.py", "What if strategy changes?"),
+    ("📊", "Scenario Engine", "pages/7_Digital_Twin.py", "What if strategy changes?"),
     ("💡", "Decision Explanation", "pages/8_AI_Recommendations.py", "Why did Hub decide this?"),
     ("📉", "SPC Control", "pages/9_SPC_Control_Chart.py", "Can we trust this?"),
     ("🗺️", "Map Intelligence", "pages/10_Map_Decision_Support.py", "Where to build?"),
@@ -35,15 +34,17 @@ TOUCH_TILES: list[tuple[str, str, str, str]] = [
 ]
 
 
+def ic_demo_mode() -> bool:
+    return bool(st.session_state.get("iq_ic_demo_mode", True))
+
+
 def apply_pending_module_nav() -> None:
-    """Must run before selectbox(key='dss_module_nav') is instantiated."""
     pending = st.session_state.pop(PENDING_MODULE_NAV, None)
     if pending is not None:
         st.session_state["dss_module_nav"] = pending
 
 
 def navigate_to(label: str, path: str) -> None:
-    """Safe page jump — does not mutate the live selectbox widget key."""
     st.session_state["dss_nav_label"] = label
     st.session_state["dss_nav_label_committed"] = label
     st.session_state["dss_nav_target"] = path
@@ -51,15 +52,24 @@ def navigate_to(label: str, path: str) -> None:
     st.switch_page(path)
 
 
+def _current_nav_label() -> str:
+    from components.layout import _current_nav_label as _cnl
+
+    return _cnl()
+
+
 def render_touch_hub(*, title: str = "Tap a workspace") -> None:
-    """Big graphical tiles — primary phone/desktop navigation after login."""
     current = _current_nav_label()
+    ic = ic_demo_mode()
+    tiles = [t for t in TOUCH_TILES if (t[1] in IC_DEMO_LABELS) or not ic]
     st.html(
         f'<div class="iq-touch-hub-title">{html.escape(title)}</div>'
-        '<p class="iq-touch-hub-sub">Tap Open — each tile jumps to a live decision workspace</p>'
+        f'<p class="iq-touch-hub-sub">'
+        f'{"IC Demo Path — evidence that supports the Hub call" if ic else "Full Quality Lab workspaces"}'
+        f"</p>"
     )
     row: list = []
-    for item in TOUCH_TILES:
+    for item in tiles:
         row.append(item)
         if len(row) == 3:
             _tile_row(row, current)
@@ -101,12 +111,13 @@ def _tile_row(items: list[tuple[str, str, str, str]], current: str) -> None:
 
 
 def render_sidebar_touch_nav() -> None:
-    """Sidebar finger-friendly jump list grouped into decision sections."""
     st.sidebar.markdown("##### Workspaces")
     current = _current_nav_label()
-    path_by = dict(MODULE_NAV)
-    known = {label for label, _ in MODULE_NAV}
-    for section, labels in NAV_SECTIONS:
+    ic = ic_demo_mode()
+    mods = modules_for_mode(ic_demo=ic)
+    path_by = dict(mods)
+    known = {label for label, _ in mods}
+    for section, labels in sections_for_mode(ic_demo=ic):
         st.sidebar.caption(section)
         for label in labels:
             if label not in known:
@@ -122,3 +133,5 @@ def render_sidebar_touch_nav() -> None:
             )
             if clicked and not is_here:
                 navigate_to(label, path)
+    if ic:
+        st.sidebar.caption("Quality Lab pages are hidden — turn off IC Demo Mode to open them.")

@@ -69,7 +69,15 @@ render_kpi_cards(
 st.plotly_chart(stacked_sold_unsold(sub), width="stretch")
 
 section_label("Gradient Boosting — forecast vs actual")
-force = st.checkbox("Force retrain model", value=False, help="Ignore cached artifact under models/artifacts/")
+with st.expander("Model artifact controls (lab)", expanded=False):
+    st.caption("Quality Lab only — hide this in IC demos. Does not change Hub GO/HOLD scoring.")
+    force = st.checkbox(
+        "Force retrain model",
+        value=False,
+        help="Ignore cached artifact under models/artifacts/",
+        key="builder_force_retrain",
+    )
+force = bool(st.session_state.get("builder_force_retrain", False))
 pred, score, _ = fit_gb_forecast(df, force_retrain=force)
 status = gb_artifact_status()
 loaded = bool(getattr(pred, "attrs", {}).get("model_loaded_from_disk"))
@@ -96,7 +104,7 @@ else:
         f"Execute IMPROVE actions for {developer}",
         [
             "Open each at-risk expander below — run the listed actions this fortnight.",
-            "Validate material price cuts on Digital Twin before publishing ads.",
+            "Validate material price cuts on Scenario Engine before publishing ads.",
             "Track recovery on Market Overview absorption bands next review.",
         ],
         tone="warn",

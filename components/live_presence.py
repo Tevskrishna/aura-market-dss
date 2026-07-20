@@ -1,5 +1,5 @@
 """
-Live session presence — honest realtime (session decision age), not fake market feeds.
+Open session presence — honest realtime (session decision age), not fake market feeds.
 """
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ def render_live_presence() -> None:
         st.html(
             '<div class="iq-live-presence" role="status">'
             '<span class="iq-live-presence-dot" style="background:#8a9bb0"></span>'
-            "<span><strong>Live session</strong> · set project on Executive Hub — "
+            "<span><strong>Open session</strong> · set project on Executive Hub — "
             "decision context will follow you across modules</span>"
             "</div>"
         )
@@ -29,7 +29,7 @@ def render_live_presence() -> None:
     st.html(
         f'<div class="iq-live-presence" role="status" aria-live="polite">'
         f'<span class="iq-live-presence-dot" aria-hidden="true"></span>'
-        f"<span><strong>Live decision</strong> · {project} · ₹{price:,.0f}/sqft · "
+        f"<span><strong>Open decision</strong> · {project} · ₹{price:,.0f}/sqft · "
         f"Hub {verdict} · {age}</span>"
         f"</div>"
     )

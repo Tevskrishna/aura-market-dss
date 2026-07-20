@@ -160,7 +160,7 @@ elif comp_lens == "Upcoming launches":
                 [
                     f"{high} upcoming launch(es) sit within ~5% of ₹{my_price:,.0f}/sqft — revise price or differentiate now.",
                     "Cross-check UC unsold and land margin before advertising.",
-                    "Simulate the rival case on Digital Twin before locking brochure pricing.",
+                    "Simulate the rival case on Scenario Engine before locking brochure pricing.",
                 ],
                 tone="warn",
             )
@@ -181,8 +181,11 @@ elif comp_lens == "UC unsold":
 elif comp_lens == "Land prices":
     st.write("Raw land cost indices — foundation for margin arbitrage.")
     st.dataframe(snap.land, width="stretch", hide_index=True)
-    section_label("Land decision sheet")
-    st.caption("BUY / HOLD / PASS on land basis + upcoming/UC pressure — same margin math as Margins lens.")
+    section_label("Land diligence sheet")
+    st.caption(
+        "Land diligence uses Proceed / Caution / Walk — not Hub GO/HOLD/NO-GO. "
+        "Same margin math as Margins lens · seed land indices."
+    )
     mm_opts = snap.land["micro_market"].astype(str).tolist() if not snap.land.empty else [settings.MICRO_MARKET_DEFAULT]
     lc1, lc2 = st.columns([2, 1])
     with lc1:
@@ -190,9 +193,12 @@ elif comp_lens == "Land prices":
     with lc2:
         land_exit = st.number_input("Assumed exit ₹/sqft", 5000, 20000, 9000, 100, key="land_decision_exit")
     land_dec = evaluate_land_decision(micro_market=str(land_mm), assumed_sale_psf=float(land_exit))
+    from components.nav_config import LAND_DILIGENCE_LABEL
+
+    diligence = LAND_DILIGENCE_LABEL.get(land_dec.verdict, land_dec.verdict)
     render_kpi_cards(
         [
-            {"label": "Verdict", "value": land_dec.verdict, "format": "str"},
+            {"label": "Diligence", "value": diligence, "format": "str"},
             {"label": "Margin", "value": land_dec.margin_pct, "format": "pct"},
             {"label": "Land ₹/sqft", "value": land_dec.land_price_psf, "format": "int"},
             {"label": "UC unsold", "value": land_dec.uc_unsold_nearby, "format": "int"},

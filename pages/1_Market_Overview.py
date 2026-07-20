@@ -121,10 +121,10 @@ with a2:
 
         navigate_to("Project Deep Dive", "pages/6_Builder_Deep_Dive.py")
 with a3:
-    if st.button("→ Open Digital Twin", width="stretch", key="mkt_go_twin"):
+    if st.button("→ Open Scenario Engine", width="stretch", key="mkt_go_twin"):
         from components.touch_nav import navigate_to
 
-        navigate_to("Digital Twin", "pages/7_Digital_Twin.py")
+        navigate_to("Scenario Engine", "pages/7_Digital_Twin.py")
 
 section_label("Interactive market graphics — change lens to redraw")
 graphic_html("trend-pulse.svg", "dss-graphic")

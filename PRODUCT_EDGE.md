@@ -1,43 +1,37 @@
-# Product edge — what is actually different (honest)
+# Product edge — honest differentiators
 
-Do **not** claim “nobody in the world has built this” — that is not credible.  
-Do claim a **rare combination for Indian mid-market developer launch decisions**.
+RealEstateIQ is an **AI-powered Executive Decision Support System** for developer launch / land calls (Bagaluru micro-market demo).
 
-## What most tools are
+It is **not** a chart museum, not a student showcase, and not a cinema UI.
 
-| Tool type | Typical gap |
-|-----------|-------------|
-| Power BI / Excel packs | Many charts, no single GO/HOLD |
-| CRM | Leads, not launch threat in ₹ Cr |
-| Proptech listing sites | Inventory marketing, not IC decision |
-| Generic AI chat | Opinions without your twin / DMAIC / SPC stack |
-| College Streamlit demos | Chart museums, no guided decision OS |
+## Real strengths (demonstrate these)
 
-## What RealEstateIQ is (real differentiator)
+| Strength | Business value |
+|----------|----------------|
+| Single executive decision workflow | One question: should we proceed? |
+| Evidence-driven journey | Every module supports the Hub call |
+| Integrated Digital Twin | ₹ Cr what-ifs before brochure print *(directional / simulated rates — honesty banner)* |
+| DMAIC inside the executive path | Unsold framed as a measurable defect |
+| SPC confidence validation | Trust the series before scaling spend |
+| Board-ready reporting | Pack locked to today’s Hub verdict |
+| Context-aware Copilot | Quiet product guide — not a second GO/HOLD |
+| Mobile executive review | Phone-readable journey + sticky brief |
 
-1. **One question OS** — “Should we launch at this price?”  
-2. **One final call** — GO / HOLD / NO-GO only on Executive Hub  
-3. **Evidence journey** — Market → Competition → Buyer → Marketing → DMAIC → Project → Twin → Explanation → SPC → Board pack  
-4. **Same open decision in session** — project + ₹/sqft + verdict travel with you (live session context)  
-5. **Rupee language** — blind-spot / recovery ₹ Cr from the twin (directional, honesty banners on)  
-6. **Quality + trust** — DMAIC + SPC in the same path as the commercial call  
-7. **Board close** — pack locked to today’s Hub call  
+## What we do **not** claim
 
-That bundle for **Bagaluru / Aerospace Highway developer IC demos** is uncommon.  
-It is **not** live KRERA, not a native iOS app, not a city-wide digital twin.
+| Claim | Reality |
+|-------|---------|
+| Live KRERA / government feeds | Seed / curated tables unless `AURA_LIVE_*` configured |
+| Native iOS/Android app | Responsive Streamlit web |
+| City-wide digital twin | Project-level NumPy scenario engine |
+| “Nobody has built this before” | Rare *bundle* for mid-market IC demos — not a monopoly on existence |
 
-## “Realtime” — what we mean (truthful)
+## Competitive contrast
 
-| Real | Not claimed |
-|------|-------------|
-| Hub levers update verdict in-session immediately | Live government RERA stream |
-| Open decision age (“Updated just now”) | Sub-second market data bus |
-| Context follows you on every page | Multi-user collaborative editing |
-| Mobile layout transforms for phone share | Native App Store product |
+Power BI / Excel → many charts, no single GO/HOLD.  
+CRM → leads, not launch threat in ₹ Cr.  
+Generic AI chat → opinions without your twin / DMAIC / SPC stack.
 
-## Mobile share
+## Tone
 
-Use the Cloud URL on your phone browser.  
-Hamburger ☰ → Workspaces / Copilot.  
-Continue → moves the journey.  
-After each Git push: Streamlit Cloud → **Reboot app**.
+Microsoft Fabric · Power BI · Salesforce · Bloomberg · ArcGIS — calm, trustworthy, guided.

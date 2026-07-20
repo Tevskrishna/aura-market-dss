@@ -50,7 +50,7 @@ HUB_HELP = {
         "what": "A 0–100 Launch Threat Score fusing competition pressure, inventory, twin ₹ Cr exposure, and margin viability.",
         "why": "Gives leadership one number instead of debating five conflicting reports.",
         "how": "Higher = more launch risk. Colour bands map to GO / HOLD / NO-GO on the Hub only.",
-        "action": "If high, open Competition and Digital Twin before printing brochures.",
+        "action": "If high, open Competition and Scenario Engine before printing brochures.",
     },
     "blind_spot": {
         "what": "Estimated ₹ Cr revenue at risk if a rival launches and you do not intervene.",
@@ -61,7 +61,7 @@ HUB_HELP = {
     "recovery": {
         "what": "Estimated ₹ Cr you can claw back with the intervene package (cut / subvention / timing).",
         "why": "Shows whether action is worth the commercial cost.",
-        "how": "Same twin engine as Hub and Digital Twin — illustrative.",
+        "how": "Same engine as Hub and Scenario Engine — illustrative / directional.",
         "action": "Lock intervene month and cut % before marketing spend scales.",
     },
 }

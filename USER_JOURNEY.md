@@ -1,29 +1,26 @@
-# User Journey — RealEstateIQ
+# User Journey
 
-## First open
+## First open (≤ 2 minutes)
 
 1. Sign in  
-2. **Welcome tour** (skip / replay) — purpose, problem, start, ~10 min journey  
-3. Land on **Executive Hub**  
+2. Optional product tour (skip / replay)  
+3. **Executive Hub** — Today's Executive Brief + GO/HOLD/NO-GO  
 
-## Guided path
+## Decision journey
 
 See [`DECISION_FLOW.md`](DECISION_FLOW.md).
 
-## Always available
-
-- **Open Copilot** (sidebar) → floating assistant panel  
-- Ask: what / why risk / summarize / next / CEO or Sales lens  
-- Open project chip (project selected once on Hub)  
-- Optional UI sounds (off by default)  
-
-## Persona moments
+## Personas
 
 | Role | First success |
 |------|----------------|
-| CEO | Hub GO/HOLD in 30s |
-| Sales | Buyer + competition evidence |
-| Marketing | ROI / allocator evidence |
-| Land | Competition & Land diligence |
-| Investor | SPC + Reports pack |
-| First-timer | Tour + Copilot “Where do I start?” |
+| CEO | Brief + Hub call in 30s |
+| Sales Head | Buyer + competition evidence |
+| Marketing | ROI / allocation evidence |
+| Developer / IC | Twin ₹ Cr + Reports pack |
+| First-time user | Tour + purpose strips + Copilot “Where next?” |
+| Professor | Honesty banners + DMAIC/SPC in one path |
+
+## Always available
+
+Menu (☰) · Workspaces · Quiet Copilot · Replay tour · Live session strip  

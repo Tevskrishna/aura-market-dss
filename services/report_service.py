@@ -199,10 +199,26 @@ def build_executive_markdown(
         "",
         "> Before launching or repricing in Bagaluru, review RERA crowding, upcoming ads, "
         "under-construction unsold stock, land cost, SMC ROI quartiles, and buyer/channel mix — "
-        "then validate interventions in Digital Twin and MONITOR via SPC.",
+        "then validate interventions in Scenario Engine and MONITOR via SPC.",
+        "",
+        "## 8. Assumptions & data lineage (board provenance)",
+        "",
+        "| Layer | Source | Status |",
+        "|---|---|---|",
+        f"| Bookings / SMC | Tenant CSV / measured | {adapter.mode} |",
+        "| Competition / land | Seed catalog (or AURA_LIVE_* if set) | Curated / seed unless live URL |",
+        "| Scenario ₹ Cr | NumPy scenario engine | Simulated · directional |",
+        "| Map suitability | Heuristic zone scores | Illustrative (Quality Lab) |",
+        "| Hub Section 0 | Session-locked LaunchVerdict | Same math as Executive Hub |",
+        "",
+        "**Assumptions (speak in IC):**",
+        "- Rival timing and cut % are stress levers chosen on Hub — not market facts.",
+        "- Land Proceed / Caution / Walk is diligence language — not the Hub GO / HOLD / NO-GO.",
+        "- Blind-spot and recovery ₹ Cr are directional scenario outputs, not audited P&L.",
+        "- Micro-market scope: Bagaluru Aerospace Highway pilot — not city-wide PropStack.",
         "",
         "---",
-        f"*{settings.APP_TITLE} · submission-ready build*",
+        f"*{settings.APP_TITLE} · board pack with provenance*",
     ]
     return "\n".join(lines)
 

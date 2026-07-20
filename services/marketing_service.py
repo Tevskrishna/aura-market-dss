@@ -68,9 +68,9 @@ def project_roi_frame(efficiency: pd.DataFrame) -> pd.DataFrame:
     out["verdict"] = out["quartile"].map(
         {
             "Q1-High": "Boost / scale",
-            "Q2": "Hold",
+            "Q2": "Hold mix",
             "Q3": "Review mix",
-            "Q4-Low": "Cut / reallocate",
+            "Q4-Low": "Budget action",
             "Mid": "Monitor",
         }
     ).fillna("Monitor")

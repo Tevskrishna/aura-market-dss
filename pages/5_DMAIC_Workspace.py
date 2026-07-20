@@ -87,10 +87,10 @@ decision_action(
     "Close the DMAIC loop this sprint",
     [
         "Take top Pareto projects into Decision Explanation (evidence only — Hub owns GO/HOLD).",
-        "Run Digital Twin interventions (price / subvention) on the largest unsold pile.",
+        "Run Scenario Engine interventions (price / subvention) on the largest unsold pile.",
         "Move CONTROL ownership to SPC — review OOC signals monthly.",
     ],
     tone="action",
 )
 
-st.caption("Next in the story: Project Deep Dive · Digital Twin · Decision Explanation · SPC · Reports.")
+st.caption("Next in the story: Project Deep Dive · Scenario Engine · Decision Explanation · SPC · Reports.")

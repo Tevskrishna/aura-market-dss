@@ -403,9 +403,12 @@ def require_login(active_module: str | None = None) -> dict:
                 st.error("Invalid credentials.")
         if st.session_state.pop("_login_notice", None):
             st.info("Sign in once here — module links stay locked until you enter the Hub.")
-        st.html(
-            '<div class="dss-login-creds">Demo · <b>admin / admin123</b> &nbsp;·&nbsp; <b>demo / demo123</b></div>'
-        )
+        with st.expander("Demo credentials (internal / Streamlit Cloud only)", expanded=False):
+            st.caption(
+                "Customer demos: use a provisioned account — do not flash default passwords on screen. "
+                "SSO / IdP is the production story."
+            )
+            st.code("admin / admin123\ndemo / demo123", language=None)
     st.stop()
     return {}
 
@@ -445,12 +448,14 @@ def _current_nav_label() -> str:
 
 def render_module_nav() -> None:
     """Top jump list — switches ONLY when the user changes the selectbox."""
-    from components.touch_nav import apply_pending_module_nav
+    from components.nav_config import modules_for_mode
+    from components.touch_nav import apply_pending_module_nav, ic_demo_mode
 
     apply_pending_module_nav()
 
-    labels = [label for label, _ in MODULE_NAV]
-    path_by = dict(MODULE_NAV)
+    mods = modules_for_mode(ic_demo=ic_demo_mode())
+    labels = [label for label, _ in mods]
+    path_by = dict(mods)
     current = _current_nav_label()
     if current not in labels:
         current = labels[0]
@@ -460,8 +465,8 @@ def render_module_nav() -> None:
     elif st.session_state.get("dss_nav_label_committed") and st.session_state[
         "dss_module_nav"
     ] != st.session_state["dss_nav_label_committed"]:
-        # Keep widget in sync when page was opened via sidebar / tile (pre-widget only)
-        st.session_state["dss_module_nav"] = st.session_state["dss_nav_label_committed"]
+        if st.session_state["dss_nav_label_committed"] in labels:
+            st.session_state["dss_module_nav"] = st.session_state["dss_nav_label_committed"]
 
     st.html(
         '<div class="dss-mobile-nav">'
@@ -484,7 +489,7 @@ def render_module_nav() -> None:
         key="dss_module_nav",
         label_visibility="collapsed",
         on_change=_on_nav_change,
-        help="Change module. Prefer sidebar Workspaces or Hub tiles.",
+        help="IC Demo Mode shows the decision path only.",
     )
 
 
@@ -508,7 +513,13 @@ def _sidebar_chrome() -> None:
         "Board Mode",
         value=bool(st.session_state.get("iq_board_mode", False)),
         key="iq_board_mode",
-        help="Presentation density — larger type, quieter chrome for IC / interview demos.",
+        help="Presentation density — larger type, quieter chrome for IC demos.",
+    )
+    st.sidebar.toggle(
+        "IC Demo Mode",
+        value=bool(st.session_state.get("iq_ic_demo_mode", True)),
+        key="iq_ic_demo_mode",
+        help="On: Hub → Market → Competition → Scenario → Explanation → Reports. Off: full Quality Lab.",
     )
     if board:
         st.html(

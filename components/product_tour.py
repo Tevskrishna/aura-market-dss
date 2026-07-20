@@ -37,12 +37,12 @@ TOUR_STEPS: list[dict[str, str]] = [
         "outcome": "≈ 30 seconds to know project status.",
     },
     {
-        "title": "The journey (~10 minutes)",
+        "title": "The IC demo journey (~6 minutes)",
         "body": (
-            "Continue through Market → Competition → Buyer → Marketing → DMAIC → Project → "
-            "Twin → Decision Explanation → SPC → Reports. Open the floating AI Copilot anytime."
+            "With IC Demo Mode on (default): Hub → Market → Competition → Scenario Engine → "
+            "Decision Explanation → Reports. Turn IC Demo Mode off in the sidebar for the full Quality Lab."
         ),
-        "outcome": "≈ 3–5 minutes to understand why; ≈ 10 minutes to a board pack.",
+        "outcome": "≈ 5–7 minutes to a board pack with one locked Hub call.",
     },
     {
         "title": "You are ready",

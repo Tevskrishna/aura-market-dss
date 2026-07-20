@@ -77,7 +77,7 @@ if slope < 0:
     decision_action(
         "Near-term outlook is softening",
         [
-            "Pull Digital Twin interventions forward before the next launch quarter.",
+            "Pull Scenario Engine interventions forward before the next launch quarter.",
             "Reallocate SMC from low-ROI names (Marketing Intelligence) into campaigns that can still book this horizon.",
             "Hold aggressive launch pricing until Competition Intelligence threat is Low/Medium.",
         ],

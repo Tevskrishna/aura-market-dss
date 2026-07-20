@@ -8,7 +8,7 @@ mapping = {
     "pages/4_Marketing_Intelligence.py": "Marketing Intelligence",
     "pages/5_DMAIC_Workspace.py": "DMAIC Quality",
     "pages/6_Builder_Deep_Dive.py": "Project Deep Dive",
-    "pages/7_Digital_Twin.py": "Digital Twin",
+    "pages/7_Digital_Twin.py": "Scenario Engine",
     "pages/8_AI_Recommendations.py": "AI Recommendations",
     "pages/9_SPC_Control_Chart.py": "SPC Control",
     "pages/10_Map_Decision_Support.py": "Map Intelligence",

@@ -18,36 +18,56 @@ DECISION_JOURNEY: list[JourneyStep] = [
     JourneyStep("Marketing Intelligence", "pages/4_Marketing_Intelligence.py", "Can marketing hit the target?"),
     JourneyStep("DMAIC Quality", "pages/5_DMAIC_Workspace.py", "Why are problems occurring?"),
     JourneyStep("Project Deep Dive", "pages/6_Builder_Deep_Dive.py", "Is the project financially healthy?"),
-    JourneyStep("Digital Twin", "pages/7_Digital_Twin.py", "What if strategy changes?"),
+    JourneyStep("Scenario Engine", "pages/7_Digital_Twin.py", "What if strategy changes?"),
     JourneyStep("Decision Explanation", "pages/8_AI_Recommendations.py", "Why did the Hub decide this?"),
     JourneyStep("SPC Control", "pages/9_SPC_Control_Chart.py", "Can we trust this decision?"),
     JourneyStep("Reports", "pages/11_Executive_Reports.py", "Board decision pack"),
 ]
 
 
+def active_journey() -> list[JourneyStep]:
+    """IC Demo Mode uses the short spine; Quality Lab uses the full Continue chain."""
+    try:
+        import streamlit as st
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+        from components.nav_config import IC_DEMO_LABELS
+
+        # Bare pytest / scripts have no ScriptRunContext — keep full spine for unit tests
+        if get_script_run_ctx() is None:
+            return list(DECISION_JOURNEY)
+        if bool(st.session_state.get("iq_ic_demo_mode", True)):
+            return [s for s in DECISION_JOURNEY if s.label in IC_DEMO_LABELS]
+    except Exception:
+        pass
+    return list(DECISION_JOURNEY)
+
+
 def journey_index(module_label: str) -> int:
-    labels = [s.label for s in DECISION_JOURNEY]
+    labels = [s.label for s in active_journey()]
     return labels.index(module_label) if module_label in labels else -1
 
 
 def next_after(module_label: str) -> JourneyStep | None:
-    labels = [s.label for s in DECISION_JOURNEY]
+    steps = active_journey()
+    labels = [s.label for s in steps]
     if module_label not in labels:
-        return DECISION_JOURNEY[1]
+        return steps[1] if len(steps) > 1 else None
     i = labels.index(module_label)
-    if i + 1 >= len(DECISION_JOURNEY):
+    if i + 1 >= len(steps):
         return None
-    return DECISION_JOURNEY[i + 1]
+    return steps[i + 1]
 
 
 def prev_before(module_label: str) -> JourneyStep | None:
-    labels = [s.label for s in DECISION_JOURNEY]
+    steps = active_journey()
+    labels = [s.label for s in steps]
     if module_label not in labels:
         return None
     i = labels.index(module_label)
     if i <= 0:
         return None
-    return DECISION_JOURNEY[i - 1]
+    return steps[i - 1]
 
 
 def _risk_from_verdict(verdict: str, score: int | None = None) -> str:
@@ -94,9 +114,12 @@ def brief_from_launch(v: LaunchVerdict) -> DecisionBrief:
 
 
 def brief_from_land(d: LandDecision) -> DecisionBrief:
+    from components.nav_config import LAND_DILIGENCE_LABEL
+
+    diligence = LAND_DILIGENCE_LABEL.get(d.verdict, d.verdict)
     return DecisionBrief(
         module="Competition & Land",
-        executive_summary=f"{d.verdict} · {d.micro_market} — {d.headline}",
+        executive_summary=f"Land diligence · {diligence} · {d.micro_market} — {d.headline}",
         key_insights=[
             f"Land ₹{d.land_price_psf:,.0f}/sqft · exit ₹{d.assumed_sale_psf:,.0f}/sqft",
             f"Implied margin {d.margin_pct}% ({d.viability})",
@@ -104,18 +127,21 @@ def brief_from_land(d: LandDecision) -> DecisionBrief:
         ],
         business_impact=(
             f"Loaded land ₹{d.loaded_land_psf:,.0f}/sqft + build ₹{d.construction_cost_psf:,.0f}/sqft "
-            f"must clear target margin before LOI."
+            f"must clear target margin before LOI. Land diligence — not the Hub launch call."
         ),
-        ai_recommendation=d.headline,
+        ai_recommendation=f"Land diligence: {diligence}. {d.headline}",
         risk_level=_risk_from_verdict(d.verdict),
         risk_score={"BUY": 25, "HOLD": 55, "PASS": 85}.get(d.verdict, 50),
         suggested_actions=list(d.actions[:5]),
-        financial_impact_label="Margin at assumed exit (%)",
+        financial_impact_label="Implied margin (%)",
         financial_impact_cr=float(d.margin_pct),
         confidence="Seed land indices + local competition density",
-        drivers=[f"Viability: {d.viability}", f"Verdict: {d.verdict}"],
+        drivers=[f"Diligence: {diligence}", f"Viability: {d.viability}"],
         next_step=next_after("Competition & Land"),
-        honesty_notes=["Land prices are catalog indices, not a live title opinion. Land BUY/HOLD/PASS supports — does not replace — the Hub launch call."],
+        honesty_notes=[
+            "Land prices are catalog indices, not a live title opinion. "
+            "Proceed / Caution / Walk supports — does not replace — the Hub launch call."
+        ],
     )
 
 
@@ -141,9 +167,9 @@ def brief_from_market(*, absorption_pct: float, at_risk: int, dpmo: float, unsol
         suggested_actions=[
             "Focus at-risk inventory in this workspace, then open Decision Explanation.",
             "Benchmark sold-out projects on Project Deep Dive before repricing.",
-            "Pressure-test rival launch on Digital Twin before print.",
+            "Pressure-test rival launch on Scenario Engine before print.",
         ],
-        financial_impact_label="Unsold units (inventory risk)",
+        financial_impact_label="Unsold units (count)",
         financial_impact_cr=float(unsold),
         confidence="Validated project catalog",
         next_step=next_after("Market Intelligence"),
@@ -164,16 +190,17 @@ def brief_from_twin(
     else:
         risk = "LOW"
     return DecisionBrief(
-        module="Digital Twin",
+        module="Scenario Engine",
         executive_summary=(
             f"{project}: rival scenario loss ≈ ₹{cannibal_loss_cr} Cr; "
             f"intervention recovery ≈ ₹{recovery_cr} Cr."
         ),
         key_insights=[
-            f"Blind-spot loss ₹{cannibal_loss_cr} Cr" + (" (rival on)" if enable_rival else " (rival off)"),
-            f"Recovery vs rival ₹{recovery_cr} Cr with cut/subvention package",
+            f"Unmitigated rival impact ₹{cannibal_loss_cr} Cr"
+            + (" (rival on)" if enable_rival else " (rival off)"),
+            f"Counter-offer recovery ₹{recovery_cr} Cr with cut/subvention package",
         ],
-        business_impact="Twin translates competition into rupees before brochure money is spent.",
+        business_impact="Scenario engine translates competition into directional ₹ Cr before brochure spend.",
         ai_recommendation=(
             "If recovery << loss, HOLD launch and deepen price/amenity intervene; else proceed with MONITOR."
             if cannibal_loss_cr > recovery_cr
@@ -183,13 +210,13 @@ def brief_from_twin(
         risk_score=min(int(cannibal_loss_cr * 3), 100),
         suggested_actions=[
             "Lock winning intervene month + cut % before marketing spends.",
-            "Export board pack with twin figures attached.",
-            "Return to Executive Hub and recompute Launch Threat Score.",
+            "Export board pack with scenario figures attached.",
+            "Return to Executive Hub and recompute Launch risk index.",
         ],
-        financial_impact_label="Blind-spot loss (₹ Cr)",
+        financial_impact_label="Unmitigated rival impact (₹ Cr)",
         financial_impact_cr=float(cannibal_loss_cr),
-        confidence="NumPy twin (seed rates) — directional IC input",
-        next_step=next_after("Digital Twin"),
+        confidence="NumPy scenario engine (seed rates) — directional IC input",
+        next_step=next_after("Scenario Engine"),
     )
 
 
@@ -231,13 +258,13 @@ def brief_from_marketing(*, total_spend_cr: float, avg_roi: float, cut_n: int) -
         risk, rec = "LOW", "Hold mix — scale High quartile carefully."
     return DecisionBrief(
         module="Marketing Intelligence",
-        executive_summary=f"SMC ₹{total_spend_cr:.2f} Cr · avg ROI {avg_roi:.2f} · {cut_n} cut candidates",
+        executive_summary=f"SMC ₹{total_spend_cr:.2f} Cr · avg ROI {avg_roi:.2f} · {cut_n} budget actions",
         key_insights=[
             f"Total spend ₹{total_spend_cr:.2f} Cr",
             f"Average ROI score {avg_roi:.2f}",
-            f"{cut_n} projects tagged Cut / reallocate",
+            f"{cut_n} projects tagged Budget action (bottom quartile)",
         ],
-        business_impact="Blind SMC spend competes with price/construction capital — ROI quartile decides who keeps budget.",
+        business_impact="Blind SMC spend competes with price/construction capital — ROI quartile decides who keeps budget. Budget action ≠ Hub GO/HOLD.",
         ai_recommendation=rec,
         risk_level=risk,
         risk_score=min(cut_n * 15 + int((1 - min(avg_roi, 1)) * 40), 100),
@@ -340,15 +367,15 @@ def brief_from_builder(*, developer: str, at_risk: int, absorption_pct: float) -
             "GB forecast artifact loads from disk when available",
         ],
         business_impact="Brand-level risk concentrates capital — act project-by-project, not with blanket cuts.",
-        ai_recommendation="Open each at-risk expander and validate material cuts on Digital Twin.",
+        ai_recommendation="Open each at-risk expander and validate material cuts on Scenario Engine.",
         risk_level="HIGH" if at_risk >= 2 else ("MEDIUM" if at_risk else "LOW"),
         risk_score=min(at_risk * 25, 100),
         suggested_actions=[
             "Review at-risk expanders for evidence levers (not a new verdict).",
             "Compare ML gap vs actual absorption.",
-            "Continue to Digital Twin, then Decision Explanation.",
+            "Continue to Scenario Engine, then Decision Explanation.",
         ],
-        financial_impact_label="At-risk projects",
+        financial_impact_label="At-risk projects (count)",
         financial_impact_cr=float(at_risk),
         confidence="Catalog + GB artifact",
         next_step=next_after("Project Deep Dive"),
@@ -371,10 +398,10 @@ def brief_from_spc(*, ooc: int, series_label: str) -> DecisionBrief:
         risk_score=min(ooc * 20, 100),
         suggested_actions=[
             "Document special causes for each OOC point.",
-            "Align intervene with Digital Twin package.",
+            "Align intervene with Scenario Engine package.",
             "Cross-check Forecasting horizon for the same series.",
         ],
-        financial_impact_label="OOC signals",
+        financial_impact_label="OOC signals (count)",
         financial_impact_cr=float(ooc),
         confidence="I-MR · d2=1.128",
         next_step=next_after("SPC Control"),

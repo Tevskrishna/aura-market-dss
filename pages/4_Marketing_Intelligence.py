@@ -45,7 +45,7 @@ if insights.by_quarter.empty and insights.roi.empty:
     st.stop()
 
 avg_roi = float(insights.roi["roi_score"].mean()) if not insights.roi.empty else 0.0
-cut_n = int((insights.roi["verdict"] == "Cut / reallocate").sum()) if not insights.roi.empty else 0
+cut_n = int((insights.roi["verdict"] == "Budget action").sum()) if not insights.roi.empty else 0
 
 render_journey_progress("Marketing Intelligence")
 render_open_project_chip()
@@ -65,7 +65,7 @@ render_kpi_cards(
         {"label": "Total SMC spend", "value": insights.total_spend_cr, "format": "cr"},
         {"label": "Projects tracked", "value": len(insights.by_project), "format": "int"},
         {"label": "Avg ROI score", "value": round(avg_roi, 2), "format": "float"},
-        {"label": "Cut candidates", "value": cut_n, "format": "int", "help": "Bottom-quartile ROI"},
+        {"label": "Budget actions", "value": cut_n, "format": "int", "help": "Bottom-quartile ROI — not a Hub launch verdict"},
     ],
 )
 

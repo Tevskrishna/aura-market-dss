@@ -16,7 +16,11 @@ import streamlit as st
 
 from components.kpi_cards import render_kpi_cards
 from models.decision import DecisionBrief, JourneyStep
-from services.decision_brief_service import DECISION_JOURNEY, journey_index, prev_before
+from services.decision_brief_service import (
+    active_journey,
+    journey_index,
+    prev_before,
+)
 from services.decision_context import format_relative_age, get_decision_context
 
 SheetMode = Literal["final", "evidence", "why", "board"]
@@ -64,23 +68,25 @@ def render_open_project_chip() -> None:
 
 def render_journey_progress(module_label: str) -> None:
     """Step X of N — current / done / remaining + ETA + purpose strip."""
-    from components.journey_meta import JOURNEY_ETA_MIN, PAGE_PURPOSE
+    from components.journey_meta import JOURNEY_ETA_IC, JOURNEY_ETA_MIN, PAGE_PURPOSE
 
+    journey = active_journey()
     idx = journey_index(module_label)
-    total = len(DECISION_JOURNEY)
+    total = len(journey)
     if idx < 0:
         st.caption("Evidence workspace · return to the guided journey via Continue on Hub.")
         return
 
     step = idx + 1
     pct = int(100 * step / total)
-    eta = JOURNEY_ETA_MIN.get(module_label, max(1, total - idx))
+    eta_map = JOURNEY_ETA_IC if total <= 7 else JOURNEY_ETA_MIN
+    eta = eta_map.get(module_label, max(1, total - idx))
     purpose = PAGE_PURPOSE.get(module_label, {})
-    question = purpose.get("question") or DECISION_JOURNEY[idx].reason
+    question = purpose.get("question") or journey[idx].reason
     why = purpose.get("why", "")
     outcome = purpose.get("outcome", "")
     supports = purpose.get("supports", "")
-    nxt = DECISION_JOURNEY[idx + 1] if idx + 1 < total else None
+    nxt = journey[idx + 1] if idx + 1 < total else None
     next_hint = (
         f"Next: Continue → {nxt.label}"
         if nxt
@@ -89,7 +95,7 @@ def render_journey_progress(module_label: str) -> None:
 
     # Pipeline dots: done / current / remaining
     dots = []
-    for i, s in enumerate(DECISION_JOURNEY):
+    for i, s in enumerate(journey):
         short = html.escape(s.label.split()[0])
         if i < idx:
             cls = "iq-pipe-done"
@@ -106,6 +112,9 @@ def render_journey_progress(module_label: str) -> None:
             f'<span class="iq-pipe-lab">{short}</span></div>'
         )
 
+    # Compact progress line (avoids horizontal scroll on phones)
+    done_n = idx
+    rem_n = total - step
     st.html(
         f'<div class="iq-purpose" role="note" aria-label="Page purpose">'
         f'<div class="iq-purpose-row"><span class="iq-purpose-label">Why here</span>'
@@ -122,9 +131,12 @@ def render_journey_progress(module_label: str) -> None:
         f'<div class="iq-journey-progress" role="navigation" aria-label="Decision journey">'
         f'<div class="iq-journey-progress-top">'
         f"<strong>Step {step} of {total}</strong>"
-        f'<span>~{eta} min remaining · {html.escape(module_label)}</span></div>'
+        f'<span>~{eta} min left · {done_n} done · {rem_n} remaining</span></div>'
         f'<div class="iq-journey-track"><div class="iq-journey-fill" style="width:{pct}%"></div></div>'
-        f'<div class="iq-pipe" aria-hidden="true">{"".join(dots)}</div>'
+        f'<div class="iq-pipe iq-pipe-wrap" aria-hidden="true">{"".join(dots)}</div>'
+        f'<div class="iq-journey-compact">'
+        f"{html.escape(module_label)} · {html.escape(next_hint)}"
+        f"</div>"
         f"</div>"
     )
 
@@ -231,8 +243,11 @@ def render_executive_sheet(
 
 
 def _render_journey_nav(brief: DecisionBrief, *, key: str) -> None:
+    from services.decision_brief_service import next_after
+
     prev = prev_before(brief.module)
-    nxt = brief.next_step
+    # Prefer live IC/full spine over brief snapshot (mode can change mid-session)
+    nxt = next_after(brief.module) or brief.next_step
     c1, c2 = st.columns(2)
     with c1:
         if prev:

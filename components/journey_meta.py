@@ -13,9 +13,19 @@ JOURNEY_ETA_MIN: dict[str, int] = {
     "Marketing Intelligence": 6,
     "DMAIC Quality": 5,
     "Project Deep Dive": 4,
-    "Digital Twin": 3,
+    "Scenario Engine": 3,
     "Decision Explanation": 2,
     "SPC Control": 1,
+    "Reports": 1,
+}
+
+# IC Demo Mode spine (~6 steps · 5–7 min walkthrough)
+JOURNEY_ETA_IC: dict[str, int] = {
+    "Executive Hub": 6,
+    "Market Intelligence": 5,
+    "Competition & Land": 4,
+    "Scenario Engine": 3,
+    "Decision Explanation": 2,
     "Reports": 1,
 }
 
@@ -63,7 +73,7 @@ PAGE_PURPOSE: dict[str, dict[str, str]] = {
         "outcome": "Absorption, forecast, and at-risk project evidence.",
         "supports": "Financial validation under the Hub call.",
     },
-    "Digital Twin": {
+    "Scenario Engine": {
         "why": "Strategy changes must be priced in ₹ Cr before print.",
         "question": "What happens if strategy changes?",
         "outcome": "What-if revenue, blind-spot, and recovery paths.",

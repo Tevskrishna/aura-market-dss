@@ -24,28 +24,22 @@
     line-height: 1.25 !important;
   }
 
-  /* Journey: scrollable pipeline, larger dots */
+  /* Journey: wrap — no horizontal scroll */
   .iq-pipe {
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.35rem;
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
     justify-content: flex-start !important;
-    gap: 0.45rem !important;
+    gap: 0.35rem 0.4rem !important;
   }
   .iq-pipe-step {
-    min-width: 2.75rem !important;
+    min-width: 2.4rem !important;
     flex: 0 0 auto !important;
   }
-  .iq-pipe-dot {
-    width: 1.55rem !important;
-    height: 1.55rem !important;
-    font-size: 0.7rem !important;
-  }
   .iq-pipe-lab {
+    display: none !important;
+  }
+  .iq-journey-compact {
     display: block !important;
-    font-size: 0.62rem !important;
-    max-width: 3.4rem !important;
   }
 
   /* EDS: single column story */

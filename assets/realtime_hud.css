@@ -514,7 +514,150 @@ div[data-testid="stPlotlyChart"] {
   font-size: 0.9rem;
 }
 
-/* Purpose strip — why / question / outcome / supports Hub */
+/* Today's Executive Brief — Fabric/Bloomberg calm */
+.iq-exec-brief {
+  margin: 0.35rem 0 0.85rem;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 22, 34, 0.96);
+}
+.iq-exec-brief-kicker {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a9bb0;
+  margin-bottom: 0.65rem;
+}
+.iq-exec-brief-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem 0.85rem;
+}
+.iq-exec-brief-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.iq-exec-brief-cell span {
+  font-size: 0.7rem;
+  color: #8a9bb0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.iq-exec-brief-cell strong {
+  color: #f2f6fb;
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  word-break: break-word;
+}
+.iq-exec-brief-wide {
+  grid-column: span 2;
+}
+.iq-exec-brief-verdict {
+  font-family: "Exo 2", sans-serif;
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+}
+
+/* Data contract — Hub trust strip */
+.iq-data-contract {
+  margin: 0 0 0.85rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(61, 224, 208, 0.22);
+  background: linear-gradient(135deg, rgba(14, 28, 40, 0.95), rgba(18, 24, 36, 0.92));
+}
+.iq-data-contract-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3de0d0;
+  margin-bottom: 0.55rem;
+}
+.iq-data-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+.iq-data-contract-grid div {
+  padding: 0.45rem 0.5rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.iq-data-contract-grid span {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8a9bb0;
+  margin-bottom: 0.2rem;
+}
+.iq-data-contract-grid strong {
+  display: block;
+  font-size: 0.84rem;
+  color: #e8eef6;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.iq-data-contract p {
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  color: #9aabbc;
+  line-height: 1.4;
+}
+.iq-data-contract code {
+  font-size: 0.72rem;
+  color: #3de0d0;
+}
+@media (max-width: 900px) {
+  .iq-data-contract-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .iq-data-contract-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.iq-journey-compact {
+  display: none;
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: #8a9bb0;
+}
+.iq-pipe-wrap {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .iq-exec-brief-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .iq-exec-brief-wide {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .iq-exec-brief-grid {
+    grid-template-columns: 1fr;
+  }
+  .iq-exec-brief-wide {
+    grid-column: span 1;
+  }
+  .iq-exec-brief {
+    position: sticky;
+    top: 2.75rem;
+    z-index: 35;
+  }
+}
+
+/* Purpose strip — why this page exists */
 .iq-purpose {
   margin: 0.25rem 0 0.65rem;
   padding: 0.7rem 0.85rem;

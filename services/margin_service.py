@@ -157,7 +157,7 @@ def evaluate_land_decision(
         headline = "Margin is thin or supply pressure is elevated — diligence only, no hard bid yet."
         actions = [
             "Complete Competition density check (upcoming + UC unsold) before earnest money.",
-            f"Stress-test exit at ₹{int(sale * 0.95):,}/sqft on Digital Twin / Co-pilot.",
+            f"Stress-test exit at ₹{int(sale * 0.95):,}/sqft on Scenario Engine / Hub.",
             "Cap marketing pre-launch until absorption proof on comparable inventory.",
         ]
     else:

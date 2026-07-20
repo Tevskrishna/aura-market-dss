@@ -118,7 +118,10 @@ render_open_project_chip()
 render_executive_sheet(brief, key="report_eds", mode="board")
 
 section_label("Journey evidence snapshot (for the pack)")
-st.caption("Summary figures for the board pack — not a new launch recommendation.")
+st.caption(
+    "Summary figures for the board pack — not a new launch recommendation. "
+    "Pack includes Section 0 (Hub lock) + Section 8 assumptions & data lineage."
+)
 render_kpi_cards(
     [
         {"label": "Absorption", "value": dmaic.kpis["absorption_pct"], "format": "pct"},

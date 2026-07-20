@@ -1,4 +1,4 @@
-"""Digital Twin — continue Hub decision; NumPy scenario engine (honest)."""
+"""Scenario Engine — continue Hub decision; NumPy scenario engine (honest)."""
 from __future__ import annotations
 
 import sys
@@ -25,8 +25,8 @@ from services.simulation_engine import get_simulation_engine
 from services.twin_service import TWIN_PRESET_NAMES, twin_preset_params
 from utils.dmaic_charts import twin_curves
 
-st.set_page_config(page_title="Digital Twin", page_icon="🕹️", layout="wide")
-require_login("Digital Twin")
+st.set_page_config(page_title="Scenario Engine", page_icon="🕹️", layout="wide")
+require_login("Scenario Engine")
 
 ctx = get_decision_context()
 PENDING_PRESET = "_pending_twin_preset"
@@ -67,8 +67,8 @@ if "_twin_ctx_seeded" not in st.session_state and ctx:
 
 page_hero(
     kicker="What happens if strategy changes?",
-    title="Digital Twin",
-    subtitle="What-if ₹ Cr outcomes for price, rival launch, and intervene — stress-test the Hub call.",
+    title="Scenario Engine",
+    subtitle="Scenario engine (directional ₹ Cr) — price, rival, intervene. Not a city-scale digital twin.",
     compact=True,
 )
 
@@ -177,7 +177,7 @@ result = get_simulation_engine().run(
     competitor_price_psf=float(rival_price) if enable_rival else None,
 )
 
-render_journey_progress("Digital Twin")
+render_journey_progress("Scenario Engine")
 render_open_project_chip()
 render_executive_sheet(
     brief_from_twin(
