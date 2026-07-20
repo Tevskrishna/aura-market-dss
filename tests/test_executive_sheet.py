@@ -31,9 +31,9 @@ def test_journey_chain():
 
 
 def test_ic_demo_spine_labels():
-    from components.nav_config import IC_DEMO_LABELS
+    from services.decision_brief_service import IC_DEMO_JOURNEY_LABELS
 
-    ic = [s.label for s in DECISION_JOURNEY if s.label in IC_DEMO_LABELS]
+    ic = [s.label for s in DECISION_JOURNEY if s.label in IC_DEMO_JOURNEY_LABELS]
     assert ic == [
         "Executive Hub",
         "Market Intelligence",
@@ -42,8 +42,8 @@ def test_ic_demo_spine_labels():
         "Decision Explanation",
         "Reports",
     ]
-    assert "Scenario Engine" in IC_DEMO_LABELS
-    assert "SPC Control" not in IC_DEMO_LABELS
+    assert "Scenario Engine" in IC_DEMO_JOURNEY_LABELS
+    assert "SPC Control" not in IC_DEMO_JOURNEY_LABELS
 
 
 def test_brief_from_launch_maps_verdict():
@@ -58,7 +58,7 @@ def test_brief_from_launch_maps_verdict():
 
 
 def test_brief_from_land():
-    from components.nav_config import LAND_DILIGENCE_LABEL
+    from services.decision_brief_service import LAND_DILIGENCE_LABEL
 
     d = evaluate_land_decision(assumed_sale_psf=9000)
     brief = brief_from_land(d)

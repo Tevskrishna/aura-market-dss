@@ -15,12 +15,7 @@ from typing import Literal
 import streamlit as st
 
 from components.kpi_cards import render_kpi_cards
-from models.decision import DecisionBrief, JourneyStep
-from services.decision_brief_service import (
-    active_journey,
-    journey_index,
-    prev_before,
-)
+from models.decision import DecisionBrief
 from services.decision_context import format_relative_age, get_decision_context
 
 SheetMode = Literal["final", "evidence", "why", "board"]
@@ -69,6 +64,7 @@ def render_open_project_chip() -> None:
 def render_journey_progress(module_label: str) -> None:
     """Step X of N — current / done / remaining + ETA + purpose strip."""
     from components.journey_meta import JOURNEY_ETA_IC, JOURNEY_ETA_MIN, PAGE_PURPOSE
+    from services.decision_brief_service import active_journey, journey_index
 
     journey = active_journey()
     idx = journey_index(module_label)
@@ -243,7 +239,7 @@ def render_executive_sheet(
 
 
 def _render_journey_nav(brief: DecisionBrief, *, key: str) -> None:
-    from services.decision_brief_service import next_after
+    from services.decision_brief_service import next_after, prev_before
 
     prev = prev_before(brief.module)
     # Prefer live IC/full spine over brief snapshot (mode can change mid-session)

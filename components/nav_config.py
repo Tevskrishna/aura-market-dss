@@ -70,6 +70,7 @@ def sections_for_mode(*, ic_demo: bool) -> list[tuple[str, list[str]]]:
 
 
 # Land diligence display — never reuse Hub GO/HOLD/NO-GO words
+# Keep in sync with services.decision_brief_service.LAND_DILIGENCE_LABEL
 LAND_DILIGENCE_LABEL = {
     "BUY": "Proceed",
     "HOLD": "Caution",

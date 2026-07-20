@@ -24,20 +24,36 @@ DECISION_JOURNEY: list[JourneyStep] = [
     JourneyStep("Reports", "pages/11_Executive_Reports.py", "Board decision pack"),
 ]
 
+# Keep labels here (not components.*) so services never import UI modules at runtime
+IC_DEMO_JOURNEY_LABELS: frozenset[str] = frozenset(
+    {
+        "Executive Hub",
+        "Market Intelligence",
+        "Competition & Land",
+        "Scenario Engine",
+        "Decision Explanation",
+        "Reports",
+    }
+)
+
 
 def active_journey() -> list[JourneyStep]:
     """IC Demo Mode uses the short spine; Quality Lab uses the full Continue chain."""
     try:
         import streamlit as st
-        from streamlit.runtime.scriptrunner import get_script_run_ctx
 
-        from components.nav_config import IC_DEMO_LABELS
+        try:
+            from streamlit.runtime.scriptrunner import get_script_run_ctx
+        except ImportError:
+            from streamlit.runtime.scriptrunner_utils.script_run_context import (  # type: ignore
+                get_script_run_ctx,
+            )
 
         # Bare pytest / scripts have no ScriptRunContext — keep full spine for unit tests
         if get_script_run_ctx() is None:
             return list(DECISION_JOURNEY)
         if bool(st.session_state.get("iq_ic_demo_mode", True)):
-            return [s for s in DECISION_JOURNEY if s.label in IC_DEMO_LABELS]
+            return [s for s in DECISION_JOURNEY if s.label in IC_DEMO_JOURNEY_LABELS]
     except Exception:
         pass
     return list(DECISION_JOURNEY)
@@ -113,9 +129,14 @@ def brief_from_launch(v: LaunchVerdict) -> DecisionBrief:
     )
 
 
-def brief_from_land(d: LandDecision) -> DecisionBrief:
-    from components.nav_config import LAND_DILIGENCE_LABEL
+LAND_DILIGENCE_LABEL = {
+    "BUY": "Proceed",
+    "HOLD": "Caution",
+    "PASS": "Walk",
+}
 
+
+def brief_from_land(d: LandDecision) -> DecisionBrief:
     diligence = LAND_DILIGENCE_LABEL.get(d.verdict, d.verdict)
     return DecisionBrief(
         module="Competition & Land",
