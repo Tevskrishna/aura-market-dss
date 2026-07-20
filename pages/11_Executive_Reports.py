@@ -12,7 +12,11 @@ sys.path.insert(0, str(ROOT))
 from dataclasses import replace
 
 from components.filters import render_global_filters
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.kpi_cards import render_kpi_cards
 from components.layout import page_hero, require_login, section_label
 from services.competition_service import build_competition_snapshot
@@ -38,9 +42,9 @@ st.set_page_config(page_title="Executive Reports", page_icon="📄", layout="wid
 require_login("Reports")
 
 page_hero(
-    kicker="BOARD · Decision pack",
+    kicker="Executive decision pack",
     title="Executive Reports",
-    subtitle="One-click board pack — Section 0 matches today’s Hub verdict.",
+    subtitle="The business story closes here — not another dashboard. Board pack locked to the Hub call.",
     compact=True,
 )
 
@@ -109,9 +113,12 @@ if has_decision_context():
 else:
     st.caption(f"Using catalog defaults — open Executive Hub to lock today’s call. ({age})")
 
-render_executive_sheet(brief, key="report_eds")
+render_journey_progress("Reports")
+render_open_project_chip()
+render_executive_sheet(brief, key="report_eds", mode="board")
 
-section_label("Brief scorecard")
+section_label("Journey evidence snapshot (for the pack)")
+st.caption("Summary figures for the board pack — not a new launch recommendation.")
 render_kpi_cards(
     [
         {"label": "Absorption", "value": dmaic.kpis["absorption_pct"], "format": "pct"},
@@ -122,8 +129,22 @@ render_kpi_cards(
     ],
 )
 
-section_label("Preview")
+section_label("Board pack preview — the business story")
+st.caption(
+    "Structure: Executive summary → Problem → Evidence → Simulation → Recommendation (Hub) → Action plan → Next steps."
+)
 st.markdown(md)
+
+st.success(
+    "Journey complete — download the pack below. "
+    "Section 0 matches today’s Executive Hub GO / HOLD / NO-GO."
+)
+try:
+    from components.ai_copilot import maybe_play_success_chime
+
+    maybe_play_success_chime("ok")
+except Exception:
+    pass
 
 c1, c2 = st.columns(2)
 c3, c4 = st.columns(2)

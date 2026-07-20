@@ -418,20 +418,257 @@ div[data-testid="stPlotlyChart"] {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Skeleton — composed arrival */
-.iq-skeleton {
+/* Guided Decision OS — progress + open project */
+.iq-open-project {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.85rem;
+  align-items: baseline;
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.8rem;
   border-radius: 8px;
-  min-height: 4.5rem;
-  margin: 0.5rem 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.03) 100%
-  );
-  background-size: 200% 100%;
-  animation: iq-shimmer 1.2s ease-in-out infinite;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 192, 72, 0.28);
+  background: rgba(255, 138, 26, 0.06);
+}
+.iq-open-project-kicker {
+  font-family: "Exo 2", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffc048;
+}
+.iq-open-project strong { color: #fff; font-size: 1rem; }
+.iq-open-project span { color: #8a9bb0; font-size: 0.85rem; }
+
+.iq-journey-progress {
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(61, 224, 208, 0.22);
+  background: rgba(12, 18, 28, 0.65);
+}
+.iq-journey-progress-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.88rem;
+}
+.iq-journey-progress-top strong { color: #3de0d0; font-family: "Exo 2", sans-serif; }
+.iq-journey-progress-top span { color: #c5d0dc; }
+.iq-journey-track {
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.iq-journey-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #3de0d0, #ffc048);
+}
+.iq-journey-hint {
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  color: #8a9bb0;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.iq-eds-evidence .iq-eds-ai,
+.iq-eds-why .iq-eds-ai,
+.iq-eds-board .iq-eds-ai {
+  border-color: rgba(61, 224, 208, 0.2) !important;
+}
+.iq-eds-final .iq-eds-ai {
+  border-color: rgba(255, 192, 72, 0.35) !important;
+}
+
+.iq-hub-verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.65rem 1.1rem;
+  margin: 0.35rem 0 0.85rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(18, 28, 42, 0.95), rgba(12, 40, 48, 0.9));
+  border: 1px solid rgba(61, 224, 208, 0.35);
+}
+.iq-hub-verdict-kicker {
+  width: 100%;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a9bb0;
+}
+.iq-hub-verdict-call {
+  font-family: "Exo 2", sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.4rem);
+  line-height: 1.1;
+}
+.iq-hub-verdict span:last-child {
+  color: #c5d0dc;
+  font-size: 0.9rem;
+}
+
+/* Purpose strip — why / question / outcome / supports Hub */
+.iq-purpose {
+  margin: 0.25rem 0 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 22, 34, 0.9);
+}
+.iq-purpose-row {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 0.4rem 0.75rem;
+  margin: 0.22rem 0;
+  font-size: 0.86rem;
+  color: #c5d0dc;
+}
+.iq-purpose-label {
+  color: #8a9bb0;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding-top: 0.15rem;
+}
+.iq-purpose-q strong {
+  font-family: "Exo 2", sans-serif;
+  color: #fff;
+  font-size: 1.02rem;
+}
+.iq-purpose-next span:last-child { color: #3de0d0; }
+
+/* Journey pipeline */
+.iq-pipe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.2rem;
+  margin-top: 0.55rem;
+  justify-content: space-between;
+}
+.iq-pipe-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.4rem;
+  flex: 1;
+  opacity: 0.55;
+}
+.iq-pipe-dot {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.25);
+  color: #8a9bb0;
+}
+.iq-pipe-lab {
+  font-size: 0.58rem;
+  color: #8a9bb0;
+  margin-top: 0.2rem;
+  text-align: center;
+  max-width: 3.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.iq-pipe-done { opacity: 0.9; }
+.iq-pipe-done .iq-pipe-dot {
+  background: rgba(61, 214, 140, 0.2);
+  border-color: #3dd68c;
+  color: #3dd68c;
+}
+.iq-pipe-now { opacity: 1; }
+.iq-pipe-now .iq-pipe-dot {
+  background: rgba(61, 224, 208, 0.18);
+  border-color: #3de0d0;
+  color: #fff;
+}
+.iq-pipe-todo .iq-pipe-dot { opacity: 0.7; }
+
+/* Copilot — quiet enterprise panel (no HUD / FAB / radar) */
+.iq-copilot-panel {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 22, 34, 0.92);
+}
+.iq-copilot-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.iq-copilot-title {
+  font-family: "Exo 2", sans-serif;
+  font-weight: 700;
+  color: #fff;
+  font-size: 1rem;
+}
+.iq-copilot-sub { font-size: 0.78rem; color: #8a9bb0; }
+
+.iq-tour {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 1rem;
+  padding: 1rem 1.15rem 1.05rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(14, 22, 34, 0.94);
+}
+.iq-tour-kicker {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a9bb0;
+  margin-bottom: 0.35rem;
+}
+.iq-tour-title {
+  margin: 0 0 0.45rem;
+  font-family: "Exo 2", sans-serif;
+  font-size: 1.3rem;
+  color: #fff;
+}
+.iq-tour-body {
+  margin: 0 0 0.65rem;
+  color: #c5d0dc;
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
+.iq-tour-outcome {
+  margin: 0 0 0.75rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #e8eef6;
+  font-size: 0.88rem;
+}
+.iq-tour-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.iq-tour-fill {
+  height: 100%;
+  background: #3de0d0;
+  transition: width 0.25s ease;
+}
+
+@media (max-width: 720px) {
+  .iq-purpose-row { grid-template-columns: 1fr; }
+  .iq-pipe-lab { display: none; }
 }
 
 @keyframes iq-shimmer {

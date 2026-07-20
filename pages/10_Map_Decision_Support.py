@@ -13,7 +13,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import decision_action, page_hero, require_login, section_label
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.states import data_honesty_banner, page_hub_label
 from components.viz_studio import (
     generate_button,
@@ -65,6 +69,8 @@ page_hero(
 zones = scored_zones()
 kpis = map_home_kpis(zones)
 
+render_journey_progress("Map Intelligence")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_map(
         top_zone=str(kpis["ai_top_pick"]),
@@ -72,6 +78,7 @@ render_executive_sheet(
         areas=int(kpis["areas_covered"]),
     ),
     key="map_eds",
+    mode="evidence",
 )
 
 live_kpi_strip(

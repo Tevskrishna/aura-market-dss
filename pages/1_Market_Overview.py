@@ -10,7 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.layout import page_hero, require_login, section_label
 from components.states import empty_state, error_state
 from components.viz_studio import generate_button, graphic_html, live_kpi_strip, render_dynamic_figure, scenario_bar
@@ -26,9 +30,9 @@ require_login("Market Intelligence")
 
 report = get_validation_report()
 page_hero(
-    kicker="MEASURE · Market",
+    kicker="Should we launch?",
     title="Market Intelligence",
-    subtitle="Confirm demand health before the launch call — KPI lenses update the graphic live.",
+    subtitle="Is demand healthy? Absorption, inventory, and at-risk supply — evidence for the Hub call.",
     compact=True,
 )
 
@@ -52,6 +56,8 @@ if projects.empty:
     )
     st.stop()
 
+render_journey_progress("Market Intelligence")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_market(
         absorption_pct=float(sk["absorption_pct"]),
@@ -60,6 +66,7 @@ render_executive_sheet(
         unsold=int(sk["units_unsold"]),
     ),
     key="mkt_eds",
+    mode="evidence",
 )
 
 section_label("Six Sigma scorecard — tap to focus")
@@ -104,10 +111,10 @@ else:
 
 a1, a2, a3 = st.columns(3)
 with a1:
-    if st.button("→ Open AI Recommendations", width="stretch", key="mkt_go_recs"):
+    if st.button("→ Decision Explanation", width="stretch", key="mkt_go_recs"):
         from components.touch_nav import navigate_to
 
-        navigate_to("AI Recommendations", "pages/8_AI_Recommendations.py")
+        navigate_to("Decision Explanation", "pages/8_AI_Recommendations.py")
 with a2:
     if st.button("→ Open Builder Deep Dive", width="stretch", key="mkt_go_builder"):
         from components.touch_nav import navigate_to

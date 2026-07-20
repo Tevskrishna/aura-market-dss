@@ -12,7 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import decision_action, page_hero, require_login, section_label
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
 from services.decision_brief_service import brief_from_spc
@@ -24,10 +28,10 @@ st.set_page_config(page_title="SPC Control Chart", page_icon="📉", layout="wid
 require_login("SPC Control")
 
 page_hero(
-    kicker="Phase 1 · CONTROL",
-    title="SPC Control Chart (I-MR)",
-    subtitle="Six Sigma I-MR · d2=1.128 · Western Electric runs · 6-month forecast with confidence bands.",
-    chips=[("OOC >3σ", "ok"), ("Runs rules", ""), ("Forecast", "")],
+    kicker="Can we trust this decision?",
+    title="SPC Control",
+    subtitle="Statistical stability of demand velocity — why executives can trust (or question) the Hub call.",
+    compact=True,
 )
 
 proj = get_adapter().projects()
@@ -48,9 +52,12 @@ if not result["ok"]:
 series_label = "Market total"
 if scope == "Single project":
     series_label = str(p)
+render_journey_progress("SPC Control")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_spc(ooc=len(result.get("ooc") or []), series_label=series_label),
     key="spc_eds",
+    mode="evidence",
 )
 
 section_label("I-Chart")

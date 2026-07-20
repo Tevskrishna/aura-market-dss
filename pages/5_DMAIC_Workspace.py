@@ -11,7 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.decision_brief_service import brief_from_dmaic
@@ -21,15 +25,17 @@ st.set_page_config(page_title="DMAIC Workspace", page_icon="🧭", layout="wide"
 require_login("DMAIC Quality")
 
 page_hero(
-    kicker="Six Sigma · DEFINE + MEASURE",
-    title="DMAIC Workspace",
-    subtitle="Frame the unsold-inventory defect, CTQs, Pareto of unsold stock, and at-risk projects. ANALYZE/IMPROVE deepen next.",
-    chips=[("DEFINE", "ok"), ("MEASURE", "ok"), ("ANALYZE next", "warn")],
+    kicker="Why are problems occurring?",
+    title="DMAIC Quality",
+    subtitle="Define the unsold defect and measure root causes — operational evidence for the Hub call.",
+    compact=True,
 )
 
 filters = render_global_filters("dmaic")
 snap = build_dmaic_snapshot(filters)
 
+render_journey_progress("DMAIC Quality")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_dmaic(
         absorption_pct=float(snap.kpis["absorption_pct"]),
@@ -37,6 +43,7 @@ render_executive_sheet(
         unsold=int(snap.kpis["unsold_units"]),
     ),
     key="dmaic_eds",
+    mode="evidence",
 )
 
 section_label("Problem statement (DEFINE)")
@@ -79,11 +86,11 @@ st.dataframe(snap.at_risk, width="stretch", hide_index=True)
 decision_action(
     "Close the DMAIC loop this sprint",
     [
-        "Attack the top Pareto unsold projects with IMPROVE actions on AI Recommendations.",
+        "Take top Pareto projects into Decision Explanation (evidence only — Hub owns GO/HOLD).",
         "Run Digital Twin interventions (price / subvention) on the largest unsold pile.",
         "Move CONTROL ownership to SPC — review OOC signals monthly.",
     ],
     tone="action",
 )
 
-st.caption("ANALYZE/IMPROVE surfaces: Builder Deep Dive · Digital Twin · AI Recommendations · SPC.")
+st.caption("Next in the story: Project Deep Dive · Digital Twin · Decision Explanation · SPC · Reports.")

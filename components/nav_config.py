@@ -14,7 +14,7 @@ MODULE_NAV: list[tuple[str, str]] = [
     ("DMAIC Quality", "pages/5_DMAIC_Workspace.py"),
     ("Project Deep Dive", "pages/6_Builder_Deep_Dive.py"),
     ("Digital Twin", "pages/7_Digital_Twin.py"),
-    ("AI Recommendations", "pages/8_AI_Recommendations.py"),
+    ("Decision Explanation", "pages/8_AI_Recommendations.py"),
     ("SPC Control", "pages/9_SPC_Control_Chart.py"),
     ("Map Intelligence", "pages/10_Map_Decision_Support.py"),
     ("Reports", "pages/11_Executive_Reports.py"),
@@ -23,9 +23,9 @@ MODULE_NAV: list[tuple[str, str]] = [
 
 # Sidebar IA — ≤7 sections, same 13 routes (CEO Morning Loop)
 NAV_SECTIONS: list[tuple[str, list[str]]] = [
-    ("Executive Decision", ["Executive Hub", "Reports"]),
+    ("Executive Decision", ["Executive Hub", "Decision Explanation", "Reports"]),
     ("Market & Land", ["Market Intelligence", "Competition & Land", "Map Intelligence"]),
     ("Customers & Growth", ["Buyer Intelligence", "Marketing Intelligence"]),
-    ("Simulate & Act", ["Digital Twin", "AI Recommendations", "Demand Forecast"]),
+    ("Simulate", ["Digital Twin", "Demand Forecast"]),
     ("Quality Evidence", ["DMAIC Quality", "Project Deep Dive", "SPC Control"]),
 ]

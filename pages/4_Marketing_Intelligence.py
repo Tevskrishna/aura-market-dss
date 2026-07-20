@@ -11,7 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.states import empty_state
@@ -23,9 +27,9 @@ st.set_page_config(page_title="Marketing Intelligence", page_icon="📣", layout
 require_login("Marketing Intelligence")
 
 page_hero(
-    kicker="MEASURE · Marketing",
+    kicker="Can marketing hit the target?",
     title="Marketing Intelligence",
-    subtitle="Where the next ₹ Cr of SMC should go — ROI quartiles and weekly allocator.",
+    subtitle="SMC spend, ROI, and allocation — whether marketing can support the Hub commercial plan.",
     compact=True,
 )
 
@@ -43,6 +47,8 @@ if insights.by_quarter.empty and insights.roi.empty:
 avg_roi = float(insights.roi["roi_score"].mean()) if not insights.roi.empty else 0.0
 cut_n = int((insights.roi["verdict"] == "Cut / reallocate").sum()) if not insights.roi.empty else 0
 
+render_journey_progress("Marketing Intelligence")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_marketing(
         total_spend_cr=float(insights.total_spend_cr),
@@ -50,6 +56,7 @@ render_executive_sheet(
         cut_n=int(cut_n),
     ),
     key="mktg_eds",
+    mode="evidence",
 )
 
 section_label("Spend scorecard")

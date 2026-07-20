@@ -10,7 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_builder
@@ -28,10 +32,10 @@ st.set_page_config(page_title="Builder Deep Dive", page_icon="🏗️", layout="
 require_login("Project Deep Dive")
 
 page_hero(
-    kicker="Phase 1 · ANALYZE",
-    title="Builder Deep Dive",
-    subtitle="Per-developer KPIs, sold vs unsold stack, Gradient Boosting absorption forecast, and at-risk root causes.",
-    chips=[("ML forecast", "ok"), ("Defect probability", ""), ("Root causes", "")],
+    kicker="Is the project financially healthy?",
+    title="Project Deep Dive",
+    subtitle="Absorption, inventory, and forecast health for the builder — evidence under the Hub call.",
+    compact=True,
 )
 
 df = get_adapter().projects()
@@ -40,6 +44,8 @@ sub = df[df["developer"] == developer].copy()
 k = market_kpis(sub)
 at_risk_n = int((sub["absorption_pct"] < 85).sum())
 
+render_journey_progress("Project Deep Dive")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_builder(
         developer=str(developer),
@@ -47,6 +53,7 @@ render_executive_sheet(
         absorption_pct=float(k["absorption_pct"]),
     ),
     key="builder_eds",
+    mode="evidence",
 )
 
 section_label(f"{developer} scorecard")
@@ -100,6 +107,6 @@ else:
             st.write("**Root causes:**")
             for c in root_causes(row):
                 st.write(f"- {c}")
-            st.write("**Developer actions:**")
+            st.write("**Evidence levers (support Hub — not a new verdict):**")
             for rec in recommendations_for_row(row, sold_out)[:3]:
                 st.write(f"- **{rec['action']}** — {rec['detail']} (est. recoverable {rec['recoverable_units']} units)")

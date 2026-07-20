@@ -1,31 +1,36 @@
 # AURA-Market — Launch Decision Co-pilot
 
-**Product (not a 12-page dashboard):** answer one real-world question —
+**Product:** RealEstateIQ — AI-powered **Developer Decision Support System** for Bagaluru launch / land calls.  
+Not a chart museum. One guided decision journey.
 
-> Can I launch / reprice at ₹X/sqft in Bagaluru this month?
+> **Should we launch / reprice at ₹X/sqft this month?** → `GO` · `HOLD` · `NO-GO`
 
-**Verdict:** `GO` · `HOLD` · `NO-GO` with a proprietary **Launch Threat Score (0–100)** that fuses:
+Honest edge (what is rare vs what we do **not** claim): [`PRODUCT_EDGE.md`](PRODUCT_EDGE.md)
 
-- Rival / upcoming price pressure  
-- Under-construction unsold stock  
-- Digital-twin blind-spot ₹ Cr loss + intervention recovery  
-- Developer margin viability  
-- SMC ROI tip + Map zone tip  
+## Problem we solve
 
-Depth modules (Competition, Map, Twin, Reports…) stay available under **Modules**.
+Developers stitch Sales, Marketing, Finance, CRM, RERA PDFs, Excel, and meetings. Reports conflict.  
+RealEstateIQ gives **one Hub recommendation**; every other module is **evidence**.
 
-## Live demo
+Narrative: [`docs/WORKING_PROCESS.md`](docs/WORKING_PROCESS.md) · Flow: [`DECISION_FLOW.md`](DECISION_FLOW.md)
 
-https://aura-market-dss.streamlit.app  
+## Share on phone (mobile)
 
-Login: `admin` / `admin123`
+1. Open **https://aura-market-dss.streamlit.app** in Chrome / Safari on your phone.  
+2. Login: `admin` / `admin123` (or `demo` / `demo123`).  
+3. Tap **☰** (top-left orange) for Workspaces, Copilot, tour replay.  
+4. On Hub: set project + ₹/sqft → read GO/HOLD/NO-GO.  
+5. Use **Continue →** — layout stacks for narrow screens; journey pipeline scrolls sideways.  
+6. Sticky footer shows current module; live strip shows open decision freshness.
 
-After each push: Streamlit Cloud → **⋯ → Reboot app**.
+After every GitHub push: Streamlit Cloud → **⋯ → Reboot app** so the phone sees the latest UI.
 
-## Why this is different
+## Working process
 
-Indian mid-market teams have CRMs, Excel absorption, and ad hoc RERA checks.  
-They do **not** have a single launch OS that converts competition blind spot → rupee exposure → three actions before brochure print.
+```
+Hub → Market → Competition → Buyer → Marketing → DMAIC → Project
+  → Twin → Decision Explanation → SPC → Reports
+```
 
 ## Local run
 
@@ -34,6 +39,8 @@ cd C:\Users\Admin\Projects\bagaluru-analytics-dss
 python -m pip install -r requirements.txt
 python -m streamlit run app.py
 ```
+
+On the same Wi‑Fi, phone can open `http://<your-PC-LAN-IP>:8501` while Streamlit is running.
 
 ## Repo
 

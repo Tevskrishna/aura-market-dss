@@ -14,8 +14,13 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from components.help_kit import HUB_HELP, help_tip
 from components.copilot_ui import action_cards, factor_bars, threat_gauge
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.layout import require_login, section_label
 from components.states import data_honesty_banner, empty_state, page_hub_label
 from components.touch_nav import render_touch_hub
@@ -139,8 +144,26 @@ if st.session_state.get("_iq_last_ctx_sig") != _sig:
     st.session_state["_iq_last_ctx_sig"] = _sig
     safe_toast(f"Open decision locked · {verdict.verdict} · {project}")
 
-# --- Decision story (primary) ---
-render_executive_sheet(brief_from_launch(verdict), key="hub_eds")
+# --- Decision story (primary) — ONLY final GO/HOLD/NO-GO lives here ---
+render_journey_progress("Executive Hub")
+st.html(
+    f"""
+    <div class="iq-hub-verdict" role="status" aria-label="Final launch recommendation">
+      <span class="iq-hub-verdict-kicker">Final recommendation · Hub only</span>
+      <strong class="iq-hub-verdict-call" style="color:{verdict.verdict_color}">{verdict.verdict}</strong>
+      <span>Risk {verdict.threat_score}/100 · Blind-spot ₹{verdict.blind_spot_loss_cr} Cr · Recovery ₹{verdict.recovery_cr} Cr</span>
+    </div>
+    """
+)
+render_executive_sheet(brief_from_launch(verdict), key="hub_eds", mode="final")
+
+h1, h2, h3 = st.columns(3)
+with h1:
+    help_tip("Launch Threat Score", key="hub_help_threat", **HUB_HELP["threat_score"])
+with h2:
+    help_tip("Blind-spot loss (₹ Cr)", key="hub_help_blind", **HUB_HELP["blind_spot"])
+with h3:
+    help_tip("Recovery (₹ Cr)", key="hub_help_rec", **HUB_HELP["recovery"])
 
 left, right = st.columns([1, 1.15], gap="large")
 with left:
@@ -183,7 +206,7 @@ twin = get_simulation_engine().run(
     competitor_price_psf=float(verdict.rival_price_psf),
 )
 
-with st.expander("₹ Cr money path (digital twin)", expanded=True):
+with st.expander("₹ Cr money path (digital twin)", expanded=False):
     render_dynamic_figure(
         "copilot",
         lambda: _style(

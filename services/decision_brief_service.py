@@ -9,27 +9,45 @@ from services.launch_copilot_service import LaunchVerdict
 from services.margin_service import LandDecision
 
 
-# CEO journey — Hub guides user forward (Product Team rule)
+# Guided Decision OS spine — one Continue chain (product experience)
 DECISION_JOURNEY: list[JourneyStep] = [
-    JourneyStep("Executive Hub", "app.py", "Frame the launch call"),
-    JourneyStep("Market Intelligence", "pages/1_Market_Overview.py", "Confirm demand / DPMO health"),
-    JourneyStep("Competition & Land", "pages/2_Competition_Intelligence.py", "Blind spot + land BUY/HOLD/PASS"),
-    JourneyStep("Marketing Intelligence", "pages/4_Marketing_Intelligence.py", "Should we raise SMC?"),
-    JourneyStep("AI Recommendations", "pages/8_AI_Recommendations.py", "Prescribe project actions"),
-    JourneyStep("Digital Twin", "pages/7_Digital_Twin.py", "Pressure-test ₹ Cr impact"),
-    JourneyStep("Reports", "pages/11_Executive_Reports.py", "Board pack PDF"),
+    JourneyStep("Executive Hub", "app.py", "Should we launch?"),
+    JourneyStep("Market Intelligence", "pages/1_Market_Overview.py", "Is demand healthy?"),
+    JourneyStep("Competition & Land", "pages/2_Competition_Intelligence.py", "Will competitors hurt us?"),
+    JourneyStep("Buyer Intelligence", "pages/3_Buyer_Analytics.py", "Who will buy?"),
+    JourneyStep("Marketing Intelligence", "pages/4_Marketing_Intelligence.py", "Can marketing hit the target?"),
+    JourneyStep("DMAIC Quality", "pages/5_DMAIC_Workspace.py", "Why are problems occurring?"),
+    JourneyStep("Project Deep Dive", "pages/6_Builder_Deep_Dive.py", "Is the project financially healthy?"),
+    JourneyStep("Digital Twin", "pages/7_Digital_Twin.py", "What if strategy changes?"),
+    JourneyStep("Decision Explanation", "pages/8_AI_Recommendations.py", "Why did the Hub decide this?"),
+    JourneyStep("SPC Control", "pages/9_SPC_Control_Chart.py", "Can we trust this decision?"),
+    JourneyStep("Reports", "pages/11_Executive_Reports.py", "Board decision pack"),
 ]
+
+
+def journey_index(module_label: str) -> int:
+    labels = [s.label for s in DECISION_JOURNEY]
+    return labels.index(module_label) if module_label in labels else -1
 
 
 def next_after(module_label: str) -> JourneyStep | None:
     labels = [s.label for s in DECISION_JOURNEY]
     if module_label not in labels:
-        # Best-effort: Hub next by default
         return DECISION_JOURNEY[1]
     i = labels.index(module_label)
     if i + 1 >= len(DECISION_JOURNEY):
         return None
     return DECISION_JOURNEY[i + 1]
+
+
+def prev_before(module_label: str) -> JourneyStep | None:
+    labels = [s.label for s in DECISION_JOURNEY]
+    if module_label not in labels:
+        return None
+    i = labels.index(module_label)
+    if i <= 0:
+        return None
+    return DECISION_JOURNEY[i - 1]
 
 
 def _risk_from_verdict(verdict: str, score: int | None = None) -> str:
@@ -96,12 +114,8 @@ def brief_from_land(d: LandDecision) -> DecisionBrief:
         financial_impact_cr=float(d.margin_pct),
         confidence="Seed land indices + local competition density",
         drivers=[f"Viability: {d.viability}", f"Verdict: {d.verdict}"],
-        next_step=JourneyStep(
-            "Marketing Intelligence",
-            "pages/4_Marketing_Intelligence.py",
-            "If BUY/HOLD — size pre-launch SMC only after land diligence",
-        ),
-        honesty_notes=["Land prices are catalog indices, not a live title opinion."],
+        next_step=next_after("Competition & Land"),
+        honesty_notes=["Land prices are catalog indices, not a live title opinion. Land BUY/HOLD/PASS supports — does not replace — the Hub launch call."],
     )
 
 
@@ -125,8 +139,8 @@ def brief_from_market(*, absorption_pct: float, at_risk: int, dpmo: float, unsol
         risk_level=risk,
         risk_score=min(int(dpmo / 5000), 100),
         suggested_actions=[
-            "Focus at-risk inventory in this workspace, then open AI Recommendations.",
-            "Benchmark sold-out projects on Builder Deep Dive before repricing.",
+            "Focus at-risk inventory in this workspace, then open Decision Explanation.",
+            "Benchmark sold-out projects on Project Deep Dive before repricing.",
             "Pressure-test rival launch on Digital Twin before print.",
         ],
         financial_impact_label="Unsold units (inventory risk)",
@@ -180,20 +194,31 @@ def brief_from_twin(
 
 
 def brief_from_recommendations(*, project: str, actions: list[str], recoverable_units: int) -> DecisionBrief:
+    why = (
+        f"Evidence explanation for the Hub call on {project}: "
+        f"{len(actions)} supporting signals · ~{recoverable_units} units recoverable if Hub actions execute."
+    )
     return DecisionBrief(
-        module="AI Recommendations",
-        executive_summary=f"{project}: {len(actions)} prescribe actions · est. recoverable {recoverable_units} units",
-        key_insights=actions[:4] or ["No material defect signals — monitor monthly."],
-        business_impact=f"Estimated recoverable inventory ≈ {recoverable_units} units if actions execute this fortnight.",
-        ai_recommendation=actions[0] if actions else "Hold price; pace construction CRM.",
+        module="Decision Explanation",
+        executive_summary=why,
+        key_insights=actions[:4] or ["No material defect signals — Hub MONITOR stands."],
+        business_impact=(
+            "This page explains WHY the Hub recommended GO / HOLD / NO-GO — "
+            "it does not issue a second launch verdict."
+        ),
+        ai_recommendation=(
+            "These factors support the Executive Hub decision. "
+            "Return to Hub for the only final recommendation."
+        ),
         risk_level="MEDIUM" if recoverable_units else "LOW",
         risk_score=min(recoverable_units, 100),
         suggested_actions=actions[:5] or ["Maintain MONITOR on SPC."],
-        financial_impact_label="Est. recoverable units",
+        financial_impact_label="Est. recoverable units (evidence)",
         financial_impact_cr=float(recoverable_units),
-        confidence="Rule + benchmark engine (augmented ML on Builder)",
-        next_step=next_after("AI Recommendations"),
-        drivers=["Price", "Delay", "Unit size", "Segment", "Brand", "Stage"],
+        confidence="Rule + journey evidence — explains Hub; does not override Hub",
+        next_step=next_after("Decision Explanation"),
+        drivers=["Market", "Competition", "Buyer", "Marketing", "DMAIC", "Twin", "SPC"],
+        honesty_notes=["Final launch recommendation lives only on Executive Hub."],
     )
 
 
@@ -219,7 +244,7 @@ def brief_from_marketing(*, total_spend_cr: float, avg_roi: float, cut_n: int) -
         suggested_actions=[
             "Run weekly allocator and lock High-quartile share.",
             "Pause Dead/Q4 projects before next media cycle.",
-            "Continue to AI Recommendations for project-level prescribe.",
+            "Continue to DMAIC to frame the defect before Twin / Hub actions.",
         ],
         financial_impact_label="SMC spend (₹ Cr)",
         financial_impact_cr=float(total_spend_cr),
@@ -249,7 +274,7 @@ def brief_from_buyer(*, bookings: int, top_channel: str, first_time_share: str =
         financial_impact_label="Bookings in view",
         financial_impact_cr=float(bookings),
         confidence="Measured booking Excels",
-        next_step=JourneyStep("Marketing Intelligence", "pages/4_Marketing_Intelligence.py", "Match SMC to audience truth"),
+        next_step=next_after("Buyer Intelligence"),
     )
 
 
@@ -290,18 +315,18 @@ def brief_from_dmaic(*, absorption_pct: float, at_risk: int, unsold: int) -> Dec
             f"{at_risk} projects below absorption ATQ",
         ],
         business_impact="DMAIC frames the defect so IMPROVE is not opinion — it is measurable.",
-        ai_recommendation="Complete MEASURE Pareto, then open AI Recommendations for IMPROVE actions.",
+        ai_recommendation="Complete MEASURE Pareto, then open Decision Explanation for IMPROVE evidence.",
         risk_level="HIGH" if at_risk >= 5 else "MEDIUM",
         risk_score=min(at_risk * 10, 100),
         suggested_actions=[
             "Own CTQs in the IC note.",
-            "Escalate at-risk rows to AI Recommendations.",
+            "Escalate at-risk rows via Decision Explanation (Hub owns the call).",
             "Control via SPC after intervene.",
         ],
         financial_impact_label="Unsold units",
         financial_impact_cr=float(unsold),
         confidence="Six Sigma DEFINE/MEASURE on catalog",
-        next_step=JourneyStep("AI Recommendations", "pages/8_AI_Recommendations.py", "IMPROVE prescriptions"),
+        next_step=next_after("DMAIC Quality"),
     )
 
 
@@ -319,14 +344,14 @@ def brief_from_builder(*, developer: str, at_risk: int, absorption_pct: float) -
         risk_level="HIGH" if at_risk >= 2 else ("MEDIUM" if at_risk else "LOW"),
         risk_score=min(at_risk * 25, 100),
         suggested_actions=[
-            "Run recommendations_for_row on each at-risk project.",
+            "Review at-risk expanders for evidence levers (not a new verdict).",
             "Compare ML gap vs actual absorption.",
-            "Continue to AI Recommendations workspace.",
+            "Continue to Digital Twin, then Decision Explanation.",
         ],
         financial_impact_label="At-risk projects",
         financial_impact_cr=float(at_risk),
         confidence="Catalog + GB artifact",
-        next_step=JourneyStep("AI Recommendations", "pages/8_AI_Recommendations.py", "Prescribe fixes"),
+        next_step=next_after("Project Deep Dive"),
     )
 
 
@@ -352,7 +377,7 @@ def brief_from_spc(*, ooc: int, series_label: str) -> DecisionBrief:
         financial_impact_label="OOC signals",
         financial_impact_cr=float(ooc),
         confidence="I-MR · d2=1.128",
-        next_step=JourneyStep("Demand Forecast", "pages/12_Forecasting.py", "Near-term outlook"),
+        next_step=next_after("SPC Control"),
     )
 
 

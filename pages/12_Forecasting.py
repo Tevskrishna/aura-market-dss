@@ -12,7 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import decision_action, page_hero, require_login, section_label
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
 from services.decision_brief_service import brief_from_forecast
@@ -47,6 +51,8 @@ fc = forecast_linear_seasonal(series, months=horizon)
 last = series.index.max()
 fc["month"] = pd.date_range(last + pd.offsets.MonthBegin(1), periods=horizon, freq="MS")
 
+render_journey_progress("Demand Forecast")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_forecast(
         horizon=int(horizon),
@@ -54,6 +60,7 @@ render_executive_sheet(
         series_label=title,
     ),
     key="fc_eds",
+    mode="evidence",
 )
 
 section_label(title)

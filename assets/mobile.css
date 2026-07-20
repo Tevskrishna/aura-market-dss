@@ -1,0 +1,146 @@
+/*
+  Mobile / share-phone layout — RealEstateIQ
+  Transforms decision chrome for narrow viewports.
+  No neon theater — readability and tap targets only.
+*/
+
+@media (max-width: 768px) {
+  /* Breathing room under fixed hamburger */
+  .block-container {
+    padding-bottom: 5.5rem !important;
+    max-width: 100% !important;
+  }
+
+  /* Purpose strip stacks cleanly */
+  .iq-purpose-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.15rem !important;
+  }
+  .iq-purpose-label {
+    margin-bottom: 0 !important;
+  }
+  .iq-purpose-q strong {
+    font-size: 1.05rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Journey: scrollable pipeline, larger dots */
+  .iq-pipe {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.35rem;
+    justify-content: flex-start !important;
+    gap: 0.45rem !important;
+  }
+  .iq-pipe-step {
+    min-width: 2.75rem !important;
+    flex: 0 0 auto !important;
+  }
+  .iq-pipe-dot {
+    width: 1.55rem !important;
+    height: 1.55rem !important;
+    font-size: 0.7rem !important;
+  }
+  .iq-pipe-lab {
+    display: block !important;
+    font-size: 0.62rem !important;
+    max-width: 3.4rem !important;
+  }
+
+  /* EDS: single column story */
+  .iq-eds-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .iq-eds-top {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  .iq-eds-summary {
+    font-size: 1.15rem !important;
+  }
+  .iq-hub-verdict-call {
+    font-size: 2rem !important;
+  }
+  .iq-hub-verdict {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* Open project chip — full width status */
+  .iq-open-project {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.25rem !important;
+  }
+
+  /* Primary actions — thumb friendly */
+  .stButton > button[kind="primary"],
+  .stButton > button[data-testid="baseButton-primary"] {
+    min-height: 3rem !important;
+    font-size: 1.05rem !important;
+  }
+
+  /* Copilot panel — no side chrome waste */
+  .iq-copilot-panel {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Live presence bar */
+  .iq-live-presence {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    margin: 0 0 0.65rem !important;
+  }
+
+  /* Sticky phone footer cue */
+  .iq-mobile-dock {
+    display: block !important;
+  }
+}
+
+/* Dock hidden on desktop */
+.iq-mobile-dock {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 0.55rem 0.75rem calc(0.55rem + env(safe-area-inset-bottom));
+  background: rgba(8, 12, 18, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.78rem;
+  color: #c5d0dc;
+  text-align: center;
+  line-height: 1.35;
+}
+.iq-mobile-dock strong {
+  color: #fff;
+  font-family: "Exo 2", sans-serif;
+}
+
+.iq-live-presence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 22, 34, 0.95);
+  font-size: 0.82rem;
+  color: #c5d0dc;
+}
+.iq-live-presence-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3dd68c;
+}
+.iq-live-presence strong {
+  color: #fff;
+}

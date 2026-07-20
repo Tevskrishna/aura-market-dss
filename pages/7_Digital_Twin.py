@@ -10,7 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.kpi_cards import render_kpi_cards
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.layout import page_hero, require_login, section_label
 from components.states import empty_state
 from components.viz_studio import generate_button, graphic_html, render_dynamic_figure, scenario_bar
@@ -62,9 +66,9 @@ if "_twin_ctx_seeded" not in st.session_state and ctx:
     st.session_state["_twin_ctx_seeded"] = True
 
 page_hero(
-    kicker="PRESCRIBE · Digital Twin",
-    title="Scenario simulator",
-    subtitle="Pressure-test the Hub call — rival launch, intervene, or hold.",
+    kicker="What happens if strategy changes?",
+    title="Digital Twin",
+    subtitle="What-if ₹ Cr outcomes for price, rival launch, and intervene — stress-test the Hub call.",
     compact=True,
 )
 
@@ -173,6 +177,8 @@ result = get_simulation_engine().run(
     competitor_price_psf=float(rival_price) if enable_rival else None,
 )
 
+render_journey_progress("Digital Twin")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_twin(
         project=str(project),
@@ -181,6 +187,7 @@ render_executive_sheet(
         enable_rival=bool(enable_rival),
     ),
     key="twin_eds",
+    mode="evidence",
 )
 
 section_label("Simulate · regenerate twin curves")
@@ -208,8 +215,8 @@ render_kpi_cards(
     [
         {"label": "Baseline revenue", "value": result.revenue_baseline_cr, "format": "cr"},
         {"label": "Under rival attack", "value": result.revenue_cannibal_cr, "format": "cr"},
-        {"label": "Blind-spot loss", "value": result.cannibal_loss_cr, "format": "cr"},
-        {"label": "Recovery vs rival", "value": result.recovery_cr, "format": "cr"},
+        {"label": "Blind-spot loss", "value": result.cannibal_loss_cr, "format": "cr", "help": "₹ Cr at risk if rival launches unchecked"},
+        {"label": "Recovery vs rival", "value": result.recovery_cr, "format": "cr", "help": "₹ Cr recoverable with intervene package"},
     ]
 )
 

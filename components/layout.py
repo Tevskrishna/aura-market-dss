@@ -18,7 +18,14 @@ __all__ = ["MODULE_NAV", "NAV_SECTIONS"]
 
 def inject_theme(*, gate: bool = False) -> None:
     chunks: list[str] = []
-    for name in ("styles.css", "dynamic.css", "copilot.css", "design_tokens.css", "realtime_hud.css"):
+    for name in (
+        "styles.css",
+        "dynamic.css",
+        "copilot.css",
+        "design_tokens.css",
+        "realtime_hud.css",
+        "mobile.css",
+    ):
         path = settings.ASSETS_DIR / name
         if path.exists():
             chunks.append(path.read_text(encoding="utf-8"))
@@ -112,6 +119,19 @@ def require_login(active_module: str | None = None) -> dict:
 
         render_sidebar_touch_nav()
         render_module_nav()
+        from components.ai_copilot import render_ai_copilot, render_sound_pref
+        from components.product_tour import render_product_tour, start_tour_replay
+
+        render_sound_pref()
+        if st.sidebar.button("Replay product tour", width="stretch", key="iq_replay_tour"):
+            start_tour_replay()
+            st.rerun()
+        render_ai_copilot()
+        from components.live_presence import render_live_presence, render_mobile_dock
+
+        render_product_tour()
+        render_live_presence()
+        render_mobile_dock()
         return st.session_state[SESSION_USER_KEY]
 
     inject_theme(gate=True)
@@ -496,7 +516,7 @@ def _sidebar_chrome() -> None:
             "html { font-size: 110% !important; }"
             ".iq-eds,.iq-hub-ask,.copilot-gauge-wrap { box-shadow: none !important; }"
             ".dss-hero,.dss-hero-compact,.iq-honesty { display: none !important; }"
-            "div[data-testid='stExpander'] { display: none !important; }"
+            ".block-container div[data-testid='stExpander'] { opacity: 0.92; }"
             ".iq-live-strip { border-color: rgba(255,192,72,0.35) !important; }"
             "</style>"
         )

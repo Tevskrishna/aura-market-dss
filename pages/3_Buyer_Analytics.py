@@ -11,7 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from services.buyer_service import build_buyer_insights
@@ -23,10 +27,10 @@ st.set_page_config(page_title="Audience Demographics", page_icon="👥", layout=
 require_login("Buyer Intelligence")
 
 page_hero(
-    kicker="AURA-Market · Lead & Audience",
-    title="Buyer & Audience Demographics",
-    subtitle="Age profiles, native vs non-native origin, family type, first-time buyers, and conversion channels from booking Excels.",
-    chips=[("Age bands", "ok"), ("Native / Outstation", "ok"), ("Family", ""), ("Channels", "")],
+    kicker="Who will buy?",
+    title="Buyer Intelligence",
+    subtitle="Audience, channels, and booking behaviour — evidence that demand exists for the Hub call.",
+    compact=True,
 )
 
 filters = render_global_filters("buyer")
@@ -42,9 +46,12 @@ if not insights.channel_mix.empty:
     else:
         top_ch = str(cm.iloc[0, 0])
 
+render_journey_progress("Buyer Intelligence")
+render_open_project_chip()
 render_executive_sheet(
     brief_from_buyer(bookings=int(insights.total_bookings), top_channel=top_ch),
     key="buyer_eds",
+    mode="evidence",
 )
 
 section_label("Demand scorecard")

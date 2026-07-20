@@ -11,7 +11,11 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from components.executive_sheet import render_executive_sheet
+from components.executive_sheet import (
+    render_executive_sheet,
+    render_journey_progress,
+    render_open_project_chip,
+)
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.states import data_honesty_banner, page_hub_label
@@ -55,14 +59,15 @@ data_honesty_banner(
         "Margin index uses configurable construction cost & FSI load from settings.",
     ],
 )
-render_executive_sheet(brief_from_land(land_preview), key="comp_eds")
-
 page_hero(
-    kicker="Intelligence · Competition & Land",
-    title="Competition Intelligence",
-    subtitle="RERA density, UC supply, land BUY/HOLD/PASS, and margin viability.",
+    kicker="Will competitors hurt us?",
+    title="Competition & Land",
+    subtitle="Rival supply, RERA density, and land margin evidence for the Hub launch call — not a second GO/HOLD.",
     compact=True,
 )
+render_journey_progress("Competition & Land")
+render_open_project_chip()
+render_executive_sheet(brief_from_land(land_preview), key="comp_eds", mode="evidence")
 
 section_label("Supply & land scorecard")
 st.caption("Tap a figure to open that layer in the graphics studio below.")

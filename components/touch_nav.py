@@ -19,19 +19,19 @@ from components.layout import _current_nav_label
 PENDING_MODULE_NAV = "_dss_pending_module_nav"
 
 TOUCH_TILES: list[tuple[str, str, str, str]] = [
-    ("🎯", "Executive Hub", "app.py", "GO / HOLD / NO-GO threat score"),
-    ("📈", "Market Intelligence", "pages/1_Market_Overview.py", "Absorption · DPMO · bands"),
-    ("🏢", "Competition & Land", "pages/2_Competition_Intelligence.py", "RERA · land · margin"),
-    ("👥", "Buyer Intelligence", "pages/3_Buyer_Analytics.py", "Who is booking"),
-    ("📣", "Marketing Intelligence", "pages/4_Marketing_Intelligence.py", "ROI · weekly allocator"),
-    ("🔬", "DMAIC Quality", "pages/5_DMAIC_Workspace.py", "Define → Control"),
-    ("🏗️", "Project Deep Dive", "pages/6_Builder_Deep_Dive.py", "Project risk + ML"),
-    ("🕹️", "Digital Twin", "pages/7_Digital_Twin.py", "Rival cannibalization"),
-    ("💡", "AI Recommendations", "pages/8_AI_Recommendations.py", "Prescribe actions"),
-    ("📉", "SPC Control", "pages/9_SPC_Control_Chart.py", "Control chart"),
-    ("🗺️", "Map Intelligence", "pages/10_Map_Decision_Support.py", "Where to build"),
-    ("📄", "Reports", "pages/11_Executive_Reports.py", "Board PDF pack"),
-    ("🔮", "Demand Forecast", "pages/12_Forecasting.py", "Demand outlook"),
+    ("🎯", "Executive Hub", "app.py", "Should we launch?"),
+    ("📈", "Market Intelligence", "pages/1_Market_Overview.py", "Is demand healthy?"),
+    ("🏢", "Competition & Land", "pages/2_Competition_Intelligence.py", "Will competitors hurt us?"),
+    ("👥", "Buyer Intelligence", "pages/3_Buyer_Analytics.py", "Who will buy?"),
+    ("📣", "Marketing Intelligence", "pages/4_Marketing_Intelligence.py", "Can marketing hit target?"),
+    ("🔬", "DMAIC Quality", "pages/5_DMAIC_Workspace.py", "Why are problems occurring?"),
+    ("🏗️", "Project Deep Dive", "pages/6_Builder_Deep_Dive.py", "Is the project healthy?"),
+    ("🕹️", "Digital Twin", "pages/7_Digital_Twin.py", "What if strategy changes?"),
+    ("💡", "Decision Explanation", "pages/8_AI_Recommendations.py", "Why did Hub decide this?"),
+    ("📉", "SPC Control", "pages/9_SPC_Control_Chart.py", "Can we trust this?"),
+    ("🗺️", "Map Intelligence", "pages/10_Map_Decision_Support.py", "Where to build?"),
+    ("📄", "Reports", "pages/11_Executive_Reports.py", "Board decision pack"),
+    ("🔮", "Demand Forecast", "pages/12_Forecasting.py", "Near-term outlook"),
 ]
 
 

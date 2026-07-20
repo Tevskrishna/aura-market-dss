@@ -22,9 +22,12 @@ from services.margin_service import evaluate_land_decision
 
 
 def test_journey_chain():
-    assert len(DECISION_JOURNEY) >= 5
+    assert len(DECISION_JOURNEY) == 11
     assert next_after("Executive Hub").label == "Market Intelligence"
+    assert next_after("Decision Explanation").label == "SPC Control"
     assert next_after("Reports") is None
+    assert DECISION_JOURNEY[0].label == "Executive Hub"
+    assert DECISION_JOURNEY[-1].label == "Reports"
 
 
 def test_brief_from_launch_maps_verdict():
@@ -55,3 +58,5 @@ def test_brief_from_market_and_twin():
 def test_brief_from_recommendations():
     b = brief_from_recommendations(project="Demo", actions=["Cut price"], recoverable_units=12)
     assert b.next_step is not None
+    assert "second" in (b.business_impact or "").lower() or "Hub" in (b.ai_recommendation or "")
+    assert b.module == "Decision Explanation"
