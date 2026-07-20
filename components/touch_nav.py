@@ -13,7 +13,8 @@ from pathlib import Path
 
 import streamlit as st
 
-from components.layout import MODULE_NAV, NAV_SECTIONS, _current_nav_label
+from components.nav_config import MODULE_NAV, NAV_SECTIONS
+from components.layout import _current_nav_label
 
 PENDING_MODULE_NAV = "_dss_pending_module_nav"
 
