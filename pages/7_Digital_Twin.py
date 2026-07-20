@@ -197,10 +197,21 @@ generate_button("twin_studio", "Generate twin graphics")
 
 
 def _twin_fig():
+    from components.visual_experience import try_scenario_month_frames, visual_experience_on
+
     if view == "Baseline only":
         return twin_curves(result.months, result.baseline, result.baseline, None)
-    if view == "Rival impact":
-        return twin_curves(result.months, result.baseline, result.intervention, result.cannibalized)
+    cann = result.cannibalized if view != "Baseline only" else None
+    if visual_experience_on() and view in {"Full story", "Rival impact"}:
+        anim = try_scenario_month_frames(
+            result.months,
+            result.baseline,
+            result.intervention,
+            result.cannibalized if enable_rival or view == "Rival impact" else cann,
+            title="Scenario paths",
+        )
+        if anim is not None:
+            return anim
     return twin_curves(result.months, result.baseline, result.intervention, result.cannibalized)
 
 
@@ -209,6 +220,7 @@ render_dynamic_figure(
     _twin_fig,
     height=420,
     scene=f"{active_preset}|{view}|{cut}|{intervene}|{subvention}|{enable_rival}|{rival_month}|{rival_price}|{price_psf}",
+    visual_purpose="scenario",
 )
 
 render_kpi_cards(

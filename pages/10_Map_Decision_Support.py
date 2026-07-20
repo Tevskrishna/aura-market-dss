@@ -108,12 +108,36 @@ with t_home:
     generate_button("map_home", "Generate map-home graphics")
 
     def _map_home_fig():
+        from components.visual_experience import try_location_3d_scatter, visual_experience_on
+
         if scene == "Top suitability":
             d = zones.sort_values("suitability_score", ascending=False).head(10)
             fig = px.bar(d, x="suitability_score", y="zone", orientation="h", color="suitability_score",
                          color_continuous_scale=["#ff4b4b", "#f0b429", "#3dd68c"])
             return _style(fig, "Top construction-ready areas")
         if scene == "Flood vs price":
+            if visual_experience_on():
+                z = zones.copy()
+                flood_map = {"Low": 1.0, "Medium": 2.0, "High": 3.0}
+                z["_flood_n"] = z["flood_risk"].map(flood_map).fillna(2.0)
+                fig3 = try_location_3d_scatter(
+                    z,
+                    x="_flood_n",
+                    y="avg_price_psf",
+                    z="suitability_score",
+                    color="flood_risk",
+                    hover_name="zone",
+                    title="Flood × price × suitability",
+                )
+                if fig3 is not None:
+                    fig3.update_layout(
+                        scene=dict(
+                            xaxis_title="Flood (1=Low…3=High)",
+                            yaxis_title="₹/sqft",
+                            zaxis_title="Suitability",
+                        )
+                    )
+                    return fig3
             fig = px.scatter(zones, x="flood_risk", y="avg_price_psf", color="suitability_score",
                              hover_name="zone", color_continuous_scale="Tealgrn")
             return _style(fig, "Flood risk vs price")
@@ -121,7 +145,13 @@ with t_home:
                          color="flood_risk", hover_name="zone", color_discrete_sequence=PALETTE)
         return _style(fig, "Metro access vs suitability")
 
-    render_dynamic_figure("map_home", _map_home_fig, height=400, scene=str(scene))
+    render_dynamic_figure(
+        "map_home",
+        _map_home_fig,
+        height=400,
+        scene=str(scene),
+        visual_purpose="location",
+    )
     top5 = zones.sort_values("suitability_score", ascending=False).head(5)
     st.dataframe(
         top5[["zone", "suitability_score", "avg_price_psf", "flood_risk", "metro_km", "price_trend_yoy_pct"]],
@@ -142,11 +172,18 @@ with t_map:
         st.success(f"Map refreshed · pass #{nonce}")
     view = zones[(zones["flood_risk"].isin(flood)) & (zones["suitability_score"] >= min_score)]
     m = folium.Map(location=[12.98, 77.60], zoom_start=10, tiles="CartoDB dark_matter")
+    from components.visual_experience import visual_experience_on
+
+    vx = visual_experience_on()
     for _, z in view.iterrows():
         color = "#3dd68c" if z["suitability_score"] >= 75 else ("#f0b429" if z["suitability_score"] >= 50 else "#ff4b4b")
+        # Visual Experience: marker size encodes suitability (location comprehension)
+        radius = 9
+        if vx:
+            radius = max(6, min(18, 5 + float(z["suitability_score"]) / 8.0))
         folium.CircleMarker(
             [z["lat"], z["lon"]],
-            radius=9,
+            radius=radius,
             color=color,
             fill=True,
             fill_opacity=0.85,

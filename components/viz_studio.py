@@ -179,14 +179,19 @@ def render_dynamic_figure(
     *,
     height: int | None = None,
     scene: str | None = None,
+    visual_purpose: str = "generic",
 ) -> None:
     """
     Rebuild Plotly whenever nonce OR scene changes.
     `scene` must be the lens / tab selection string so switches remount.
+    `visual_purpose` feeds optional Visual Experience enhancements (presentation only).
     """
+    from components.visual_experience import enhance_figure
+
     nonce = viz_nonce(key)
     scene_val = scene if scene is not None else str(st.session_state.get(f"{key}_scene", ""))
     fig = builder()
+    fig = enhance_figure(fig, purpose=visual_purpose)  # type: ignore[arg-type]
     if height and hasattr(fig, "update_layout"):
         fig.update_layout(height=height)
     if hasattr(fig, "update_layout"):
@@ -197,7 +202,8 @@ def render_dynamic_figure(
             fig.update_layout(title=f"{title}{stamp}")
         elif stamp and not title and scene_val:
             fig.update_layout(title=f"{scene_val}{stamp}")
-        fig.update_layout(transition_duration=350)
+        if visual_purpose == "generic":
+            fig.update_layout(transition_duration=350)
     if st.session_state.pop(f"{key}_flash", None):
         st.success(f"Refreshed · {scene_val or 'current view'} · pass #{nonce}")
     chart_key = f"{key}_chart_{nonce}_{_slug(scene_val)}"

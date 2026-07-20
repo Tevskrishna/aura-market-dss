@@ -218,6 +218,7 @@ with st.expander("₹ Cr money path (scenario engine · directional)", expanded=
         ),
         height=360,
         scene=f"{project}|{my_price}|{cut}|{sub}|{intervene_m}|{rival_m}|{months}",
+        visual_purpose="scenario",
     )
 
 md = verdict_markdown(verdict)

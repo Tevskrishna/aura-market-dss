@@ -523,6 +523,13 @@ def _sidebar_chrome() -> None:
         key="iq_ic_demo_mode",
         help="On: Hub → Market → Competition → Scenario → Explanation → Reports. Off: full Quality Lab.",
     )
+    from components.visual_experience import (
+        inject_visual_experience_chrome,
+        render_visual_experience_toggle,
+        visual_experience_on,
+    )
+
+    render_visual_experience_toggle()
     if board:
         st.html(
             "<style>"
@@ -534,6 +541,8 @@ def _sidebar_chrome() -> None:
             "</style>"
         )
         st.sidebar.caption("Board Mode on · calm presentation")
+    if visual_experience_on():
+        inject_visual_experience_chrome()
     st.sidebar.markdown("---")
     st.sidebar.caption("Workspaces · page list hidden")
 

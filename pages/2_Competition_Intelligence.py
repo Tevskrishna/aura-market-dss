@@ -92,12 +92,51 @@ generate_button("comp_studio", "Generate competition graphics")
 
 
 def _comp_fig():
+    from components.visual_experience import (
+        try_comparison_3d_bars,
+        try_location_3d_scatter,
+        visual_experience_on,
+    )
+
     if comp_lens == "RERA density" and not snap.rera.empty:
         tmp = snap.rera.copy()
         tmp["year"] = pd.to_datetime(tmp["approval_date"], errors="coerce").dt.year
-        fig = px.bar(tmp.groupby("year").size().reset_index(name="approvals"), x="year", y="approvals", color_discrete_sequence=PALETTE)
+        by_year = tmp.groupby("year").size().reset_index(name="approvals")
+        if visual_experience_on():
+            fig3 = try_comparison_3d_bars(
+                [str(int(y)) for y in by_year["year"].tolist()],
+                [float(v) for v in by_year["approvals"].tolist()],
+                title="RERA approvals by year",
+                x_title="Year",
+                y_title="Approvals",
+            )
+            if fig3 is not None:
+                return fig3
+        fig = px.bar(by_year, x="year", y="approvals", color_discrete_sequence=PALETTE)
         return _style(fig, "RERA approvals by year")
     if comp_lens == "Upcoming launches" and not snap.upcoming.empty:
+        if visual_experience_on():
+            u = snap.upcoming.copy()
+            if "indicative_price_psf" in u.columns and "planned_units" in u.columns:
+                u["_dev_i"] = u["developer"].astype("category").cat.codes.astype(float)
+                fig3 = try_location_3d_scatter(
+                    u,
+                    x="indicative_price_psf",
+                    y="planned_units",
+                    z="_dev_i",
+                    color="developer",
+                    hover_name="project",
+                    title="Upcoming launches · price × units × brand",
+                )
+                if fig3 is not None:
+                    fig3.update_layout(
+                        scene=dict(
+                            xaxis_title="₹/sqft",
+                            yaxis_title="Planned units",
+                            zaxis_title="Developer (index)",
+                        )
+                    )
+                    return fig3
         fig = px.scatter(
             snap.upcoming,
             x="indicative_price_psf",
@@ -135,7 +174,13 @@ def _comp_fig():
     return _style(fig, "No data for lens")
 
 
-render_dynamic_figure("comp_studio", _comp_fig, height=400, scene=str(comp_lens))
+render_dynamic_figure(
+    "comp_studio",
+    _comp_fig,
+    height=400,
+    scene=str(comp_lens),
+    visual_purpose="comparison",
+)
 
 # Single control path: lens drives detail (no duplicate tab charts)
 section_label(f"Layer detail · {comp_lens}")
