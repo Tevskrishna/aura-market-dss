@@ -112,6 +112,6 @@ def render_product_tour() -> None:
                 st.session_state[TOUR_STEP_KEY] = step + 1
                 st.rerun()
         else:
-            if st.button("Start on Executive Hub", type="primary", width="stretch", key="iq_tour_done"):
+            if st.button("Start on Executive Hub", type="primary", width="stretch", key="iq_tour_finish_btn"):
                 complete_tour()
                 st.rerun()
