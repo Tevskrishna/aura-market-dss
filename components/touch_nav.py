@@ -104,10 +104,15 @@ def _tile_row(items: list[tuple[str, str, str, str]], current: str) -> None:
                 key=f"touch_tile_{Path(path).stem}",
                 type="primary" if active else "secondary",
                 width="stretch",
-                disabled=active,
             )
-            if clicked and not active:
-                navigate_to(label, path)
+            if clicked:
+                if active:
+                    try:
+                        st.toast(f"Already on {label}", icon="📍")
+                    except Exception:
+                        pass
+                else:
+                    navigate_to(label, path)
 
 
 def render_sidebar_touch_nav() -> None:
@@ -129,9 +134,14 @@ def render_sidebar_touch_nav() -> None:
                 key=f"side_nav_{Path(path).stem}",
                 type="primary" if is_here else "secondary",
                 width="stretch",
-                disabled=is_here,
             )
-            if clicked and not is_here:
-                navigate_to(label, path)
+            if clicked:
+                if is_here:
+                    try:
+                        st.toast(f"Already on {label}", icon="📍")
+                    except Exception:
+                        pass
+                else:
+                    navigate_to(label, path)
     if ic:
         st.sidebar.caption("Quality Lab pages are hidden — turn off IC Demo Mode to open them.")

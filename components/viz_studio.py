@@ -37,25 +37,40 @@ def scenario_bar(
     options: list[str],
     default: str | None = None,
 ) -> str:
-    """Layer / lens control that must remount charts when the selection changes.
-
-    Prefer radio over segmented_control: Streamlit often ignores clicks when both
-    ``default=`` and ``key=`` are passed to segmented_control / pills.
-    """
+    """Layer / lens control — button row (radios often feel 'dead' on Cloud/mobile)."""
     fallback = default if default in options else options[0]
     if key not in st.session_state or st.session_state.get(key) not in options:
         st.session_state[key] = fallback
 
-    st.caption(label)
-    # Horizontal radio is the most reliable "tab" widget across Streamlit versions.
-    choice = st.radio(
-        label,
-        options=options,
-        key=key,
-        horizontal=True,
-        label_visibility="collapsed",
-    )
-    picked = choice if choice in options else fallback
+    current = str(st.session_state.get(key, fallback))
+    st.caption(f"{label} · tap to switch (chart + table update below)")
+
+    # Wrap in rows of up to 3 so long labels stay tappable on phones
+    for start in range(0, len(options), 3):
+        chunk = options[start : start + 3]
+        cols = st.columns(len(chunk), gap="small")
+        for i, (col, opt) in enumerate(zip(cols, chunk)):
+            with col:
+                active = opt == current
+                clicked = st.button(
+                    ("● " if active else "") + opt,
+                    key=f"{key}_btn_{start + i}_{_slug(opt)}",
+                    type="primary" if active else "secondary",
+                    width="stretch",
+                )
+                if clicked and not active:
+                    st.session_state[key] = opt
+                    st.session_state[f"{key}_scene"] = opt
+                    try:
+                        st.toast(f"Layer · {opt}", icon="📊")
+                    except Exception:
+                        pass
+                    st.rerun()
+
+    picked = str(st.session_state.get(key, fallback))
+    if picked not in options:
+        picked = fallback
+        st.session_state[key] = picked
     st.session_state[f"{key}_scene"] = picked
     return picked
 
@@ -186,4 +201,15 @@ def render_dynamic_figure(
     if st.session_state.pop(f"{key}_flash", None):
         st.success(f"Refreshed · {scene_val or 'current view'} · pass #{nonce}")
     chart_key = f"{key}_chart_{nonce}_{_slug(scene_val)}"
-    st.plotly_chart(fig, width="stretch", key=chart_key)
+    st.plotly_chart(
+        fig,
+        width="stretch",
+        key=chart_key,
+        config={
+            "displayModeBar": True,
+            "responsive": True,
+            "scrollZoom": True,
+            "displaylogo": False,
+            "modeBarButtonsToAdd": ["hoverclosest", "hovercompare"],
+        },
+    )

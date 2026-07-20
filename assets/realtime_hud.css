@@ -562,7 +562,57 @@ div[data-testid="stPlotlyChart"] {
   font-weight: 800 !important;
 }
 
-/* Data contract — Hub trust strip */
+/* Page-ready progress cue */
+.iq-page-load {
+  margin: 0 0 0.75rem;
+}
+.iq-page-load-track {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 0.35rem;
+}
+.iq-page-load-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3de0d0, #ffc048);
+  animation: iq-load-fill 0.7s ease-out forwards;
+}
+@keyframes iq-load-fill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+.iq-page-load-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.55rem;
+  font-size: 0.78rem;
+  color: #8a9bb0;
+}
+.iq-page-load-meta strong {
+  color: #e8eef6;
+  font-weight: 600;
+}
+.iq-page-load-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3dd68c;
+  box-shadow: 0 0 0 3px rgba(61, 214, 140, 0.18);
+}
+
+/* Layer buttons — clearer hit targets than flat radios */
+div[data-testid="stHorizontalBlock"] .stButton > button {
+  min-height: 2.65rem;
+  white-space: normal;
+  line-height: 1.2;
+  font-size: 0.88rem !important;
+}
+
+.iq-journey-compact {
 .iq-data-contract {
   margin: 0 0 0.85rem;
   padding: 0.75rem 0.9rem;
@@ -651,9 +701,9 @@ div[data-testid="stPlotlyChart"] {
     grid-column: span 1;
   }
   .iq-exec-brief {
-    position: sticky;
-    top: 2.75rem;
-    z-index: 35;
+    position: relative;
+    top: auto;
+    z-index: 1;
   }
 }
 

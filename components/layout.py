@@ -120,8 +120,10 @@ def require_login(active_module: str | None = None) -> dict:
         render_sidebar_touch_nav()
         render_module_nav()
         from components.ai_copilot import render_ai_copilot, render_sound_pref
+        from components.page_load import render_page_load_cue
         from components.product_tour import render_product_tour, start_tour_replay
 
+        render_page_load_cue(active_module)
         render_sound_pref()
         if st.sidebar.button("Replay product tour", width="stretch", key="iq_replay_tour"):
             start_tour_replay()

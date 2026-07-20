@@ -84,6 +84,9 @@ linked_kpi_lens_strip(
 )
 
 section_label("Competition graphics studio")
+st.caption(
+    "Interactive layers — tap a button below. Plotly chart: zoom · pan · hover · download via toolbar."
+)
 comp_lens = scenario_bar(COMP_LENS_KEY, "Layer", COMP_LAYERS)
 generate_button("comp_studio", "Generate competition graphics")
 
