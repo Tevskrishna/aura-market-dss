@@ -11,11 +11,12 @@ sys.path.insert(0, str(ROOT))
 
 from components.layout import page_hero, require_login, section_label
 from components.executive_sheet import render_executive_sheet
+from components.states import empty_state
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_recommendations
 from services.decision_context import context_banner_text, get_decision_context
 from services.recommendation_engine import recommendations_for_row
-from services.twin_service import run_segmented_twin
+from services.simulation_engine import get_simulation_engine
 from utils.dmaic_charts import twin_curves
 
 st.set_page_config(page_title="AI Recommendations", page_icon="💡", layout="wide")
@@ -23,6 +24,13 @@ require_login("AI Recommendations")
 
 ctx = get_decision_context()
 df = get_adapter().projects()
+if df.empty:
+    empty_state(
+        "No projects for recommendations",
+        "Seed catalog missing — open Executive Hub after loading data.",
+        "Load data/projects.csv",
+    )
+    st.stop()
 projects = df["project"].tolist()
 
 if "_recs_ctx_seeded" not in st.session_state and ctx and ctx.get("project") in projects:
@@ -80,7 +88,7 @@ cut_hub = float(ctx.get("cut_pct", 8) if ctx else 8)
 cut = next((r["price_cut_psf"] for r in recs if r.get("price_cut_psf")), 0)
 cut_pct = (cut / row["price_psf"] * 100) if cut else cut_hub
 ticket = float(row["avg_unit_size_sqft"]) * price / 100_000
-twin = run_segmented_twin(
+twin = get_simulation_engine().run(
     base_monthly_rate=max(int(row["units_sold"] / 24), 6),
     months=int(ctx.get("horizon_months", 12) if ctx else 12),
     price_psf=price,
@@ -92,4 +100,8 @@ twin = run_segmented_twin(
     competitor_launch_month=int(ctx.get("rival_month", 3) if ctx else 3),
 )
 st.plotly_chart(twin_curves(twin.months, twin.baseline, twin.intervention, twin.cannibalized), width="stretch")
-st.caption(f"Estimated revenue recovery: ₹ {twin.recovery_cr} Cr · Continue → Digital Twin to stress-test.")
+st.caption(
+    f"Estimated revenue recovery: ₹ {twin.recovery_cr} Cr · Same engine as Hub ("
+    f"{get_simulation_engine().name}). Continue → Digital Twin to stress-test. "
+    "Hub 'Do this week' already merges these prescribe lines."
+)

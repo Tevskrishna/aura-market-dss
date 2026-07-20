@@ -507,6 +507,23 @@ def _sidebar_chrome() -> None:
         st.session_state[SESSION_AUTH_KEY] = False
         st.session_state[SESSION_USER_KEY] = None
         st.rerun()
+    board = st.sidebar.toggle(
+        "Board Mode",
+        value=bool(st.session_state.get("iq_board_mode", False)),
+        key="iq_board_mode",
+        help="Presentation density — larger type, quieter chrome for IC / interview demos.",
+    )
+    if board:
+        st.html(
+            "<style>"
+            "html { font-size: 110% !important; }"
+            ".iq-eds,.iq-hub-ask,.copilot-gauge-wrap { box-shadow: none !important; }"
+            ".dss-hero,.dss-hero-compact,.iq-honesty { display: none !important; }"
+            "div[data-testid='stExpander'] { display: none !important; }"
+            ".iq-live-strip { border-color: rgba(255,192,72,0.35) !important; }"
+            "</style>"
+        )
+        st.sidebar.caption("Board Mode on · calm presentation")
     st.sidebar.markdown("---")
     st.sidebar.caption("Workspaces · page list hidden")
 

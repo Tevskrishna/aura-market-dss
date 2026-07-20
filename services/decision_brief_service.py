@@ -380,3 +380,39 @@ def brief_from_forecast(*, horizon: int, last_yhat: float, series_label: str) ->
         next_step=JourneyStep("Reports", "pages/11_Executive_Reports.py", "Board pack"),
         honesty_notes=["Mentor scope: near-term decisions — not city-cycle futures."],
     )
+
+
+def weekly_actions_unified(
+    *,
+    launch_actions: list[str],
+    project: str,
+    max_items: int = 5,
+) -> list[str]:
+    """
+    Single 'Do this week' narrative — Hub co-pilot actions first,
+    then top AI recommendation lines for the same project (no second score).
+    """
+    out: list[str] = []
+    for a in launch_actions:
+        if a and a not in out:
+            out.append(a)
+        if len(out) >= max_items:
+            return out[:max_items]
+    try:
+        from services.adapters import get_adapter
+        from services.recommendation_engine import recommendations_for_row
+
+        df = get_adapter().projects()
+        if df.empty or project not in set(df["project"].tolist()):
+            return out[:max_items]
+        row = df[df["project"] == project].iloc[0]
+        sold = df[df["absorption_pct"] >= 95]
+        for r in recommendations_for_row(row, sold)[:3]:
+            line = f"{r.get('issue', 'Signal')} → {r.get('action', '')}".strip()
+            if line and line not in out:
+                out.append(line)
+            if len(out) >= max_items:
+                break
+    except Exception:
+        pass
+    return out[:max_items]

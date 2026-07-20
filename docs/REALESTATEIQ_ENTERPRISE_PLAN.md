@@ -348,26 +348,28 @@ Every epic maps to a question in the brief — no orphan charts.
 
 Impact × Effort (next actions). **P0 before any large feature build.**
 
-| ID | Item | Impact | Effort | Priority | Depends on |
-|---|---|---|---|---|---|
-| P0-1 | Seed-data honesty labels in UI | High | Low | **P0** | — |
-| P0-2 | IA: Executive Hub first; nest modules | High | Med | **P0** | Product freeze |
-| P0-3 | Login deep-link redirect fix | Med | Low | **P0** | — |
-| P0-4 | Design tokens + Metric/Empty/Error | High | Med | **P0** | — |
-| P0-5 | Repository interface over catalog | High | Med | **P0** | — |
-| P1-1 | Responsive table/map pass 320–1920 | High | Med | **P1** | P0-4 |
-| P1-2 | Land decision sheet | High | Med | **P1** | P0-5 |
-| P1-3 | Persist ML artifacts + no click-train | Med | Med | **P1** | Data |
-| P1-4 | Marketing allocator v1 | High | Med | **P1** | P0-5 |
-| P1-5 | PDF board pack | High | Med | **P1** | Hub |
-| P2-1 | SQLite + Postgres path | High | High | **P2** | P0-5 |
-| P2-2 | Live adapter (KRERA/partner) | Very High | High | **P2** | Credentials |
-| P2-3 | SimPy engine behind interface | Med | High | **P2** | Twin ABC |
-| P2-4 | AgGrid everywhere tables | Med | Med | **P2** | P0-4 |
-| P2-5 | Light mode parity | Med | Med | **P2** | Tokens |
-| P3-1 | SSO / Admin module | Very High | High | **P3** | Tenancy |
-| P3-2 | Prophet / LightGBM suite | Med | High | **P3** | Labels |
-| P3-3 | React shell (if needed) | High | Very High | **P3** | API |
+| ID | Item | Impact | Effort | Priority | Depends on | **Status 2026-07-20** |
+|---|---|---|---|---|---|---|
+| P0-1 | Seed-data honesty labels in UI | High | Low | **P0** | — | **DONE** |
+| P0-2 | IA: Executive Hub first; nest modules | High | Med | **P0** | Product freeze | **DONE** (5 nav sections) |
+| P0-3 | Login deep-link redirect fix | Med | Low | **P0** | — | **DONE** |
+| P0-4 | Design tokens + Metric/Empty/Error | High | Med | **P0** | — | **DONE** |
+| P0-5 | Repository interface over catalog | High | Med | **P0** | — | **DONE** (lite) |
+| P1-1 | Responsive table/map pass 320–1920 | High | Med | **P1** | P0-4 | **DONE** |
+| P1-2 | Land decision sheet | High | Med | **P1** | P0-5 | **DONE** |
+| P1-3 | Persist ML artifacts + no click-train | Med | Med | **P1** | Data | **DONE** |
+| P1-4 | Marketing allocator v1 | High | Med | **P1** | P0-5 | **DONE** |
+| P1-5 | PDF board pack | High | Med | **P1** | Hub | **DONE** (+ Hub Section 0) |
+| P2-1 | SQLite + Postgres path | High | High | **P2** | P0-5 | SQLite mirror optional; Postgres later |
+| P2-2 | Live adapter (KRERA/partner) | Very High | High | **P2** | Credentials | **BLOCKED** on credentials |
+| P2-3 | SimPy engine behind interface | Med | High | **P2** | Twin ABC | ABC **DONE**; SimPy impl deferred |
+| P2-4 | AgGrid everywhere tables | Med | Med | **P2** | P0-4 | Deferred |
+| P2-5 | Light mode parity | Med | Med | **P2** | Tokens | Deferred |
+| P3-1 | SSO / Admin module | Very High | High | **P3** | Tenancy | Deferred |
+| P3-2 | Prophet / LightGBM suite | Med | High | **P3** | Labels | Deferred |
+| P3-3 | React shell (if needed) | High | Very High | **P3** | API | Deferred |
+
+**Demo / interview close-out:** see `docs/DEMO_100.md` — P0+P1 + Board Mode + SimulationEngine NumPy = **requirement-complete for mentor SCOPE** without claiming live government data.
 
 ---
 

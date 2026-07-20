@@ -22,7 +22,7 @@ from components.touch_nav import render_touch_hub
 from components.viz_studio import render_dynamic_figure
 from config import settings
 from services.adapters import get_adapter
-from services.decision_brief_service import brief_from_launch
+from services.decision_brief_service import brief_from_launch, weekly_actions_unified
 from services.decision_context import (
     context_signature,
     format_relative_age,
@@ -31,7 +31,7 @@ from services.decision_context import (
     save_decision_context,
 )
 from services.launch_copilot_service import evaluate_launch, verdict_markdown
-from services.twin_service import run_twin_with_cannibalization
+from services.simulation_engine import get_simulation_engine
 from utils.charts import _style
 from utils.dmaic_charts import twin_curves
 
@@ -159,13 +159,18 @@ with right:
     section_label("Why this score")
     factor_bars(verdict)
     section_label("Do this week")
-    action_cards(verdict.actions[:3])
+    weekly = weekly_actions_unified(
+        launch_actions=list(verdict.actions),
+        project=project,
+        max_items=5,
+    )
+    action_cards(weekly[:3])
 
 # --- Supporting evidence (secondary) ---
 row = projects[projects["project"] == project].iloc[0]
 ticket = float(row["avg_unit_size_sqft"]) * float(my_price) / 100_000
 base_rate = max(int(row["units_sold"] / 24), 6)
-twin = run_twin_with_cannibalization(
+twin = get_simulation_engine().run(
     base_monthly_rate=base_rate,
     months=int(months),
     price_psf=float(my_price),

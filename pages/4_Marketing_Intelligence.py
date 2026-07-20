@@ -14,6 +14,7 @@ from components.filters import render_global_filters
 from components.executive_sheet import render_executive_sheet
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.states import empty_state
 from services.decision_brief_service import brief_from_marketing
 from services.marketing_service import build_marketing_insights, weekly_budget_allocation
 from utils.charts import marketing_efficiency_chart
@@ -30,6 +31,14 @@ page_hero(
 
 filters = render_global_filters("mkt")
 insights = build_marketing_insights(filters)
+
+if insights.by_quarter.empty and insights.roi.empty:
+    empty_state(
+        "No marketing spend for current filters",
+        "Widen builder/project filters or load SMC spend seed data.",
+        "Reset filters to All · All.",
+    )
+    st.stop()
 
 avg_roi = float(insights.roi["roi_score"].mean()) if not insights.roi.empty else 0.0
 cut_n = int((insights.roi["verdict"] == "Cut / reallocate").sum()) if not insights.roi.empty else 0

@@ -17,7 +17,8 @@ from components.viz_studio import generate_button, graphic_html, render_dynamic_
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_twin
 from services.decision_context import context_banner_text, get_decision_context, safe_toast
-from services.twin_service import TWIN_PRESET_NAMES, run_twin_with_cannibalization, twin_preset_params
+from services.simulation_engine import get_simulation_engine
+from services.twin_service import TWIN_PRESET_NAMES, twin_preset_params
 from utils.dmaic_charts import twin_curves
 
 st.set_page_config(page_title="Digital Twin", page_icon="🕹️", layout="wide")
@@ -159,7 +160,7 @@ with r3:
     rival_price = st.number_input("Competitor price ₹/sqft", 4000, 20000, key="twin_rival_price", step=100)
 
 ticket = float(row["avg_unit_size_sqft"]) * float(price_psf) / 100_000
-result = run_twin_with_cannibalization(
+result = get_simulation_engine().run(
     base_monthly_rate=base,
     months=months,
     price_psf=float(price_psf),
@@ -213,6 +214,6 @@ render_kpi_cards(
 )
 
 st.caption(
-    "Engine: NumPy Poisson scenario model (illustrative) — not SimPy discrete-event. "
-    "Use EDS Continue → Reports when the ₹ Cr path is clear."
+    f"Engine: {get_simulation_engine().name} (NumPy Poisson scenario — illustrative). "
+    "Not SimPy discrete-event. Use EDS Continue → Reports when the ₹ Cr path is clear."
 )

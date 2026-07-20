@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-07-20 — DEMO 100% requirement close-out
+
+### Added
+- `services/simulation_engine.py` — SimulationEngine ABC + NumpySimulationEngine (Wave 5)
+- Board Mode sidebar toggle (presentation density)
+- `weekly_actions_unified` — Hub Do-this-week merges co-pilot + prescribe lines
+- `docs/DEMO_100.md` — P0/P1 status matrix + interview definition of done
+- Tests: `tests/test_demo_100.py`
+
+### Changed
+- Hub / Twin / Recs run twin via `get_simulation_engine()`
+- Enterprise plan §10 status column updated
+
 ## 2026-07-20 — Cinematic gate (RealEstateIQ entrance)
 
 ### Changed
