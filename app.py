@@ -6,6 +6,7 @@ One question: Should we launch / reprice at ₹X this month?
 from __future__ import annotations
 
 import sys
+import traceback
 from pathlib import Path
 
 import streamlit as st
@@ -14,32 +15,7 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from components.help_kit import HUB_HELP, help_tip
-from components.copilot_ui import action_cards, factor_bars, threat_gauge
-from components.data_contract import render_data_contract
-from components.executive_brief import render_executive_brief
-from components.executive_sheet import (
-    render_executive_sheet,
-    render_journey_progress,
-)
-from components.layout import require_login, section_label
-from components.states import data_honesty_banner, empty_state, page_hub_label
-from components.touch_nav import render_touch_hub
-from components.viz_studio import render_dynamic_figure
 from config import settings
-from services.adapters import get_adapter
-from services.decision_brief_service import brief_from_launch, weekly_actions_unified
-from services.decision_context import (
-    context_signature,
-    format_relative_age,
-    get_decision_context,
-    safe_toast,
-    save_decision_context,
-)
-from services.launch_copilot_service import evaluate_launch, verdict_markdown
-from services.simulation_engine import get_simulation_engine
-from utils.charts import _style
-from utils.dmaic_charts import twin_curves
 
 st.set_page_config(
     page_title="Executive Hub · RealEstateIQ",
@@ -47,6 +23,37 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+
+try:
+    from components.help_kit import HUB_HELP, help_tip
+    from components.copilot_ui import action_cards, factor_bars, threat_gauge
+    from components.data_contract import render_data_contract
+    from components.executive_brief import render_executive_brief
+    from components.executive_sheet import (
+        render_executive_sheet,
+        render_journey_progress,
+    )
+    from components.layout import require_login, section_label
+    from components.states import data_honesty_banner, empty_state, page_hub_label
+    from components.touch_nav import render_touch_hub
+    from components.viz_studio import render_dynamic_figure
+    from services.adapters import get_adapter
+    from services.decision_brief_service import brief_from_launch, weekly_actions_unified
+    from services.decision_context import (
+        context_signature,
+        format_relative_age,
+        get_decision_context,
+        safe_toast,
+        save_decision_context,
+    )
+    from services.launch_copilot_service import evaluate_launch, verdict_markdown
+    from services.simulation_engine import get_simulation_engine
+    from utils.charts import _style
+    from utils.dmaic_charts import twin_curves
+except Exception as boot_err:
+    st.error("Hub failed to start — open Manage app → Logs, or share this trace:")
+    st.code(f"{type(boot_err).__name__}: {boot_err}\n\n{traceback.format_exc()}")
+    st.stop()
 
 require_login("Executive Hub")
 adapter = get_adapter()
