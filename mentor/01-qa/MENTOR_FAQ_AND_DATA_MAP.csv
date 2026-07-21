@@ -1,0 +1,16 @@
+Question,Answer
+What is this app?,Developer Decision Support System for Bagaluru / Aerospace Highway. Answers: Should we launch/reprice at this Rs/sqft? → GO / HOLD / NO-GO.
+Business problem solved,Fragmented Sales/Marketing/Finance/Competition/Excel → one Hub decision + evidence + board pack.
+Useful for the company how?,"Faster launch calls, competition blind-spot in Rs Cr, scenario intervene, board pack locked to Hub; uses their booking+SMC data."
+Bengaluru mega Excel used?,NO. bengaluru_realestate_dataset.xlsx is NOT used by the app.
+Why Bagaluru mentioned?,Mentor/SCOPE micro-market: Bagaluru / Aerospace Highway pilot — not from that mega Excel.
+Did we create projects.csv ourselves?,YES. Curated seed in scripts/build_seed_data.py. Not exported from mentor Excels.
+Developer names in mentor Excels?,"NO developer column. Excels have project names. Developers are in data/projects.csv, rera, upcoming, UC seed CSVs."
+Postal code / invest by pin?,Postal codes on Buyer Intelligence catchment only. NO invest/not-invest-by-pincode feature. Hub GO/HOLD does not use pins.
+Where is blind spot?,Hub: Unmitigated rival impact (Rs Cr) — loss if rival launches and you do nothing.
+Where is Digital Twin?,UI name: Scenario Engine (IC path). Also Hub expander Rs Cr money path. Docs: WORKING_PROCESS.md
+Prescriptive model for micro-market?,YES. Launch Co-pilot GO/HOLD/NO-GO + actions + Scenario intervene + land diligence for Bagaluru corridor.
+Tools / techniques,"Streamlit, pandas, Plotly, Folium, NumPy twin, sklearn GB, DMAIC, SPC, fpdf2, pytest, GitHub/Streamlit Cloud."
+Mentor: projects not in our 4 files — where from?,"Honest: Those 4 mentor workbooks do NOT list Brigade El Dorado, Godrej Ananda, RERA, upcoming, land, or zones. Competition + inventory is CURATED SEED (build_seed_data.py). Mentor files only feed Buyer (3 demographic xlsx) + Marketing (SMC). PDF barely used. Mega Bengaluru Excel NOT used. Label: measured=bookings/SMC; seed=competition/land/projects."
+What if mentor asks to show El Dorado in their Excel?,"You cannot — it is not in Atmosphere/Blubelle/Ecopolitan/SMC. Say: El Dorado is seed competition inventory for the corridor demo, not extracted from your four files. Your files power Buyer + Marketing."
+Can we claim all Hub data came from mentor files?,NO. Hub GO/HOLD uses seed projects + upcoming/UC/land + scenario math. Mentor Excels support buyer/marketing evidence when IC Demo Mode is OFF.

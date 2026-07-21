@@ -7,6 +7,9 @@
 This document answers the questions mentors usually ask.  
 For how the code is structured, see [`../02-architecture/ARCHITECTURE_OVERVIEW.md`](../02-architecture/ARCHITECTURE_OVERVIEW.md).
 
+**Excel sheet (all recent viva Q&A + data map):** [`MENTOR_FAQ_AND_DATA_MAP.xlsx`](MENTOR_FAQ_AND_DATA_MAP.xlsx)  
+Sheets: `Q_and_A` · `Your_mentor_files` · `Repo_CSVs` · `Where_to_click` · `Demo_steps`
+
 ---
 
 ## Elevator answer (30 seconds)
@@ -95,6 +98,15 @@ The project proves you can turn fragmented launch data into a **credible executi
 | **Curated seed** | Hand-built / scripted Bagaluru Aerospace Highway demo tables | Competition, land, zones, projects |
 | **Not used** | `bengaluru_realestate_dataset.xlsx` | **Not loaded by the app** |
 
+### Q7a. Mentor: “Projects like El Dorado aren’t in our 4 files — where did you get them?”
+
+**Say this (honest):**
+
+> The **four mentor workbooks do not list** corridor inventory (Brigade El Dorado, Godrej Ananda, RERA rows, upcoming rivals, land ₹/sqft, zones).  
+> Those tables are **curated seed** we built for the Bagaluru / Aerospace Highway pilot (`scripts/build_seed_data.py` → `projects.csv`, RERA, upcoming, UC, land, zones).  
+> Your files power **Buyer Intelligence** (3 demographic Excels → bookings / postal codes) and **Marketing Intelligence** (SMC spends). The Lead PDF is barely usable.  
+> We **do not** claim Hub competition data came from those four files. UI data contract: **measured** = bookings/SMC · **seed** = projects/competition/land · **simulated** = scenario ₹ Cr.
+
 ### Q8. Which Excel sheets (for the files we *did* use)?
 
 **A.**
@@ -115,6 +127,22 @@ The project proves you can turn fragmented launch data into a **credible executi
 ### Q10. Is the data “live”?
 
 **A.** No by default. UI shows a **data contract**: measured (bookings/SMC) · seed (competition/land) · simulated (scenario ₹ Cr) · illustrative (map). Live adapters exist as stubs until `AURA_LIVE_*` is configured.
+
+### Q10a. Do mentor Excels contain developer names?
+
+**A.** No. Atmosphere / Blubelle / Ecopolitan sheets have **project names**, not a developer column. Developer names live in seed CSVs (`projects.csv`, RERA, upcoming, UC).
+
+### Q10b. Postal codes — invest / not invest by pin?
+
+**A.** Postal codes appear on **Buyer Intelligence** (catchment from booking Excels) only. There is **no** invest-by-pincode feature. Hub GO/HOLD does not use pins.
+
+### Q10c. What is “blind spot”?
+
+**A.** Hub metric: **unmitigated rival impact (₹ Cr)** — estimated loss if a rival launches and you do nothing.
+
+### Q10d. Is there a prescriptive layer for this micro-market?
+
+**A.** Yes: Launch Co-pilot **GO/HOLD/NO-GO** + recommended actions, Scenario Engine intervene, and land Proceed/Caution/Walk — scoped to Bagaluru / Aerospace Highway.
 
 ---
 
