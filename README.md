@@ -14,6 +14,9 @@ RealEstateIQ gives **one Hub recommendation**; every other module is **evidence*
 
 Narrative: [`docs/WORKING_PROCESS.md`](docs/WORKING_PROCESS.md) · Flow: [`DECISION_FLOW.md`](DECISION_FLOW.md)
 
+**Mentors:** start at [`mentor/README.md`](mentor/README.md) — Q&A + architecture packs (two folders).
+
+
 ## Share on phone (mobile)
 
 1. Open **https://aura-market-dss.streamlit.app** in Chrome / Safari on your phone.  
