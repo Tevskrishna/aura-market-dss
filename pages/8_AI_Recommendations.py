@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.layout import page_hero, require_login, section_label
+from components.stitch_ui import end_stitch_page
 from components.executive_sheet import (
     render_executive_sheet,
     render_journey_progress,
@@ -202,3 +203,5 @@ with st.expander("Mini digital twin preview (same engine as Hub)", expanded=Fals
         f"Recovery ≈ ₹{twin.recovery_cr} Cr · Engine: {get_simulation_engine().name} · "
         "Illustration only — Hub remains the decision."
     )
+
+end_stitch_page("Decision Explanation")

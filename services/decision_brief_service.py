@@ -38,7 +38,7 @@ IC_DEMO_JOURNEY_LABELS: frozenset[str] = frozenset(
 
 
 def active_journey() -> list[JourneyStep]:
-    """IC Demo Mode uses the short spine; Quality Lab uses the full Continue chain."""
+    """Stakeholder Continue spine (6 steps). Full DECISION_JOURNEY only outside Streamlit (tests)."""
     try:
         import streamlit as st
 
@@ -52,8 +52,7 @@ def active_journey() -> list[JourneyStep]:
         # Bare pytest / scripts have no ScriptRunContext — keep full spine for unit tests
         if get_script_run_ctx() is None:
             return list(DECISION_JOURNEY)
-        if bool(st.session_state.get("iq_ic_demo_mode", True)):
-            return [s for s in DECISION_JOURNEY if s.label in IC_DEMO_JOURNEY_LABELS]
+        return [s for s in DECISION_JOURNEY if s.label in IC_DEMO_JOURNEY_LABELS]
     except Exception:
         pass
     return list(DECISION_JOURNEY)

@@ -1,0 +1,26 @@
+month,product_type,supply_units,absorption_units,availability_units
+2023-01,Apartment Cmplx,250.0,250.0,
+2023-01,Plots,152.0,151.0,1.0
+2023-01,Total,402.0,401.0,1.0
+2023-07,Apartment Cmplx,1591.0,1555.0,36.0
+2023-07,Total,1591.0,1555.0,36.0
+2023-11,Apartment Cmplx,1512.0,1452.0,60.0
+2023-11,Total,1512.0,1452.0,60.0
+2024-01,Apartment Cmplx,349.0,225.0,124.0
+2024-01,Total,349.0,225.0,124.0
+2024-02,Apartment Cmplx,1228.0,997.0,231.0
+2024-02,Total,1228.0,997.0,231.0
+2024-05,Apartment Cmplx,948.0,948.0,
+2024-05,Total,948.0,948.0,
+2024-08,Apartment Cmplx,800.0,800.0,
+2024-08,Total,800.0,800.0,
+2024-10,Apartment Cmplx,2076.0,1516.0,560.0
+2024-10,Total,2076.0,1516.0,560.0
+2024-12,Apartment Cmplx,581.0,576.0,5.0
+2024-12,Total,581.0,576.0,5.0
+2025-03,Apartment Cmplx,100.0,17.0,83.0
+2025-03,Total,100.0,17.0,83.0
+2025-08,Apartment Cmplx,500.0,33.0,467.0
+2025-08,Total,500.0,33.0,467.0
+2025-11,Row House/Villas,196.0,22.0,174.0
+2025-11,Total,196.0,22.0,174.0

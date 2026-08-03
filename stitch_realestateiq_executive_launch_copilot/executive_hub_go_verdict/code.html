@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Executive Hub - RealEstateIQ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdbc7",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "outline-variant": "#c4c7c7",
+                        "surface-container-low": "#f5f3f3",
+                        "primary": "#000000",
+                        "on-background": "#1b1c1c",
+                        "on-secondary": "#ffffff",
+                        "surface": "#fbf9f8",
+                        "on-tertiary-fixed": "#311300",
+                        "on-tertiary-container": "#b97343",
+                        "surface-variant": "#e4e2e2",
+                        "tertiary-container": "#311300",
+                        "outline": "#747878",
+                        "inverse-on-surface": "#f2f0f0",
+                        "on-secondary-fixed": "#1c1c19",
+                        "inverse-primary": "#c8c6c5",
+                        "tertiary-fixed-dim": "#ffb688",
+                        "secondary": "#5f5e5b",
+                        "on-primary-container": "#858383",
+                        "surface-tint": "#5f5e5e",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface-variant": "#444748",
+                        "on-secondary-container": "#656461",
+                        "secondary-fixed": "#e5e2dd",
+                        "on-surface": "#1b1c1c",
+                        "background": "#fbf9f8",
+                        "primary-fixed": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#474743",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#000000",
+                        "surface-container": "#efeded",
+                        "on-tertiary-fixed-variant": "#6f380c",
+                        "inverse-surface": "#303030",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fbf9f8",
+                        "surface-container-highest": "#e4e2e2",
+                        "surface-container-high": "#eae8e7",
+                        "secondary-fixed-dim": "#c9c6c2",
+                        "surface-dim": "#dbd9d9",
+                        "on-primary-fixed-variant": "#474746",
+                        "secondary-container": "#e5e2dd",
+                        "primary-container": "#1c1b1b",
+                        "forest-green": "#1B3022",
+                        "terracotta": "#B97343"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "stack-lg": "64px",
+                        "margin-x": "64px",
+                        "gutter": "32px",
+                        "container-max": "1440px",
+                        "stack-md": "32px",
+                        "stack-sm": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Geist"],
+                        "headline-lg": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "body-md": ["Geist"],
+                        "label-caps": ["Geist"],
+                        "headline-md": ["Playfair Display"],
+                        "data-mono": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "data-mono": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #F5F2ED;
+            color: #1b1c1c;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #000000;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+        .custom-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #000000;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="font-body-md">
+<!-- Sidebar: RealEstateIQ Context -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-secondary-fixed border-r border-secondary-container z-50 flex flex-col py-stack-md">
+<div class="px-8 mb-12">
+<h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">RealEstateIQ</h1>
+<div class="mt-8">
+<p class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Active Portfolio</p>
+<div class="flex items-center mt-2 gap-3">
+<div class="w-10 h-10 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">apartment</span>
+</div>
+<div>
+<p class="font-body-md text-primary font-bold">Project Alpha</p>
+<p class="text-[10px] text-secondary font-label-caps">Bagaluru Development</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="flex-grow space-y-1">
+<!-- Active Tab: Hub (Executive Hub inferred from active context) -->
+<a class="flex items-center px-8 py-3 bg-secondary-container text-primary font-bold border-r-4 border-primary" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-label-caps text-label-caps">Executive Hub</span>
+</a>
+<a class="flex items-center px-8 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span>
+<span class="font-label-caps text-label-caps">Market Intelligence</span>
+</a>
+<a class="flex items-center px-8 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined mr-3">map</span>
+<span class="font-label-caps text-label-caps">Competition &amp; Land</span>
+</a>
+<a class="flex items-center px-8 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined mr-3">psychology</span>
+<span class="font-label-caps text-label-caps">Scenario Engine</span>
+</a>
+<a class="flex items-center px-8 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined mr-3">fact_check</span>
+<span class="font-label-caps text-label-caps">Decision Explanation</span>
+</a>
+<a class="flex items-center px-8 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</a>
+</nav>
+<div class="px-8 mt-auto space-y-4">
+<a class="flex items-center text-secondary hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center text-secondary hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">help</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen relative flex flex-col">
+<!-- Top Bar -->
+<header class="h-20 w-full px-12 flex justify-end items-center gap-4 bg-background z-40 border-b border-secondary-container">
+<button class="px-6 py-2 border border-secondary text-secondary font-label-caps text-label-caps hover:bg-surface-container-low transition-all">
+                EXPORT REPORT
+            </button>
+<button class="px-6 py-2 bg-primary text-on-primary font-label-caps text-label-caps hover:opacity-90 transition-all">
+                BOARD REVIEW
+            </button>
+<div class="ml-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container-highest rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior executive director for a luxury real estate investment firm. The lighting is sophisticated and directional, characteristic of a high-end corporate portrait. He has a composed and authoritative expression, wearing a tailored charcoal suit against a minimal, off-white architectural background that matches the brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOcus9MatD1OIjfSf7NDNg1iFL6MzWOrna_8XjfkC_a5Keu16y3MdNpd_vFu9jh8Y2gQUrrEdUNXCChrxJUz5BwTHDh7h1j38op8XNq-j0svo1GpPhiwKEmdD5SGaOWXI-zlthzm0TGiMFyt16xNQJnBYo5EiD-oQJDEoUNjfkG1-PbmGOcE0Oa5Vm0Z5X21peplT7-2U2_iGKBmtZmdNrn8hCFTz7KKucrc_rRjdnwVoWid7BTjK7"/>
+</div>
+</div>
+</header>
+<!-- Full Bleed Hero Section -->
+<section class="flex-grow relative flex">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtMo-fNZ1LF3FkyUIlwy3Kvkmgw3BIgqza9dikoBq3KFA99GeQ4ZYfYMFFyrbrPCkTxErLSz4wIhfllaX7cPNasZARSpSRI8ZNBM1d5Wc1YC7zwVpYgOYoI72nOpAUsARCwN-LhJP7ay38Sr8elbmHk4bmwuz1fyKdxCmFscBNvdmUENWIsyxn3kfGzmPmKM5Gw1_3eLPsIyRWHOEY1Ib7uqBwxdOMX1NTROG5eVIYM7dAY41K6GQcG-A"/>
+<div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
+</div>
+<!-- Hero Text Content -->
+<div class="relative z-10 w-full flex flex-col lg:flex-row">
+<div class="flex-grow flex flex-col justify-center px-16 max-w-4xl text-white py-stack-lg">
+<span class="font-label-caps text-label-caps tracking-[0.3em] text-white/80 mb-4">
+                        REALESTATEIQ | PURAVANKARA · BAGALURU
+                    </span>
+<h2 class="font-display-lg text-display-lg mb-6 leading-[1.1]">
+                        Should we launch at this price?
+                    </h2>
+<p class="font-body-lg text-body-lg text-white/90 max-w-xl mb-12">
+                        Market absorption trends suggest a high probability of sell-through at the current premium. Analyze the impact of supply volatility on the final IRR.
+                    </p>
+<!-- Control Panel (Transparent Overlay Style) -->
+<div class="max-w-md bg-black/40 backdrop-blur-md p-8 border border-white/10 rounded-lg">
+<div class="mb-8">
+<div class="flex justify-between items-end mb-4">
+<label class="font-label-caps text-label-caps text-white/70">PROPOSED UNIT PRICE</label>
+<span class="font-headline-md text-headline-md text-white">₹12,500/sqft</span>
+</div>
+<input class="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer custom-slider" max="18000" min="8000" type="range" value="12500"/>
+<div class="flex justify-between mt-2 font-data-mono text-[10px] text-white/50">
+<span>₹8,000</span>
+<span>₹18,000</span>
+</div>
+</div>
+<button class="w-full py-4 bg-terracotta text-white font-label-caps text-label-caps tracking-widest hover:brightness-110 transition-all active:scale-[0.98]">
+                            EXECUTE ANALYSIS
+                        </button>
+</div>
+</div>
+<!-- Right Panel: Verdict -->
+<div class="w-full lg:w-[450px] bg-forest-green flex flex-col items-center justify-center p-12 text-white text-center">
+<p class="font-label-caps text-label-caps text-white/60 mb-6 tracking-widest">MODEL VERDICT</p>
+<div class="relative mb-12">
+<h3 class="font-display-lg text-[180px] leading-none font-bold">GO</h3>
+<div class="absolute -top-4 -right-4 w-6 h-6 bg-green-400 rounded-full animate-pulse shadow-[0_0_20px_rgba(74,222,128,0.6)]"></div>
+</div>
+<div class="w-full space-y-10 border-t border-white/10 pt-10">
+<div class="flex flex-col items-center">
+<p class="font-label-caps text-label-caps text-white/50 mb-2">RISK INDEX</p>
+<p class="font-headline-md text-headline-md">Low</p>
+<div class="w-32 h-1 bg-white/10 mt-4 overflow-hidden">
+<div class="w-1/4 h-full bg-green-400"></div>
+</div>
+</div>
+<div class="flex flex-col items-center">
+<p class="font-label-caps text-label-caps text-white/50 mb-2">CAPITAL EXPOSURE</p>
+<p class="font-headline-md text-headline-md">₹450 Cr</p>
+</div>
+<div class="flex flex-col items-center pt-4">
+<p class="text-white/40 text-xs italic font-body-md">
+                                Model confidence: 94.2% based on latest absorption rates in North Bangalore sector.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-highest border-t border-secondary-container py-stack-sm px-margin-x flex justify-between items-center z-40">
+<span class="font-label-caps text-label-caps text-primary">REALESTATEIQ</span>
+<p class="text-secondary font-body-md text-body-md opacity-60">© 2024 RealEstateIQ Institutional Holdings. Internal Use Only.</p>
+<div class="flex gap-6">
+<a class="text-secondary font-label-caps text-label-caps hover:text-primary transition-all" href="#">Evidence Vault</a>
+<a class="text-secondary font-label-caps text-label-caps hover:text-primary transition-all" href="#">Risk Disclosure</a>
+<a class="text-secondary font-label-caps text-label-caps hover:text-primary transition-all" href="#">Board Protocol</a>
+<a class="text-secondary font-label-caps text-label-caps hover:text-primary transition-all" href="#">Compliance</a>
+</div>
+</footer>
+</main>
+<script>
+        // Micro-interaction for the analysis button
+        const executeBtn = document.querySelector('button.bg-terracotta');
+        if (executeBtn) {
+            executeBtn.addEventListener('click', () => {
+                executeBtn.innerHTML = 'RE-CALCULATING...';
+                executeBtn.classList.add('opacity-80');
+                setTimeout(() => {
+                    executeBtn.innerHTML = 'EXECUTE ANALYSIS';
+                    executeBtn.classList.remove('opacity-80');
+                }, 1500);
+            });
+        }
+
+        // Parallax effect for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroImg = document.querySelector('section img');
+            if(heroImg) {
+                heroImg.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+    </script>
+</body></html>

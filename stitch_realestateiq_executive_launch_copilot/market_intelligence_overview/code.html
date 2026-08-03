@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Market Intelligence | RealEstateIQ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#5f5e5e",
+                    "primary-container": "#1c1b1b",
+                    "on-primary-fixed-variant": "#474746",
+                    "surface-container-high": "#eae8e7",
+                    "surface-dim": "#dbd9d9",
+                    "surface-bright": "#fbf9f8",
+                    "secondary": "#5f5e5b",
+                    "on-secondary-container": "#656461",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#311300",
+                    "tertiary-container": "#311300",
+                    "surface-container": "#efeded",
+                    "tertiary-fixed": "#ffdbc7",
+                    "surface-container-highest": "#e4e2e2",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#fbf9f8",
+                    "tertiary": "#000000",
+                    "on-tertiary-fixed-variant": "#6f380c",
+                    "on-primary-fixed": "#1c1b1b",
+                    "on-surface-variant": "#444748",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c4c7c7",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb688",
+                    "surface": "#fbf9f8",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1b1c1c",
+                    "secondary-fixed-dim": "#c9c6c2",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#303030",
+                    "surface-container-low": "#f5f3f3",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#858383",
+                    "on-tertiary-container": "#b97343",
+                    "primary-fixed": "#e5e2e1",
+                    "secondary-container": "#e5e2dd",
+                    "on-secondary-fixed-variant": "#474743",
+                    "inverse-on-surface": "#f2f0f0",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "outline": "#747878",
+                    "inverse-primary": "#c8c6c5",
+                    "on-secondary-fixed": "#1c1c19",
+                    "surface-variant": "#e4e2e2",
+                    "primary": "#000000",
+                    "secondary-fixed": "#e5e2dd",
+                    "on-surface": "#1b1c1c",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-sm": "16px",
+                    "stack-md": "32px",
+                    "margin-x": "64px",
+                    "base": "8px",
+                    "gutter": "32px",
+                    "stack-lg": "64px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Playfair Display"],
+                    "label-caps": ["Geist"],
+                    "headline-md": ["Playfair Display"],
+                    "data-mono": ["Geist"],
+                    "headline-lg": ["Playfair Display"],
+                    "body-md": ["Geist"],
+                    "body-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fbf9f8;
+            color: #1b1c1c;
+        }
+        .luxury-gradient {
+            background: radial-gradient(circle at top right, rgba(229, 226, 221, 0.4) 0%, rgba(251, 249, 248, 1) 70%);
+        }
+        .chart-grid-line {
+            stroke: #e5e2dd;
+            stroke-dasharray: 4,4;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden luxury-gradient">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-stack-md bg-surface-container-low border-r border-secondary-container w-64 z-50">
+<div class="px-6 mb-stack-lg">
+<h1 class="font-headline-md text-headline-md text-primary font-bold tracking-tighter">RealEstateIQ</h1>
+<div class="mt-stack-sm flex items-center space-x-3">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">apartment</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-primary">Project Alpha</p>
+<p class="font-body-md text-xs text-secondary italic">Bagaluru Development</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center space-x-4 px-6 py-3 bg-secondary-container text-primary font-bold border-r-4 border-primary" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Market Intelligence</span>
+</a>
+<a class="flex items-center space-x-4 px-6 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">apartment</span>
+<span class="font-label-caps text-label-caps">Project Switcher</span>
+</a>
+<a class="flex items-center space-x-4 px-6 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-caps text-label-caps">Risk Matrix</span>
+</a>
+<a class="flex items-center space-x-4 px-6 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Financial Modeling</span>
+</a>
+<a class="flex items-center space-x-4 px-6 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-label-caps text-label-caps">Stakeholder Approval</span>
+</a>
+</nav>
+<div class="px-6 mt-auto space-y-2">
+<button class="w-full py-3 bg-primary text-on-primary font-label-caps text-label-caps hover:opacity-90 duration-200 uppercase tracking-widest">
+                New Investment
+            </button>
+<div class="pt-stack-sm border-t border-secondary-container space-y-1">
+<a class="flex items-center space-x-4 py-2 text-secondary hover:text-primary" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center space-x-4 py-2 text-secondary hover:text-primary" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen pb-20">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-40 bg-background flex justify-between items-center w-full px-margin-x h-20 border-b border-secondary-container">
+<div class="flex items-center space-x-stack-md">
+<div class="relative flex items-center">
+<span class="absolute left-4 material-symbols-outlined text-secondary text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none focus:ring-1 focus:ring-on-tertiary-container w-64 font-body-md text-sm" placeholder="Search portfolios..." type="text"/>
+</div>
+<nav class="hidden md:flex space-x-6">
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps" href="#">Portfolio</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-caps text-label-caps" href="#">Strategy</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps" href="#">Risk</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps" href="#">Capital</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-secondary hover:text-primary font-label-caps text-label-caps border border-secondary-container px-4 py-2 hover:bg-surface-container transition-all">Export Report</button>
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-4 py-2 hover:opacity-90 duration-200">Board Review</button>
+<div class="w-10 h-10 bg-secondary-container overflow-hidden">
+<img class="w-full h-full object-cover grayscale" data-alt="Close up professional portrait of a senior real estate executive with a focused and authoritative expression, wearing a tailored charcoal suit against a minimal architectural background, in a high-end luxury editorial style with soft, natural side lighting and neutral tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjeuHCFnijulsnIwhRVQUQD5ZhKGnpGdvxuNYDukYZF3U6C35lL_XWd7_c2RY1Ha6d-QaIwwKiL_ZVldsCeQUvfsik1x7KHg_p6YIM7bBSjH3WAXc3OLeIlwVid636dTW3vxPkgPBlgAANF56YCDwCj9PWbD5hQsGDP41wHce8YoxT3SWf1qSGl3tRgimVrddBjDznyOYJUMdjTByanwlkvOWQMjhW9sq9HA5oRSawZxjM0Qem4gSo"/>
+</div>
+</div>
+</header>
+<!-- Content Body -->
+<div class="px-margin-x py-stack-md max-w-container-max mx-auto space-y-stack-lg">
+<!-- KPI Strip -->
+<section class="bg-primary-container py-4 px-8 flex justify-between items-center text-on-primary border-l-4 border-on-tertiary-container">
+<h2 class="font-headline-md text-xl tracking-tight text-secondary-fixed">Bagaluru Snapshot</h2>
+<div class="flex space-x-stack-lg">
+<div class="flex flex-col">
+<span class="font-label-caps text-[10px] text-on-primary-container uppercase tracking-widest">Active Assets</span>
+<span class="font-data-mono text-headline-md text-on-primary-fixed">12 Projects</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-[10px] text-on-primary-container uppercase tracking-widest">Total Inventory</span>
+<span class="font-data-mono text-headline-md text-on-primary-fixed">10,283 Units</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-[10px] text-on-primary-container uppercase tracking-widest">Market Velocity</span>
+<span class="font-data-mono text-headline-md text-on-tertiary-container">83% Absorbed</span>
+</div>
+</div>
+</section>
+<!-- Main Visualization Section -->
+<section class="grid grid-cols-12 gap-gutter">
+<div class="col-span-12 bg-white p-stack-md border border-secondary-container">
+<div class="flex justify-between items-end mb-stack-md">
+<div>
+<h3 class="font-headline-lg text-primary">Weighted Price Trend</h3>
+<p class="font-body-md text-secondary">Historical quarterly pricing variance per sq. ft. (Institutional Grade)</p>
+</div>
+<div class="flex space-x-4 font-label-caps text-label-caps">
+<span class="flex items-center gap-2"><div class="w-3 h-3 bg-on-tertiary-container"></div> Primary Market</span>
+<span class="flex items-center gap-2"><div class="w-3 h-3 bg-primary"></div> Secondary Forecast</span>
+</div>
+</div>
+<!-- SVG Chart Mock (High Fidelity Visual) -->
+<div class="w-full h-96 relative bg-surface-container-low border border-outline-variant">
+<svg class="w-full h-full px-12 py-8" preserveaspectratio="none" viewbox="0 0 1000 400">
+<!-- Grid Lines -->
+<line class="chart-grid-line" stroke-width="0.5" x1="0" x2="1000" y1="50" y2="50"></line>
+<line class="chart-grid-line" stroke-width="0.5" x1="0" x2="1000" y1="150" y2="150"></line>
+<line class="chart-grid-line" stroke-width="0.5" x1="0" x2="1000" y1="250" y2="250"></line>
+<line class="chart-grid-line" stroke-width="0.5" x1="0" x2="1000" y1="350" y2="350"></line>
+<!-- Price Curve 1 -->
+<path d="M0,350 L100,320 L250,280 L400,290 L550,210 L700,180 L850,120 L1000,80" fill="none" stroke="#b97343" stroke-linecap="round" stroke-width="3"></path>
+<!-- Price Curve 2 (Forecast) -->
+<path d="M700,180 L800,200 L900,190 L1000,220" fill="none" stroke="#1c1b1b" stroke-dasharray="8,8" stroke-width="2"></path>
+<!-- Data Points -->
+<circle cx="700" cy="180" fill="#b97343" r="5"></circle>
+<text class="font-data-mono text-[12px] fill-primary" x="710" y="170">Q3 Peak: ₹14,200</text>
+</svg>
+<!-- Y-Axis Labels -->
+<div class="absolute left-4 top-0 bottom-0 flex flex-col justify-between py-6 font-data-mono text-[10px] text-secondary">
+<span>₹18k</span>
+<span>₹14k</span>
+<span>₹10k</span>
+<span>₹6k</span>
+<span>₹2k</span>
+</div>
+<!-- X-Axis Labels -->
+<div class="absolute bottom-2 left-0 right-0 flex justify-between px-12 font-label-caps text-[10px] text-secondary">
+<span>2021</span>
+<span>2022</span>
+<span>2023</span>
+<span>2024 (Forecast)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Project Data Table -->
+<section class="space-y-stack-sm">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-md text-primary">Micro-Market Portfolio Analysis</h3>
+<div class="flex space-x-2">
+<button class="p-2 border border-secondary-container hover:bg-white"><span class="material-symbols-outlined text-sm">filter_list</span></button>
+<button class="p-2 border border-secondary-container hover:bg-white"><span class="material-symbols-outlined text-sm">download</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-secondary-container">
+<th class="text-left py-4 px-6 font-label-caps text-label-caps text-primary uppercase tracking-widest">Project Name</th>
+<th class="text-left py-4 px-6 font-label-caps text-label-caps text-primary uppercase tracking-widest">Pricing (Avg.)</th>
+<th class="text-left py-4 px-6 font-label-caps text-label-caps text-primary uppercase tracking-widest">Absorption</th>
+<th class="text-left py-4 px-6 font-label-caps text-label-caps text-primary uppercase tracking-widest">Inventory</th>
+<th class="text-left py-4 px-6 font-label-caps text-label-caps text-primary uppercase tracking-widest">Status</th>
+<th class="text-right py-4 px-6 font-label-caps text-label-caps text-primary uppercase tracking-widest">Risk Score</th>
+</tr>
+</thead>
+<tbody class="bg-white">
+<tr class="border-b border-secondary-container hover:bg-surface-container-low transition-colors group">
+<td class="py-5 px-6 font-body-md font-semibold text-primary">Prestige Highlake</td>
+<td class="py-5 px-6 font-data-mono text-secondary">₹12,450 / sqft</td>
+<td class="py-5 px-6">
+<div class="w-full bg-secondary-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-on-tertiary-container h-full" style="width: 92%"></div>
+</div>
+<span class="text-[10px] font-data-mono text-secondary">92% Quarterly</span>
+</td>
+<td class="py-5 px-6 font-data-mono text-secondary">142 Units</td>
+<td class="py-5 px-6">
+<span class="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-label-caps rounded uppercase">Stable</span>
+</td>
+<td class="py-5 px-6 text-right font-data-mono font-bold text-primary">0.14</td>
+</tr>
+<tr class="border-b border-secondary-container hover:bg-surface-container-low transition-colors group">
+<td class="py-5 px-6 font-body-md font-semibold text-primary">Sobha Royal Pavilion</td>
+<td class="py-5 px-6 font-data-mono text-secondary">₹15,800 / sqft</td>
+<td class="py-5 px-6">
+<div class="w-full bg-secondary-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-on-tertiary-container h-full" style="width: 76%"></div>
+</div>
+<span class="text-[10px] font-data-mono text-secondary">76% Quarterly</span>
+</td>
+<td class="py-5 px-6 font-data-mono text-secondary">482 Units</td>
+<td class="py-5 px-6">
+<span class="px-2 py-1 bg-amber-100 text-amber-800 text-[10px] font-label-caps rounded uppercase">Reviewing</span>
+</td>
+<td class="py-5 px-6 text-right font-data-mono font-bold text-primary">0.38</td>
+</tr>
+<tr class="border-b border-secondary-container hover:bg-surface-container-low transition-colors group">
+<td class="py-5 px-6 font-body-md font-semibold text-primary">Embassy Springs Phase II</td>
+<td class="py-5 px-6 font-data-mono text-secondary">₹10,200 / sqft</td>
+<td class="py-5 px-6">
+<div class="w-full bg-secondary-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-on-tertiary-container h-full" style="width: 54%"></div>
+</div>
+<span class="text-[10px] font-data-mono text-secondary">54% Quarterly</span>
+</td>
+<td class="py-5 px-6 font-data-mono text-secondary">1,240 Units</td>
+<td class="py-5 px-6">
+<span class="px-2 py-1 bg-blue-100 text-blue-800 text-[10px] font-label-caps rounded uppercase">Launch</span>
+</td>
+<td class="py-5 px-6 text-right font-data-mono font-bold text-primary">0.22</td>
+</tr>
+<tr class="border-b border-secondary-container hover:bg-surface-container-low transition-colors group">
+<td class="py-5 px-6 font-body-md font-semibold text-primary">Brigade Utopia</td>
+<td class="py-5 px-6 font-data-mono text-secondary">₹11,900 / sqft</td>
+<td class="py-5 px-6">
+<div class="w-full bg-secondary-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-on-tertiary-container h-full" style="width: 88%"></div>
+</div>
+<span class="text-[10px] font-data-mono text-secondary">88% Quarterly</span>
+</td>
+<td class="py-5 px-6 font-data-mono text-secondary">315 Units</td>
+<td class="py-5 px-6">
+<span class="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-label-caps rounded uppercase">Stable</span>
+</td>
+<td class="py-5 px-6 text-right font-data-mono font-bold text-primary">0.11</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="mt-stack-lg border-t border-secondary-container bg-surface-container-highest">
+<div class="w-full py-stack-sm px-margin-x flex justify-between items-center max-w-container-max mx-auto">
+<span class="font-label-caps text-label-caps text-primary uppercase">RealEstateIQ Institutional</span>
+<p class="font-body-md text-xs text-secondary italic">© 2024 RealEstateIQ Institutional Holdings. Internal Use Only.</p>
+<div class="flex space-x-6">
+<a class="font-label-caps text-[10px] text-on-secondary-container hover:text-primary transition-all" href="#">Evidence Vault</a>
+<a class="font-label-caps text-[10px] text-on-secondary-container hover:text-primary transition-all" href="#">Risk Disclosure</a>
+<a class="font-label-caps text-[10px] text-on-secondary-container hover:text-primary transition-all" href="#">Compliance</a>
+</div>
+</div>
+</footer>
+</main>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mousedown', () => {
+                row.classList.add('scale-[0.995]', 'duration-150');
+            });
+            row.addEventListener('mouseup', () => {
+                row.classList.remove('scale-[0.995]');
+            });
+        });
+    </script>
+</body></html>

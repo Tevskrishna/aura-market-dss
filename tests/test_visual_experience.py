@@ -21,15 +21,15 @@ def test_visual_default_off_without_session():
     assert visual_experience_on() is False or visual_experience_on() in (False, True)
 
 
-def test_enhance_figure_noop_when_off():
+def test_enhance_figure_applies_transition_always():
     class _Fig:
         def update_layout(self, **kwargs):
             self.kwargs = kwargs
 
     fig = _Fig()
-    out = enhance_figure(fig, purpose="scenario")
+    out = enhance_figure(fig, purpose="generic")
     assert out is fig
-    assert not hasattr(fig, "kwargs") or "transition" not in getattr(fig, "kwargs", {})
+    assert "transition" in fig.kwargs
 
 
 def test_comparison_3d_returns_none_when_off():

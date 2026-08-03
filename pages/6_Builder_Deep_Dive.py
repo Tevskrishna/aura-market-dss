@@ -16,6 +16,7 @@ from components.executive_sheet import (
     render_open_project_chip,
 )
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.stitch_ui import end_stitch_page
 from services.adapters import get_adapter
 from services.decision_brief_service import brief_from_builder
 from services.recommendation_engine import (
@@ -118,3 +119,4 @@ else:
             st.write("**Evidence levers (support Hub — not a new verdict):**")
             for rec in recommendations_for_row(row, sold_out)[:3]:
                 st.write(f"- **{rec['action']}** — {rec['detail']} (est. recoverable {rec['recoverable_units']} units)")
+end_stitch_page("Decision Explanation")

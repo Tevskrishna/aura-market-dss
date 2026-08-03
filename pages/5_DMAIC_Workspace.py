@@ -18,6 +18,7 @@ from components.executive_sheet import (
 )
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.stitch_ui import end_stitch_page
 from services.decision_brief_service import brief_from_dmaic
 from services.dmaic_service import build_dmaic_snapshot
 
@@ -94,3 +95,5 @@ decision_action(
 )
 
 st.caption("Next in the story: Project Deep Dive · Scenario Engine · Decision Explanation · SPC · Reports.")
+end_stitch_page("Decision Explanation")
+

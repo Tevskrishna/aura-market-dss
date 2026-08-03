@@ -35,7 +35,8 @@ TOUCH_TILES: list[tuple[str, str, str, str]] = [
 
 
 def ic_demo_mode() -> bool:
-    return bool(st.session_state.get("iq_ic_demo_mode", True))
+    """Always the stakeholder 6-step path — IC Demo Mode toggle removed."""
+    return True
 
 
 def apply_pending_module_nav() -> None:
@@ -65,7 +66,7 @@ def render_touch_hub(*, title: str = "Tap a workspace") -> None:
     st.html(
         f'<div class="iq-touch-hub-title">{html.escape(title)}</div>'
         f'<p class="iq-touch-hub-sub">'
-        f'{"IC Demo Path — evidence that supports the Hub call" if ic else "Full Quality Lab workspaces"}'
+        f'{"Stakeholder path — evidence that supports the Hub call" if ic else "Full Quality Lab workspaces"}'
         f"</p>"
     )
     row: list = []
@@ -144,4 +145,4 @@ def render_sidebar_touch_nav() -> None:
                 else:
                     navigate_to(label, path)
     if ic:
-        st.sidebar.caption("Quality Lab pages are hidden — turn off IC Demo Mode to open them.")
+        st.sidebar.caption("Stakeholder path · 6 steps")

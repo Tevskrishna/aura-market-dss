@@ -19,6 +19,7 @@ from components.executive_sheet import (
     render_open_project_chip,
 )
 from components.states import data_honesty_banner, page_hub_label
+from components.stitch_ui import end_stitch_page
 from components.viz_studio import (
     generate_button,
     graphic_html,
@@ -343,3 +344,4 @@ with t_heat:
         width="stretch",
         hide_index=True,
     )
+end_stitch_page("Scenario Engine")

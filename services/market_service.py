@@ -172,3 +172,43 @@ def marketing_efficiency_frame(
             }
         )
     return pd.DataFrame(records).sort_values("spend_cr", ascending=False)
+
+
+def propstack_summary_row(catalog: DataCatalog | None = None) -> dict | None:
+    """One-row PropStack Location Analysis snapshot if ingested."""
+    catalog = catalog or load_catalog()
+    if not catalog.has("micromarket_summary"):
+        return None
+    df = catalog.get("micromarket_summary")
+    if df.empty:
+        return None
+    return df.iloc[0].to_dict()
+
+
+def propstack_inventory(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("inventory_trend"):
+        return pd.DataFrame()
+    return catalog.get("inventory_trend")
+
+
+def propstack_price_trend(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("weighted_price_trend"):
+        return pd.DataFrame()
+    return catalog.get("weighted_price_trend")
+
+
+def propstack_new_launches(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("new_launches"):
+        return pd.DataFrame()
+    return catalog.get("new_launches")
+
+
+def propstack_absorption_bands(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("absorption_by_price_band"):
+        return pd.DataFrame()
+    return catalog.get("absorption_by_price_band")
+

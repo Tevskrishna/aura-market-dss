@@ -39,8 +39,8 @@ TOUR_STEPS: list[dict[str, str]] = [
     {
         "title": "The IC demo journey (~6 minutes)",
         "body": (
-            "With IC Demo Mode on (default): Hub → Market → Competition → Scenario Engine → "
-            "Decision Explanation → Reports. Turn IC Demo Mode off in the sidebar for the full Quality Lab."
+            "Stakeholder path: Hub → Market → Competition → Scenario Engine → "
+            "Decision Explanation → Reports."
         ),
         "outcome": "≈ 5–7 minutes to a board pack with one locked Hub call.",
     },

@@ -18,6 +18,7 @@ from components.executive_sheet import (
 )
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.stitch_ui import end_stitch_page
 from services.buyer_service import build_buyer_insights
 from services.decision_brief_service import brief_from_buyer
 from services.data_loader import load_catalog
@@ -124,7 +125,23 @@ section_label("Lead funnel intelligence")
 cat = load_catalog()
 if cat.has("lead_insights"):
     st.caption("Lead Insights PDF was image-only — curated funnel grounded in booking channel mix.")
-    st.dataframe(cat.get("lead_insights"), width="stretch", hide_index=True)
+    leads = cat.get("lead_insights")
+    st.dataframe(leads, width="stretch", hide_index=True)
+    if {"channel_cluster", "indicative_share_pct"}.issubset(leads.columns):
+        fig = px.bar(
+            leads.sort_values("indicative_share_pct", ascending=True),
+            x="indicative_share_pct",
+            y="channel_cluster",
+            orientation="h",
+            title="Indicative channel share (%)",
+            color_discrete_sequence=PALETTE,
+            labels={"indicative_share_pct": "Share %", "channel_cluster": "Channel"},
+        )
+        from utils.charts import _style
+
+        st.plotly_chart(_style(fig, "Indicative channel share (%)"), width="stretch")
+else:
+    st.info("lead_insights.csv not loaded.")
 
 st.download_button(
     "Download channel mix CSV",
@@ -132,3 +149,4 @@ st.download_button(
     file_name="buyer_channel_mix.csv",
     mime="text/csv",
 )
+end_stitch_page("Market Intelligence")

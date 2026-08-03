@@ -17,6 +17,7 @@ from components.executive_sheet import (
     render_journey_progress,
     render_open_project_chip,
 )
+from components.stitch_ui import end_stitch_page
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
 from services.decision_brief_service import brief_from_forecast
@@ -104,3 +105,4 @@ st.download_button(
     file_name="forecast.csv",
     mime="text/csv",
 )
+end_stitch_page("Scenario Engine")

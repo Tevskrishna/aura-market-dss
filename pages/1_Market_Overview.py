@@ -1,4 +1,4 @@
-"""Market Overview — interactive MEASURE scorecard (click KPIs / lenses / actions)."""
+"""Market Intelligence — Stitch Bagaluru snapshot + PropStack series."""
 from __future__ import annotations
 
 import sys
@@ -10,32 +10,39 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from components.filters import render_global_filters
-from components.executive_sheet import (
-    render_executive_sheet,
-    render_journey_progress,
-    render_open_project_chip,
-)
-from components.layout import page_hero, require_login, section_label
+from components.layout import require_login, section_label
 from components.states import empty_state, error_state
-from components.viz_studio import generate_button, graphic_html, live_kpi_strip, render_dynamic_figure, scenario_bar
-from services.decision_brief_service import brief_from_market
+from components.stitch_ui import (
+    end_stitch_page,
+    render_bagaluru_snapshot,
+    render_portfolio_table,
+    render_topbar,
+)
+from components.touch_nav import navigate_to
+from components.viz_studio import render_dynamic_figure, scenario_bar
 from services.data_loader import load_catalog
-from services.market_service import booking_trend_frame, build_market_bundle, get_validation_report
+from services.market_service import (
+    build_market_bundle,
+    get_validation_report,
+    propstack_absorption_bands,
+    propstack_inventory,
+    propstack_new_launches,
+    propstack_price_trend,
+    propstack_summary_row,
+)
 from services.sigma_service import market_kpis as sigma_kpis
-from utils.charts import booking_trend_chart, buyer_mix_chart
+from utils.charts import (
+    absorption_price_band_chart,
+    inventory_trend_chart,
+    new_launch_pulse_chart,
+    weighted_price_trend_chart,
+)
 from utils.dmaic_charts import absorption_band_chart, price_absorption_bubble
 
-st.set_page_config(page_title="Market Overview", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Market Intelligence · RealEstateIQ", page_icon="📊", layout="wide")
 require_login("Market Intelligence")
 
 report = get_validation_report()
-page_hero(
-    kicker="Should we launch?",
-    title="Market Intelligence",
-    subtitle="Is demand healthy? Absorption, inventory, and at-risk supply — evidence for the Hub call.",
-    compact=True,
-)
-
 if not report or not report.ready_for_market_overview:
     error_state(
         "Core datasets failed validation",
@@ -43,8 +50,23 @@ if not report or not report.ready_for_market_overview:
     )
     st.stop()
 
+render_topbar()
+
+st.html(
+    """
+    <div class="st-mkt-head">
+      <div>
+        <h2 class="st-page-title">Market Intelligence Overview</h2>
+        <p class="st-page-sub">Institutional data streams for Bagaluru residential · PropStack Dec 2022 – Nov 2025.</p>
+      </div>
+      <p class="st-mkt-asof">Data current · PropStack Nov 2025</p>
+    </div>
+    """
+)
+
+catalog = load_catalog()
 filters = render_global_filters("market")
-bundle = build_market_bundle(filters, load_catalog())
+bundle = build_market_bundle(filters, catalog)
 sk = sigma_kpis(bundle.projects)
 projects = bundle.projects
 
@@ -56,113 +78,133 @@ if projects.empty:
     )
     st.stop()
 
-render_journey_progress("Market Intelligence")
-render_open_project_chip()
-render_executive_sheet(
-    brief_from_market(
-        absorption_pct=float(sk["absorption_pct"]),
-        at_risk=int(sk["at_risk_projects"]),
-        dpmo=float(sk["dpmo"]),
-        unsold=int(sk["units_unsold"]),
-    ),
-    key="mkt_eds",
-    mode="evidence",
-)
+ps = propstack_summary_row(catalog)
+render_bagaluru_snapshot(ps)
 
-section_label("Six Sigma scorecard — tap to focus")
-live_kpi_strip(
-    [
-        {"label": "Launched", "display": f"{sk['total_units']:,}", "hint": "units"},
-        {"label": "Sold", "display": f"{sk['units_sold']:,}", "hint": "units"},
-        {"label": "Unsold", "display": f"{sk['units_unsold']:,}", "hint": "defect pool"},
-        {"label": "Sigma", "display": str(sk["sigma_level"]), "hint": "DPMO-based"},
-        {"label": "At-risk", "display": str(sk["at_risk_projects"]), "hint": "<70% abs."},
-    ]
-)
-st.caption(f"DPMO = (unsold ÷ launched) × 1,000,000 → **{sk['dpmo']:,.0f}**")
+inv = propstack_inventory(catalog)
+price = propstack_price_trend(catalog)
+launches = propstack_new_launches(catalog)
+bands = propstack_absorption_bands(catalog)
 
-k1, k2, k3, k4 = st.columns(4)
-with k1:
+chart_col, thesis_col = st.columns([2, 1], gap="large")
+with chart_col:
+    st.html(
+        """
+        <div class="st-card-head">
+          <div>
+            <h3 class="st-section-title" style="margin:0;">Weighted Price Trend</h3>
+            <p class="st-card-sub">Historical quarterly pricing variance per sq. ft. (institutional grade)</p>
+          </div>
+          <div class="st-legend">
+            <span><i class="c-terra"></i> Primary market</span>
+            <span><i class="c-ink"></i> Secondary / available</span>
+          </div>
+        </div>
+        """
+    )
+    ps_lens = scenario_bar(
+        "mkt_propstack_lens",
+        "Series lens",
+        ["Price trend", "Inventory", "New launches", "Price bands", "Project absorption"],
+    )
+
+    def _ps_fig():
+        if ps_lens == "Inventory":
+            return inventory_trend_chart(inv)
+        if ps_lens == "New launches":
+            return new_launch_pulse_chart(launches)
+        if ps_lens == "Price bands":
+            return absorption_price_band_chart(bands)
+        if ps_lens == "Project absorption":
+            return absorption_band_chart(projects)
+        return weighted_price_trend_chart(price)
+
+    st.html('<div class="st-chart-card">')
+    render_dynamic_figure("mkt_propstack", _ps_fig, height=380, scene=f"ps|{ps_lens}|{len(projects)}")
+    st.html("</div>")
+
+with thesis_col:
+    abs_pct = float(ps["absorption_pct"]) if ps else float(sk.get("absorption_pct", 0))
+    at_risk = int(sk.get("at_risk_projects", 0))
+    risk_q = "L-04 (Low)" if at_risk <= 2 else ("M-06 (Watch)" if at_risk <= 5 else "H-08 (Elevated)")
+    liq = min(0.99, abs_pct / 100)
+    st.html(
+        f"""
+        <div class="st-thesis">
+          <div class="st-thesis-kicker">Investment thesis</div>
+          <h3>North-East corridor outperformance</h3>
+          <p>
+            PropStack Bagaluru shows <strong>{abs_pct:.0f}%</strong> absorption across launched supply,
+            with IT-corridor demand and ring-road connectivity supporting mid-premium liquidity.
+            Use this page as Hub evidence — not a second launch call.
+          </p>
+          <div class="st-thesis-rows">
+            <div><span>Risk quotient</span><strong>{risk_q}</strong></div>
+            <div><span>Liquidity index</span><strong>{liq:.2f} {"High" if liq >= 0.75 else "Moderate"}</strong></div>
+            <div><span>At-risk projects</span><strong>{at_risk}</strong></div>
+            <div><span>Unsold pool</span><strong>{int(sk.get("units_unsold", 0)):,}</strong></div>
+          </div>
+        </div>
+        """
+    )
+
+st.html(
+    """
+    <div class="st-card-head" style="margin-top:1.5rem;">
+      <h3 class="st-section-title" style="margin:0;">Micro-Market Portfolio Analysis</h3>
+    </div>
+    """
+)
+focus_c1, focus_c2, focus_c3 = st.columns(3)
+with focus_c1:
     if st.button("Focus at-risk", type="primary", width="stretch", key="mkt_focus_risk"):
         st.session_state["mkt_focus"] = "at_risk"
-        st.session_state["mkt_lens"] = "Absorption bands"
-with k2:
+with focus_c2:
     if st.button("Show sold-out", width="stretch", key="mkt_focus_sold"):
         st.session_state["mkt_focus"] = "sold_out"
-        st.session_state["mkt_lens"] = "Price bubble"
-with k3:
-    if st.button("Bookings pulse", width="stretch", key="mkt_focus_book"):
-        st.session_state["mkt_focus"] = "all"
-        st.session_state["mkt_lens"] = "Bookings pulse"
-with k4:
+with focus_c3:
     if st.button("Reset view", width="stretch", key="mkt_focus_reset"):
         st.session_state["mkt_focus"] = "all"
-        st.session_state["mkt_lens"] = "Absorption bands"
 
 focus = st.session_state.get("mkt_focus", "all")
 if focus == "at_risk":
     view = projects[projects["absorption_pct"] < 70].sort_values("absorption_pct")
-    st.info(f"Focused on **{len(view)}** at-risk projects (<70% absorption).")
 elif focus == "sold_out":
     view = projects[projects["absorption_pct"] >= 95].sort_values("absorption_pct", ascending=False)
-    st.success(f"Showing **{len(view)}** sold-out / near sold-out benchmarks.")
 else:
-    view = projects
+    view = projects.sort_values("absorption_pct", ascending=False)
 
-a1, a2, a3 = st.columns(3)
-with a1:
-    if st.button("→ Decision Explanation", width="stretch", key="mkt_go_recs"):
-        from components.touch_nav import navigate_to
+render_portfolio_table(view)
 
-        navigate_to("Decision Explanation", "pages/8_AI_Recommendations.py")
-with a2:
-    if st.button("→ Open Builder Deep Dive", width="stretch", key="mkt_go_builder"):
-        from components.touch_nav import navigate_to
-
-        navigate_to("Project Deep Dive", "pages/6_Builder_Deep_Dive.py")
-with a3:
-    if st.button("→ Open Scenario Engine", width="stretch", key="mkt_go_twin"):
-        from components.touch_nav import navigate_to
-
-        navigate_to("Scenario Engine", "pages/7_Digital_Twin.py")
-
-section_label("Interactive market graphics — change lens to redraw")
-graphic_html("trend-pulse.svg", "dss-graphic")
-lens = scenario_bar(
-    "mkt_lens",
-    "Chart lens (tap to switch figure)",
-    ["Absorption bands", "Price bubble", "Bookings pulse", "Buyer mix"],
-)
-generate_button("mkt_studio", "Regenerate market graphics")
-
-
-def _mkt_fig():
-    frame = view if not view.empty else projects
-    if lens == "Absorption bands":
-        return absorption_band_chart(frame)
-    if lens == "Price bubble":
-        return price_absorption_bubble(frame)
-    if lens == "Bookings pulse":
-        return booking_trend_chart(booking_trend_frame(bundle.bookings))
-    return buyer_mix_chart(bundle.kpis.buyer_distribution)
-
-
-render_dynamic_figure("mkt_studio", _mkt_fig, height=420, scene=f"{lens}|{focus}|{len(view)}")
-st.caption("Plotly chart is zoomable · pan · hover · box-select. Use the mode bar at the top-right of the figure.")
-
-section_label("Inventory detail — click column headers to sort")
-cols = [
-    c
-    for c in [
-        "developer",
-        "project",
-        "total_units",
-        "units_sold",
-        "units_unsold",
-        "absorption_pct",
-        "price_psf",
-        "status",
+with st.expander("Price vs absorption bubble · CSV export", expanded=False):
+    render_dynamic_figure(
+        "mkt_bubble",
+        lambda: price_absorption_bubble(view if not view.empty else projects),
+        height=360,
+        scene=f"bubble|{focus}|{len(view)}",
+    )
+    cols = [
+        c
+        for c in ["developer", "project", "price_psf", "absorption_pct", "total_units", "units_unsold", "status"]
+        if c in view.columns
     ]
-    if c in view.columns
-]
-st.dataframe(view[cols], width="stretch", hide_index=True, height=360)
+    st.download_button(
+        "Download portfolio CSV",
+        view[cols].to_csv(index=False).encode("utf-8"),
+        file_name="bagaluru_portfolio.csv",
+        mime="text/csv",
+        width="stretch",
+    )
+
+nav1, nav2, nav3 = st.columns(3)
+with nav1:
+    if st.button("→ Competition & Land", width="stretch", key="mkt_go_comp"):
+        navigate_to("Competition & Land", "pages/2_Competition_Intelligence.py")
+with nav2:
+    if st.button("→ Scenario Engine", width="stretch", key="mkt_go_twin"):
+        navigate_to("Scenario Engine", "pages/7_Digital_Twin.py")
+with nav3:
+    if st.button("→ Decision Explanation", width="stretch", key="mkt_go_recs"):
+        navigate_to("Decision Explanation", "pages/8_AI_Recommendations.py")
+
+end_stitch_page("Market Intelligence")

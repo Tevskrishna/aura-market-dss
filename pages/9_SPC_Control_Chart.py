@@ -17,6 +17,7 @@ from components.executive_sheet import (
     render_journey_progress,
     render_open_project_chip,
 )
+from components.stitch_ui import end_stitch_page
 from services.adapters import get_adapter
 from services.data_loader import load_catalog
 from services.decision_brief_service import brief_from_spc
@@ -106,9 +107,10 @@ fc = forecast_linear_seasonal(series, months=6)
 last = series.index.max()
 fc["month"] = pd.date_range(last + pd.offsets.MonthBegin(1), periods=6, freq="MS")
 fig = go.Figure()
-fig.add_trace(go.Scatter(x=series.index, y=series.values, name="History", line=dict(color="#58a6ff")))
-fig.add_trace(go.Scatter(x=fc["month"], y=fc["forecast"], name="Forecast", mode="lines+markers", line=dict(color="#3dd68c")))
-fig.add_trace(go.Scatter(x=fc["month"], y=fc["upper"], name="Upper 95%", line=dict(dash="dot", color="#8b949e")))
-fig.add_trace(go.Scatter(x=fc["month"], y=fc["lower"], name="Lower 95%", line=dict(dash="dot", color="#8b949e")))
+fig.add_trace(go.Scatter(x=series.index, y=series.values, name="History", line=dict(color="#1b3022")))
+fig.add_trace(go.Scatter(x=fc["month"], y=fc["forecast"], name="Forecast", mode="lines+markers", line=dict(color="#b97343")))
+fig.add_trace(go.Scatter(x=fc["month"], y=fc["upper"], name="Upper 95%", line=dict(dash="dot", color="#747878")))
+fig.add_trace(go.Scatter(x=fc["month"], y=fc["lower"], name="Lower 95%", line=dict(dash="dot", color="#747878")))
 st.plotly_chart(_style(fig, "Linear trend + seasonal correction"), width="stretch")
 st.dataframe(fc[["month", "forecast", "lower", "upper"]], width="stretch", hide_index=True)
+end_stitch_page("Decision Explanation")

@@ -18,14 +18,14 @@ __all__ = ["MODULE_NAV", "NAV_SECTIONS"]
 
 def inject_theme(*, gate: bool = False) -> None:
     chunks: list[str] = []
-    for name in (
-        "styles.css",
-        "dynamic.css",
-        "copilot.css",
-        "design_tokens.css",
-        "realtime_hud.css",
-        "mobile.css",
-    ):
+    # Stitch institutional light theme is the product UI. Skip legacy dark DSS sheets
+    # so Streamlit chrome does not fight the Google Stitch look.
+    css_names = (
+        ("stitch_theme.css", "mobile.css")
+        if not gate
+        else ("stitch_theme.css", "mobile.css")
+    )
+    for name in css_names:
         path = settings.ASSETS_DIR / name
         if path.exists():
             chunks.append(path.read_text(encoding="utf-8"))
@@ -55,12 +55,11 @@ def inject_theme(*, gate: bool = False) -> None:
               max-width: 1240px !important;
             }
             div[data-testid="stForm"] {
-              background: rgba(10, 14, 22, 0.72);
-              border: 1px solid rgba(61, 224, 208, 0.2);
-              border-radius: 14px;
+              background: #ffffff;
+              border: 1px solid #e5e2dd;
+              border-radius: 2px;
               padding: 1rem 1.1rem 0.85rem;
-              backdrop-filter: blur(14px);
-              box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+              box-shadow: none;
               margin-top: -4.5rem;
               position: relative;
               z-index: 5;
@@ -74,10 +73,13 @@ def inject_theme(*, gate: bool = False) -> None:
               min-height: 52px !important;
               font-size: 1.05rem !important;
               font-weight: 800 !important;
+              background: #b97343 !important;
+              border-color: #b97343 !important;
+              color: #fff !important;
             }
             .dss-login-creds {
               margin-top: 0.65rem;
-              color: #8a9bb0;
+              color: #5f5e5b;
               font-size: 0.85rem;
             }
             @media (max-width: 900px) {
@@ -491,60 +493,45 @@ def render_module_nav() -> None:
         key="dss_module_nav",
         label_visibility="collapsed",
         on_change=_on_nav_change,
-        help="IC Demo Mode shows the decision path only.",
+        help="Jump across the stakeholder path.",
     )
 
 
 def _sidebar_chrome() -> None:
     user = st.session_state.get(SESSION_USER_KEY) or {}
-    st.sidebar.html(
-        f'<div class="dss-brand">'
-        f'<div class="dss-brand-mark">{html.escape(settings.BRAND_MARK)}</div>'
-        '<p class="dss-brand-name">RealEstateIQ</p>'
-        '<div class="dss-brand-sub">Executive Hub · AURA engine</div>'
-        '<div class="dss-brand-tag">GO · HOLD · NO-GO decisions</div>'
-        "</div>"
-        f'<div class="dss-user-card"><strong>{html.escape(str(user.get("name", "User")))}</strong><br/>'
-        f'<span>{html.escape(str(user.get("role", "viewer")).upper())} ACCESS</span></div>'
-    )
+    from components.stitch_ui import stitch_brand_sidebar_html
+    from services.decision_context import get_decision_context
+
+    open_proj = None
+    try:
+        ctx = get_decision_context()
+        open_proj = (ctx or {}).get("project")
+    except Exception:
+        open_proj = None
+    st.sidebar.html(stitch_brand_sidebar_html(open_proj))
+    st.sidebar.caption(f"{html.escape(str(user.get('name', 'User')))} · {html.escape(str(user.get('role', 'viewer')).upper())}")
     if st.sidebar.button("Sign out", width="stretch"):
         st.session_state[SESSION_AUTH_KEY] = False
         st.session_state[SESSION_USER_KEY] = None
         st.rerun()
     board = st.sidebar.toggle(
         "Board Mode",
-        value=bool(st.session_state.get("iq_board_mode", False)),
+        value=bool(st.session_state.get("iq_board_mode", True)),
         key="iq_board_mode",
-        help="Presentation density — larger type, quieter chrome for IC demos.",
+        help="Larger type, quieter chrome for IC demos.",
     )
-    st.sidebar.toggle(
-        "IC Demo Mode",
-        value=bool(st.session_state.get("iq_ic_demo_mode", True)),
-        key="iq_ic_demo_mode",
-        help="On: Hub → Market → Competition → Scenario → Explanation → Reports. Off: full Quality Lab.",
-    )
-    from components.visual_experience import (
-        inject_visual_experience_chrome,
-        render_visual_experience_toggle,
-        visual_experience_on,
-    )
+    st.sidebar.caption("Stakeholder path · Hub → Market → Competition → Scenario → Explanation → Reports")
+    # Chart motion is always on via Plotly; optional depth/3D stays user-controlled
+    from components.visual_experience import inject_visual_experience_chrome, render_visual_experience_toggle
 
+    st.session_state.setdefault("iq_visual_experience", True)
     render_visual_experience_toggle()
+    inject_visual_experience_chrome()
     if board:
-        st.html(
-            "<style>"
-            "html { font-size: 110% !important; }"
-            ".iq-eds,.iq-hub-ask,.copilot-gauge-wrap { box-shadow: none !important; }"
-            ".dss-hero,.dss-hero-compact,.iq-honesty { display: none !important; }"
-            ".block-container div[data-testid='stExpander'] { opacity: 0.92; }"
-            ".iq-live-strip { border-color: rgba(255,192,72,0.35) !important; }"
-            "</style>"
-        )
-        st.sidebar.caption("Board Mode on · calm presentation")
-    if visual_experience_on():
-        inject_visual_experience_chrome()
+        st.html("<style>html { font-size: 105% !important; }</style>")
+        st.sidebar.caption("Board Mode on")
     st.sidebar.markdown("---")
-    st.sidebar.caption("Workspaces · page list hidden")
+    st.sidebar.caption("Workspaces")
 
 
 def page_hero(
@@ -555,32 +542,28 @@ def page_hero(
     *,
     compact: bool = False,
 ) -> None:
-    """Supporting chrome. Use compact=True under EDS so the sheet stays primary."""
-    if compact:
-        sub = f'<p class="dss-subtitle dss-hero-compact-sub">{html.escape(subtitle)}</p>' if subtitle else ""
-        st.html(
-            f'<div class="dss-hero dss-hero-compact">'
-            f'<div class="dss-kicker">{html.escape(kicker)}</div>'
-            f"<h1>{html.escape(title)}</h1>"
-            f"{sub}</div>"
-        )
-        return
-    chips = chips or []
-    chip_html = "".join(
-        f'<span class="dss-chip {html.escape(klass)}">{html.escape(label)}</span>'
-        for label, klass in chips
+    """Supporting chrome — Stitch light institutional header + topbar."""
+    _ = compact  # retained for call-site compatibility
+    from components.stitch_ui import begin_stitch_page
+
+    begin_stitch_page()
+    sub = (
+        f'<p class="st-page-sub">{html.escape(subtitle)}</p>'
+        if subtitle
+        else ""
     )
     st.html(
-        f'<div class="dss-hero">'
-        f'<div class="dss-kicker">{html.escape(kicker)}</div>'
-        f"<h1>{html.escape(title)}</h1>"
-        f'<p class="dss-subtitle">{html.escape(subtitle)}</p>'
-        f'<div class="dss-chip-row">{chip_html}</div></div>'
+        f'<div class="st-page-kicker">{html.escape(kicker)}</div>'
+        f'<h2 class="st-page-title">{html.escape(title)}</h2>'
+        f"{sub}"
     )
+    if chips:
+        chip_html = " · ".join(html.escape(label) for label, _ in chips)
+        st.caption(chip_html)
 
 
 def section_label(title: str) -> None:
-    st.html(f'<div class="dss-section-label"><h2>{html.escape(title)}</h2></div>')
+    st.html(f'<h3 class="st-section-title">{html.escape(title)}</h3>')
 
 
 def info_panel(title: str, body: str) -> None:

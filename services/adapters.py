@@ -92,7 +92,7 @@ class LocalCatalogAdapter(DataAdapter):
         return AdapterMeta(
             name="LocalCatalogAdapter",
             mode="local",
-            description=f"Validated catalog via {backend} (Atmosphere, Blubelle, Ecopolitan, SMC, seed competition).",
+            description=f"Validated catalog via {backend} (PropStack Bagaluru, bookings, SMC).",
         )
 
     def _get(self, key: str) -> pd.DataFrame:

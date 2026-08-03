@@ -32,6 +32,17 @@ DATASETS = {
     "under_construction": "under_construction.csv",
     "land_prices": "land_prices.csv",
     "lead_insights": "lead_insights.csv",
+    # PropStack Bagaluru micro-market export (optional evidence layers)
+    "micromarket_summary": "micromarket_summary.csv",
+    "inventory_trend": "inventory_trend.csv",
+    "weighted_price_trend": "weighted_price_trend.csv",
+    "new_launches": "new_launches.csv",
+    "productwise_supply": "productwise_supply.csv",
+    "productwise_supply_absorption": "productwise_supply_absorption.csv",
+    "cumulative_supply_absorption": "cumulative_supply_absorption.csv",
+    "absorption_by_price_band": "absorption_by_price_band.csv",
+    "micromarket_quarterly_unsold": "micromarket_quarterly_unsold.csv",
+    "micromarket_wt_price_quarterly": "micromarket_wt_price_quarterly.csv",
 }
 
 BOOKING_PROJECT_DEVELOPER = {
@@ -81,7 +92,10 @@ ALL_QUARTERS_LABEL = "All Quarters"
 
 DATA_ADAPTER_MODE = os.getenv("AURA_DATA_ADAPTER_MODE", "hybrid").lower()  # local | live | hybrid
 DATA_BACKEND = os.getenv("AURA_DATA_BACKEND", "csv").lower()  # csv | sqlite
-DEMO_NOTICE = "AURA-Market · hybrid adapters (live URLs when set, else validated seed CSVs)"
+DEMO_NOTICE = (
+    "AURA-Market · PropStack Bagaluru projects + market series · "
+    "measured bookings/SMC · simulated scenario ₹ Cr"
+)
 
 # Live / partner JSON endpoints (optional — enterprise path)
 LIVE_RERA_URL = os.getenv("AURA_LIVE_RERA_URL", "").strip()

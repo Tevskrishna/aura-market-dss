@@ -18,6 +18,7 @@ from components.executive_sheet import (
 )
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
+from components.stitch_ui import end_stitch_page
 from components.states import data_honesty_banner, page_hub_label
 from components.viz_studio import (
     generate_button,
@@ -268,3 +269,5 @@ else:
         ]
     )
     st.dataframe(margins, width="stretch", hide_index=True)
+
+end_stitch_page("Competition & Land")

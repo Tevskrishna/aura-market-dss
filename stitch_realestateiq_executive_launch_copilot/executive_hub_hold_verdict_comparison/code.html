@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RealEstateIQ | Executive Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#5f5e5e",
+                    "primary-container": "#1c1b1b",
+                    "on-primary-fixed-variant": "#474746",
+                    "surface-container-high": "#eae8e7",
+                    "surface-dim": "#dbd9d9",
+                    "surface-bright": "#fbf9f8",
+                    "secondary": "#5f5e5b",
+                    "on-secondary-container": "#656461",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#311300",
+                    "tertiary-container": "#311300",
+                    "surface-container": "#efeded",
+                    "tertiary-fixed": "#ffdbc7",
+                    "surface-container-highest": "#e4e2e2",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#fbf9f8",
+                    "tertiary": "#000000",
+                    "on-tertiary-fixed-variant": "#6f380c",
+                    "on-primary-fixed": "#1c1b1b",
+                    "on-surface-variant": "#444748",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c4c7c7",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb688",
+                    "surface": "#fbf9f8",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1b1c1c",
+                    "secondary-fixed-dim": "#c9c6c2",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#303030",
+                    "surface-container-low": "#f5f3f3",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#858383",
+                    "on-tertiary-container": "#b97343",
+                    "primary-fixed": "#e5e2e1",
+                    "secondary-container": "#e5e2dd",
+                    "on-secondary-fixed-variant": "#474743",
+                    "inverse-on-surface": "#f2f0f0",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "outline": "#747878",
+                    "inverse-primary": "#c8c6c5",
+                    "on-secondary-fixed": "#1c1c19",
+                    "surface-variant": "#e4e2e2",
+                    "primary": "#000000",
+                    "secondary-fixed": "#e5e2dd",
+                    "on-surface": "#1b1c1c",
+                    "on-error": "#ffffff",
+                    "deep-forest": "#1B3022"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-sm": "16px",
+                    "stack-md": "32px",
+                    "margin-x": "64px",
+                    "base": "8px",
+                    "gutter": "32px",
+                    "stack-lg": "64px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Playfair Display"],
+                    "label-caps": ["Geist"],
+                    "headline-md": ["Playfair Display"],
+                    "data-mono": ["Geist"],
+                    "headline-lg": ["Playfair Display"],
+                    "body-md": ["Geist"],
+                    "body-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .text-copper { color: #b97343; }
+        .border-copper { border-color: #b97343; }
+        .bg-copper { background-color: #b97343; }
+        .bg-deep-forest { background-color: #1B3022; }
+        
+        /* Custom range slider styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #b97343;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e5e2dd;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-tertiary-fixed font-body-md">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-secondary-container h-20 flex items-center">
+<div class="flex justify-between items-center w-full px-margin-x max-w-container-max mx-auto">
+<div class="flex items-center gap-stack-md">
+<span class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">RealEstateIQ</span>
+<nav class="hidden md:flex items-center gap-gutter ml-stack-lg">
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps uppercase" href="#">Portfolio</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps uppercase" href="#">Strategy</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps uppercase" href="#">Risk</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps uppercase" href="#">Capital</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps uppercase" href="#">Reporting</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-caps text-label-caps uppercase" href="#">Archive</a>
+</nav>
+</div>
+<div class="flex items-center gap-stack-sm">
+<button class="px-6 py-2 border border-secondary text-secondary font-label-caps text-label-caps uppercase hover:bg-surface-container transition-all">Export Report</button>
+<button class="px-6 py-2 bg-primary text-on-primary font-label-caps text-label-caps uppercase hover:opacity-90 transition-all">Board Review</button>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Project Level) -->
+<aside class="fixed left-0 top-20 h-[calc(100vh-80px)] w-64 bg-surface-container-low border-r border-secondary-container hidden xl:flex flex-col py-stack-md">
+<div class="px-6 mb-stack-lg">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary text-3xl">apartment</span>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary leading-none">Project Alpha</h3>
+<p class="text-secondary font-label-caps text-[10px] uppercase mt-1">Bagaluru Development</p>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-copper text-copper font-label-caps text-label-caps uppercase hover:bg-tertiary-fixed/20 transition-all">New Investment</button>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 px-6 py-4 bg-secondary-container text-primary font-bold border-r-4 border-primary" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps uppercase">Market Intelligence</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">apartment</span>
+<span class="font-label-caps text-label-caps uppercase">Project Switcher</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-caps text-label-caps uppercase">Risk Matrix</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps uppercase">Financial Modeling</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-label-caps text-label-caps uppercase">Stakeholder Approval</span>
+</a>
+</nav>
+<div class="px-6 pt-stack-md border-t border-secondary-container space-y-4">
+<a class="flex items-center gap-4 text-secondary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Settings</span>
+</a>
+<a class="flex items-center gap-4 text-secondary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-caps text-label-caps uppercase">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="xl:ml-64 pt-20">
+<!-- First Viewport: Hero -->
+<section class="relative h-screen min-h-[800px] flex items-center overflow-hidden">
+<!-- Full Bleed Hero Background -->
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-black/40 z-10"></div>
+<div class="w-full h-full bg-cover bg-center scale-105" data-alt="A sweeping, cinematic aerial panorama of the Bagaluru skyline during blue hour. Modern glass residential towers with warm interior lights contrast against a deep indigo sky. The lighting is crisp and institutional, reflecting a high-end luxury real estate aesthetic with a sophisticated and grounded atmosphere." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBk3XNEFttFcScHIEUjn4EUUC9ETo4qXRJ4CRnvKpOL3TGf9ElW2OuMpHaQw6reaq_-2pWRHORO0JOk8x0XvI0PFuT-ni8FaP57izflte4BrHdL1vLHovEx_h8zkK2gBix9m4oFfz0U0LEyffs2-MYVtkNtMaIP50DAuJKLejnuRJFoUuZCTPqBYJYf9pYWx0ufJ95pLh6LG2VLN8Us7oCBqpto3qKF-cFUMBT4Nu59bsCyQmI4x7-b')"></div>
+</div>
+<!-- Hero Content Container -->
+<div class="relative z-20 w-full px-margin-x max-w-container-max mx-auto text-white grid grid-cols-12 gap-gutter">
+<div class="col-span-12 lg:col-span-8 flex flex-col justify-center">
+<span class="font-label-caps text-label-caps uppercase tracking-[0.3em] mb-4 text-surface-container-high opacity-80">RealEstateIQ | Puravankara Portfolio</span>
+<h1 class="font-display-lg text-[64px] leading-[1.1] mb-6 max-w-2xl">Should we launch at this price?</h1>
+<p class="font-body-lg text-body-lg text-surface-bright/80 max-w-xl mb-stack-lg leading-relaxed">
+                        Evaluating the Phase 2 expansion for Bagaluru North. Current market sentiment indicates strong absorption at luxury price points despite macroeconomic shifts.
+                    </p>
+<!-- Controls Layer -->
+<div class="flex flex-col sm:flex-row items-end gap-stack-md">
+<div class="flex-1 w-full max-w-xs">
+<label class="block font-label-caps text-[10px] uppercase mb-2 text-surface-container-high">Target Price Point</label>
+<div class="flex items-center gap-4 bg-white/10 backdrop-blur-md px-6 py-4 rounded-lg border border-white/20">
+<span class="font-headline-md text-headline-md">₹</span>
+<input class="bg-transparent border-none focus:ring-0 font-headline-md text-headline-md w-32 p-0" type="number" value="12500"/>
+<span class="text-white/40 font-body-md">/sqft</span>
+</div>
+<input class="w-full mt-4 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer" max="20000" min="8000" step="100" type="range" value="12500"/>
+</div>
+<button class="px-12 py-5 bg-copper text-white font-label-caps text-headline-md uppercase tracking-widest hover:brightness-110 transition-all">Execute Analysis</button>
+</div>
+</div>
+<!-- Verdict Block -->
+<div class="col-span-12 lg:col-span-4 flex items-center justify-end">
+<div class="bg-deep-forest p-10 w-full aspect-square flex flex-col justify-center border border-white/10 shadow-2xl">
+<div class="flex justify-between items-start mb-auto">
+<span class="font-label-caps text-label-caps uppercase text-white/60 tracking-widest">Model Verdict</span>
+<div class="h-3 w-3 rounded-full animate-pulse bg-copper"></div>
+</div>
+<div class="text-center py-stack-md">
+<span class="font-display-lg text-[120px] leading-none text-white tracking-tighter">HOLD</span>
+</div>
+<div class="mt-auto pt-stack-md border-t border-white/10 flex justify-between items-end">
+<div>
+<p class="text-white/60 font-label-caps text-[10px] uppercase">Risk Index</p>
+<p class="font-headline-md text-white">Medium</p>
+</div>
+<div class="text-right">
+<p class="text-white/60 font-label-caps text-[10px] uppercase">Exposure</p>
+<p class="font-headline-md text-white">₹450 Cr</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Below the Fold -->
+<section class="py-stack-lg px-margin-x max-w-container-max mx-auto bg-background">
+<div class="grid grid-cols-12 gap-stack-lg">
+<!-- Left Column: Actions & Risk -->
+<div class="col-span-12 lg:col-span-7 space-y-stack-lg">
+<!-- Do This Week Checklist -->
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-md border-b border-secondary-container pb-4">Do this week</h2>
+<div class="space-y-4">
+<label class="flex items-center gap-4 p-5 bg-white border border-secondary-container hover:border-copper transition-all cursor-pointer group">
+<input class="w-5 h-5 border-secondary-container text-copper focus:ring-copper" type="checkbox"/>
+<span class="font-body-lg text-secondary group-hover:text-primary">Approve final pricing strategy for HNI outreach</span>
+</label>
+<label class="flex items-center gap-4 p-5 bg-white border border-secondary-container hover:border-copper transition-all cursor-pointer group">
+<input class="w-5 h-5 border-secondary-container text-copper focus:ring-copper" type="checkbox"/>
+<span class="font-body-lg text-secondary group-hover:text-primary">Sign off on ₹450 Cr capital allocation mandate</span>
+</label>
+<label class="flex items-center gap-4 p-5 bg-white border border-secondary-container hover:border-copper transition-all cursor-pointer group">
+<input class="w-5 h-5 border-secondary-container text-copper focus:ring-copper" type="checkbox"/>
+<span class="font-body-lg text-secondary group-hover:text-primary">Review competitor response scenario C-4</span>
+</label>
+</div>
+</div>
+<!-- Risk Detail Accordion -->
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-md border-b border-secondary-container pb-4">Risk Detail</h2>
+<div class="divide-y divide-secondary-container border-b border-secondary-container">
+<details class="group py-6" open="">
+<summary class="flex justify-between items-center cursor-pointer list-none">
+<h4 class="font-headline-md text-headline-md">Inventory Absorption Velocity</h4>
+<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="pt-4 text-secondary leading-relaxed">
+                                    Current model assumes a 24-month absorption cycle. Sensitivity analysis shows that even at a 36-month cycle, the project maintains a 15% IRR floor. Market stress tests in Bagaluru North show resilient demand in the 12.5k - 14k bracket.
+                                </div>
+</details>
+<details class="group py-6">
+<summary class="flex justify-between items-center cursor-pointer list-none">
+<h4 class="font-headline-md text-headline-md">Regulatory &amp; Zoning Stance</h4>
+<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="pt-4 text-secondary">
+                                    Environmental clearance for Phase 3 remains pending but is classified as low-impact risk.
+                                </div>
+</details>
+</div>
+</div>
+</div>
+<!-- Right Column: Evidence Vault -->
+<div class="col-span-12 lg:col-span-5">
+<div class="bg-surface-container p-8 sticky top-24">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-md">Evidence Vault</h2>
+<p class="text-secondary mb-8 font-body-md">Primary source documents for institutional verification.</p>
+<div class="space-y-4">
+<a class="flex items-center justify-between p-6 bg-white border border-secondary-container hover:shadow-lg transition-all" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-copper">public</span>
+<span class="font-headline-md text-primary">Market Context</span>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</a>
+<a class="flex items-center justify-between p-6 bg-white border border-secondary-container hover:shadow-lg transition-all" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-copper">monitoring</span>
+<span class="font-headline-md text-primary">Competition Analysis</span>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</a>
+<a class="flex items-center justify-between p-6 bg-white border border-secondary-container hover:shadow-lg transition-all" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-copper">model_training</span>
+<span class="font-headline-md text-primary">Scenario Modeling</span>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</a>
+<a class="flex items-center justify-between p-6 bg-white border border-secondary-container hover:shadow-lg transition-all" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-copper">description</span>
+<span class="font-headline-md text-primary">Board Reports</span>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stakeholder Path -->
+<section class="py-stack-lg border-t border-secondary-container">
+<div class="px-margin-x max-w-container-max mx-auto">
+<h3 class="font-label-caps text-label-caps uppercase tracking-widest mb-stack-md text-center">Approval Lifecycle</h3>
+<div class="flex flex-col md:flex-row justify-between items-start gap-gutter">
+<div class="flex-1 text-center group">
+<div class="w-12 h-12 bg-primary text-white flex items-center justify-center mx-auto mb-4 font-headline-md">1</div>
+<p class="font-headline-md text-primary mb-1">Market Intel</p>
+<p class="text-secondary text-sm">Verified 12/04</p>
+</div>
+<div class="w-full md:w-px md:h-12 bg-secondary-container self-center h-px"></div>
+<div class="flex-1 text-center">
+<div class="w-12 h-12 bg-primary text-white flex items-center justify-center mx-auto mb-4 font-headline-md">2</div>
+<p class="font-headline-md text-primary mb-1">Risk Audit</p>
+<p class="text-secondary text-sm">Completed</p>
+</div>
+<div class="w-full md:w-px md:h-12 bg-secondary-container self-center h-px"></div>
+<div class="flex-1 text-center">
+<div class="w-12 h-12 border-2 border-primary text-primary flex items-center justify-center mx-auto mb-4 font-headline-md">3</div>
+<p class="font-headline-md text-primary mb-1">Exec Hub</p>
+<p class="text-copper font-bold text-sm uppercase">Active State</p>
+</div>
+<div class="w-full md:w-px md:h-12 bg-secondary-container self-center h-px"></div>
+<div class="flex-1 text-center opacity-40">
+<div class="w-12 h-12 border border-secondary-container flex items-center justify-center mx-auto mb-4 font-headline-md">4</div>
+<p class="font-headline-md text-secondary mb-1">Finance Review</p>
+<p class="text-secondary text-sm">Pending</p>
+</div>
+<div class="w-full md:w-px md:h-12 bg-secondary-container self-center h-px"></div>
+<div class="flex-1 text-center opacity-40">
+<div class="w-12 h-12 border border-secondary-container flex items-center justify-center mx-auto mb-4 font-headline-md">5</div>
+<p class="font-headline-md text-secondary mb-1">Board Vote</p>
+<p class="text-secondary text-sm">Unscheduled</p>
+</div>
+<div class="w-full md:w-px md:h-12 bg-secondary-container self-center h-px"></div>
+<div class="flex-1 text-center opacity-40">
+<div class="w-12 h-12 border border-secondary-container flex items-center justify-center mx-auto mb-4 font-headline-md">6</div>
+<p class="font-headline-md text-secondary mb-1">Public Launch</p>
+<p class="text-secondary text-sm">Q4 2024</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-sm px-margin-x flex justify-between items-center max-w-container-max mx-auto border-t border-secondary-container bg-surface-container-highest">
+<span class="font-label-caps text-label-caps text-primary uppercase">RealEstateIQ Institutional Holdings</span>
+<div class="hidden md:flex gap-gutter">
+<a class="text-on-secondary-container hover:text-primary transition-all font-label-caps text-label-caps uppercase" href="#">Evidence Vault</a>
+<a class="text-on-secondary-container hover:text-primary transition-all font-label-caps text-label-caps uppercase" href="#">Risk Disclosure</a>
+<a class="text-on-secondary-container hover:text-primary transition-all font-label-caps text-label-caps uppercase" href="#">Board Protocol</a>
+<a class="text-on-secondary-container hover:text-primary transition-all font-label-caps text-label-caps uppercase" href="#">Compliance</a>
+</div>
+<p class="text-secondary font-body-md opacity-60">© 2024. Internal Use Only.</p>
+</footer>
+<script>
+        // Micro-interaction for the slider and price text
+        const priceInput = document.querySelector('input[type="number"]');
+        const priceSlider = document.querySelector('input[type="range"]');
+
+        priceSlider.addEventListener('input', (e) => {
+            priceInput.value = e.target.value;
+        });
+
+        priceInput.addEventListener('input', (e) => {
+            priceSlider.value = e.target.value;
+        });
+    </script>
+</body></html>

@@ -137,7 +137,6 @@ def linked_kpi_lens_strip(
         lens = str(card.get("lens") or "")
         active = st.session_state.get(lens_key) == lens
         label = f"{card.get('label', '')}\n{card.get('display', card.get('value', ''))}"
-        # Keys must be unique even when two KPIs share the same lens (e.g. UC + UC unsold).
         btn_key = f"{lens_key}_kpi_{i}_{_slug(str(card.get('label', '')))}_{_slug(lens)}"
         with col:
             if st.button(
@@ -183,39 +182,66 @@ def render_dynamic_figure(
 ) -> None:
     """
     Rebuild Plotly whenever nonce OR scene changes.
-    `scene` must be the lens / tab selection string so switches remount.
-    `visual_purpose` feeds optional Visual Experience enhancements (presentation only).
+    ▶ Play motion sits above the chart as a Streamlit button (always visible).
     """
     from components.visual_experience import enhance_figure
+    from utils.charts import apply_entrance_motion
 
     nonce = viz_nonce(key)
     scene_val = scene if scene is not None else str(st.session_state.get(f"{key}_scene", ""))
+    anim_key = f"{key}_anim_token"
+
+    play_c1, play_c2 = st.columns([1.15, 3.4])
+    with play_c1:
+        if st.button("▶ Play motion", type="primary", width="stretch", key=f"{key}_play_btn"):
+            st.session_state[anim_key] = int(st.session_state.get(anim_key, 0)) + 1
+            st.rerun()
+    with play_c2:
+        st.caption("← Tap this to animate the chart · or use ▶ Play animation under the plot")
+
+    token = int(st.session_state.get(anim_key, 0))
+    start_empty = token > 0
+
     fig = builder()
     fig = enhance_figure(fig, purpose=visual_purpose)  # type: ignore[arg-type]
+
+    if start_empty and hasattr(fig, "update_layout"):
+        fig.frames = ()
+        try:
+            fig.layout.updatemenus = ()
+        except Exception:
+            pass
+        fig = apply_entrance_motion(fig, start_empty=True)
+
     if height and hasattr(fig, "update_layout"):
         fig.update_layout(height=height)
+
     if hasattr(fig, "update_layout"):
-        # Visible title stamp so user sees regenerates even when shape is similar
-        stamp = f" · live #{nonce}" if nonce else ""
-        title = fig.layout.title.text if fig.layout.title and fig.layout.title.text else ""
-        if stamp and title and "live #" not in str(title):
-            fig.update_layout(title=f"{title}{stamp}")
-        elif stamp and not title and scene_val:
-            fig.update_layout(title=f"{scene_val}{stamp}")
-        if visual_purpose == "generic":
-            fig.update_layout(transition_duration=350)
+        try:
+            raw = fig.layout.title.text if fig.layout.title else None
+        except Exception:
+            raw = None
+        if raw in (None, "", " ", "None", "undefined") or str(raw).strip().lower() == "undefined":
+            fig.update_layout(title=None)
+            try:
+                fig.layout.pop("title", None)
+            except Exception:
+                pass
+        fig.update_layout(transition={"duration": 550, "easing": "cubic-in-out"})
+
     if st.session_state.pop(f"{key}_flash", None):
         st.success(f"Refreshed · {scene_val or 'current view'} · pass #{nonce}")
-    chart_key = f"{key}_chart_{nonce}_{_slug(scene_val)}"
+
+    chart_key = f"{key}_chart_{nonce}_{_slug(scene_val)}_a{token}"
     st.plotly_chart(
         fig,
         width="stretch",
         key=chart_key,
         config={
-            "displayModeBar": True,
+            "displayModeBar": "hover",
             "responsive": True,
-            "scrollZoom": True,
+            "scrollZoom": False,
             "displaylogo": False,
-            "modeBarButtonsToAdd": ["hoverclosest", "hovercompare"],
+            "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d"],
         },
     )

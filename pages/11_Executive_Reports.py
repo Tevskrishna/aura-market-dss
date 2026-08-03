@@ -19,6 +19,7 @@ from components.executive_sheet import (
 )
 from components.kpi_cards import render_kpi_cards
 from components.layout import page_hero, require_login, section_label
+from components.stitch_ui import end_stitch_page
 from services.competition_service import build_competition_snapshot
 from services.decision_brief_service import brief_from_launch
 from services.decision_context import (
@@ -186,3 +187,5 @@ with c4:
         mime="text/csv",
         width="stretch",
     )
+
+end_stitch_page("Reports")

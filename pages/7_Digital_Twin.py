@@ -16,6 +16,7 @@ from components.executive_sheet import (
     render_open_project_chip,
 )
 from components.layout import page_hero, require_login, section_label
+from components.stitch_ui import end_stitch_page
 from components.states import empty_state
 from components.viz_studio import generate_button, graphic_html, render_dynamic_figure, scenario_bar
 from services.adapters import get_adapter
@@ -236,3 +237,5 @@ st.caption(
     f"Engine: {get_simulation_engine().name} (NumPy Poisson scenario — illustrative). "
     "Not SimPy discrete-event. Use EDS Continue → Reports when the ₹ Cr path is clear."
 )
+
+end_stitch_page("Scenario Engine")

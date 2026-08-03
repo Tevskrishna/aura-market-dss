@@ -60,16 +60,17 @@ def inject_visual_experience_chrome() -> None:
 
 def enhance_figure(fig: Any, *, purpose: Purpose = "generic") -> Any:
     """
-    Mutate Plotly figure presentation when Visual Experience is on.
-    Returns the same figure object; safe no-op when mode is off or fig is empty.
+    Always apply smooth Plotly transitions. Optional depth/3D when Visual Experience is on.
+    Motion uses Plotly's React renderer (what Streamlit already loads) — no extra React app.
     """
-    if fig is None or not visual_experience_on():
-        return fig
-    if not hasattr(fig, "update_layout"):
+    if fig is None or not hasattr(fig, "update_layout"):
         return fig
 
-    # Shared: slower, clearer transitions when lenses/scenarios change
-    fig.update_layout(transition={"duration": 650, "easing": "cubic-in-out"})
+    # Always-on: morph between lenses / filter changes
+    fig.update_layout(transition={"duration": 550, "easing": "cubic-in-out"})
+
+    if not visual_experience_on():
+        return fig
 
     if purpose == "scenario":
         _enhance_scenario_relationships(fig)

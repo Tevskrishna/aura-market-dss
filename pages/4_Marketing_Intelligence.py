@@ -19,6 +19,7 @@ from components.executive_sheet import (
 from components.kpi_cards import render_kpi_cards
 from components.layout import decision_action, page_hero, require_login, section_label
 from components.states import empty_state
+from components.stitch_ui import end_stitch_page
 from services.decision_brief_service import brief_from_marketing
 from services.marketing_service import build_marketing_insights, weekly_budget_allocation
 from utils.charts import marketing_efficiency_chart
@@ -159,3 +160,4 @@ with c_dl2:
         mime="text/csv",
         width="stretch",
     )
+end_stitch_page("Market Intelligence")

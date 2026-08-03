@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RealEstateIQ - Executive Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Geist:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdbc7",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "outline-variant": "#c4c7c7",
+                        "surface-container-low": "#f5f3f3",
+                        "primary": "#000000",
+                        "on-background": "#1b1c1c",
+                        "on-secondary": "#ffffff",
+                        "surface": "#fbf9f8",
+                        "on-tertiary-fixed": "#311300",
+                        "on-tertiary-container": "#b97343",
+                        "surface-variant": "#e4e2e2",
+                        "tertiary-container": "#311300",
+                        "outline": "#747878",
+                        "inverse-on-surface": "#f2f0f0",
+                        "on-secondary-fixed": "#1c1c19",
+                        "inverse-primary": "#c8c6c5",
+                        "tertiary-fixed-dim": "#ffb688",
+                        "secondary": "#5f5e5b",
+                        "on-primary-container": "#858383",
+                        "surface-tint": "#5f5e5e",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface-variant": "#444748",
+                        "on-secondary-container": "#656461",
+                        "secondary-fixed": "#e5e2dd",
+                        "on-surface": "#1b1c1c",
+                        "background": "#fbf9f8",
+                        "primary-fixed": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#474743",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#000000",
+                        "surface-container": "#efeded",
+                        "on-tertiary-fixed-variant": "#6f380c",
+                        "inverse-surface": "#303030",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fbf9f8",
+                        "surface-container-highest": "#e4e2e2",
+                        "surface-container-high": "#eae8e7",
+                        "secondary-fixed-dim": "#c9c6c2",
+                        "surface-dim": "#dbd9d9",
+                        "on-primary-fixed-variant": "#474746",
+                        "secondary-container": "#e5e2dd",
+                        "primary-container": "#1c1b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "stack-lg": "64px",
+                        "margin-x": "64px",
+                        "gutter": "32px",
+                        "container-max": "1440px",
+                        "stack-md": "32px",
+                        "stack-sm": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Geist"],
+                        "headline-lg": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "body-md": ["Geist"],
+                        "label-caps": ["Geist"],
+                        "headline-md": ["Playfair Display"],
+                        "data-mono": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "data-mono": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Geist', sans-serif; background-color: #fbf9f8; }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        .amber-bronze-gradient {
+            background: linear-gradient(135deg, #b97343 0%, #311300 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low border-r border-secondary-container flex flex-col py-stack-md z-50">
+<div class="px-6 mb-stack-md">
+<h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">RealEstateIQ</h1>
+</div>
+<div class="px-4 mb-stack-sm">
+<div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-highest/30">
+<div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-primary">apartment</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-primary">Project Alpha</p>
+<p class="font-body-md text-body-md text-secondary text-xs">Bagaluru Development</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-primary font-bold border-r-4 border-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Market Intelligence</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="apartment">apartment</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Project Switcher</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Risk Matrix</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Financial Modeling</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Stakeholder Approval</span>
+</a>
+</nav>
+<div class="mt-auto px-2 border-t border-secondary-container pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:underline" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:underline" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Support</span>
+</a>
+</div>
+</aside>
+<div class="pl-64 flex flex-col min-h-screen">
+<!-- TopNavBar Anchor -->
+<header class="h-20 bg-background border-b border-secondary-container flex justify-between items-center px-margin-x sticky top-0 z-40">
+<nav class="flex gap-gutter items-center h-full">
+<a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="#">Portfolio</a>
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="#">Strategy</a>
+<a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="#">Risk</a>
+<a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="#">Capital</a>
+<a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="#">Reporting</a>
+</nav>
+<div class="flex items-center gap-6">
+<button class="font-label-caps text-label-caps text-secondary hover:text-primary uppercase tracking-widest transition-all">Export Report</button>
+<button class="bg-primary text-white font-label-caps text-label-caps px-6 py-2 uppercase tracking-widest hover:opacity-80 transition-all">Board Review</button>
+<div class="w-10 h-10 bg-secondary-container rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior executive director in a high-end boardroom environment. The subject is dressed in a tailored charcoal suit, exuding an air of institutional authority. The background is softly blurred, showing glimpses of a minimalist luxury office with large glass windows overlooking a modern skyline. The lighting is soft and directional, typical of high-end editorial photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZw0J_qFRrlOg3t4oDDDy3X5WfNjFUT1iThDT7CvMaqTU5KEUSY92WlvAf8jW_fditWwyIm0TOz_4resbLa8tzlLP4E1eJ1dtdleGFhYdn3C_UuZ8cy6apURErOlLPV6-ICAhZT3AUa8a2qCCcePrYw7cVO_n5rUDxt4GtN4BQDbmcJrmjeYnlB3Jk226n2AGDsoAFmuiR1X8WTMaaCNGwZNP77HCf25pUovmMksnA2W8jB3b7-LeM"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 p-margin-x max-w-container-max mx-auto w-full space-y-stack-md">
+<!-- Hero Layout Section -->
+<div class="grid grid-cols-12 gap-gutter items-stretch">
+<!-- Visual Canvas -->
+<div class="col-span-12 lg:col-span-7 h-[500px] bg-secondary-container relative overflow-hidden group border border-secondary-container">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AP1WRLtMo-fNZ1LF3FkyUIlwy3Kvkmgw3BIgqza9dikoBq3KFA99GeQ4ZYfYMFFyrbrPCkTxErLSz4wIhfllaX7cPNasZARSpSRI8ZNBM1d5Wc1YC7zwVpYgOYoI72nOpAUsARCwN-LhJP7ay38Sr8elbmHk4bmwuz1fyKdxCmFscBNvdmUENWIsyxn3kfGzmPmKM5Gw1_3eLPsIyRWHOEY1Ib7uqBwxdOMX1NTROG5eVIYM7dAY41K6GQcG-A"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<span class="font-label-caps text-label-caps uppercase tracking-widest bg-white/10 backdrop-blur-md px-3 py-1 mb-3 inline-block">Asset Snapshot</span>
+<h2 class="font-display-lg text-display-lg leading-none">Bagaluru Residential Cluster</h2>
+<p class="font-body-lg text-body-lg text-white/80 mt-2">Institutional-grade development pipeline • Phase IV Completion</p>
+</div>
+</div>
+<!-- Verdict Panel (HOLD) -->
+<div class="col-span-12 lg:col-span-5 amber-bronze-gradient flex flex-col justify-between p-10 text-white relative shadow-2xl">
+<div class="space-y-4">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-tertiary-fixed tracking-[0.2em] uppercase">Investment Committee Decision</span>
+<span class="material-symbols-outlined text-tertiary-fixed opacity-50" style="font-variation-settings: 'FILL' 1;">lock_clock</span>
+</div>
+<h1 class="font-display-lg text-[80px] leading-tight italic tracking-tight font-bold">HOLD</h1>
+<p class="font-body-lg text-body-lg text-tertiary-fixed/70 border-t border-white/20 pt-4">Strategic pause recommended based on current market volatility and project liquidity reserves.</p>
+</div>
+<div class="grid grid-cols-2 gap-stack-sm mt-stack-md">
+<div class="bg-white/5 p-4 border-l border-white/30">
+<p class="font-label-caps text-[10px] text-tertiary-fixed uppercase mb-1">Risk Index</p>
+<p class="font-headline-md text-headline-md font-bold">Medium</p>
+</div>
+<div class="bg-white/5 p-4 border-l border-white/30">
+<p class="font-label-caps text-[10px] text-tertiary-fixed uppercase mb-1">Exposure</p>
+<p class="font-headline-md text-headline-md font-bold">₹450 Cr</p>
+</div>
+</div>
+<div class="mt-8">
+<button class="w-full border border-white/30 py-4 font-label-caps text-label-caps uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                            Access Full Risk Dossier
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bento Data Grid Section -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Financial Summary -->
+<div class="col-span-12 md:col-span-8 bg-white border border-secondary-container p-stack-md">
+<div class="flex justify-between items-end mb-stack-sm">
+<h3 class="font-headline-md text-headline-md">Financial Analysis</h3>
+<p class="font-label-caps text-label-caps text-secondary">Updated: Today, 08:00 AM</p>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-secondary-container text-secondary font-label-caps text-label-caps">
+<th class="py-4 font-semibold">Key Metric</th>
+<th class="py-4 font-semibold">Projected</th>
+<th class="py-4 font-semibold">Current Value</th>
+<th class="py-4 font-semibold text-right">Variance</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-secondary-container">
+<tr>
+<td class="py-4 font-body-md text-primary">Equity Deployment</td>
+<td class="py-4 font-data-mono text-secondary">₹1,200 Cr</td>
+<td class="py-4 font-data-mono text-primary font-bold">₹980 Cr</td>
+<td class="py-4 font-data-mono text-right text-error">-18.3%</td>
+</tr>
+<tr>
+<td class="py-4 font-body-md text-primary">Target IRR</td>
+<td class="py-4 font-data-mono text-secondary">24.5%</td>
+<td class="py-4 font-data-mono text-primary font-bold">21.2%</td>
+<td class="py-4 font-data-mono text-right text-on-tertiary-container">-3.3%</td>
+</tr>
+<tr>
+<td class="py-4 font-body-md text-primary">Pre-Lease Ratio</td>
+<td class="py-4 font-data-mono text-secondary">85.0%</td>
+<td class="py-4 font-data-mono text-primary font-bold">72.0%</td>
+<td class="py-4 font-data-mono text-right text-on-tertiary-container">-13.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Strategic Status -->
+<div class="col-span-12 md:col-span-4 bg-surface-container p-stack-md flex flex-col justify-between border border-secondary-container">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="w-2 h-2 bg-on-tertiary-container rounded-full animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-on-tertiary-container uppercase">Holding Pattern Active</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2">Stakeholder Alignment</h4>
+<p class="font-body-md text-secondary">Board alignment is currently split 60/40 regarding the next capital injection. Further diligence required.</p>
+</div>
+<div class="space-y-3 mt-6">
+<div class="flex justify-between items-center p-3 bg-white/50 border border-white">
+<span class="font-label-caps text-label-caps uppercase">Regulatory Approval</span>
+<span class="font-data-mono text-on-tertiary-container text-xs bg-tertiary-fixed px-2 py-0.5">PENDING</span>
+</div>
+<div class="flex justify-between items-center p-3 bg-white/50 border border-white">
+<span class="font-label-caps text-label-caps uppercase">Structural Integrity</span>
+<span class="font-data-mono text-green-700 text-xs bg-green-100 px-2 py-0.5">PASSED</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Anchor -->
+<footer class="mt-auto w-full py-stack-sm px-margin-x flex justify-between items-center bg-surface-container-highest border-t border-secondary-container">
+<span class="font-label-caps text-label-caps text-primary">RealEstateIQ</span>
+<p class="font-body-md text-body-md text-secondary-fixed-dim text-xs">© 2024 RealEstateIQ Institutional Holdings. Internal Use Only.</p>
+<div class="flex gap-stack-sm">
+<a class="font-label-caps text-label-caps text-on-secondary-container hover:text-primary transition-all" href="#">Evidence Vault</a>
+<a class="font-label-caps text-label-caps text-on-secondary-container hover:text-primary transition-all" href="#">Risk Disclosure</a>
+<a class="font-label-caps text-label-caps text-on-secondary-container hover:text-primary transition-all" href="#">Compliance</a>
+</div>
+</footer>
+</div>
+<!-- Interactive Micro-interactions Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hover effect for the decision panel
+            const decisionPanel = document.querySelector('.amber-bronze-gradient');
+            decisionPanel.addEventListener('mousemove', (e) => {
+                const rect = decisionPanel.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                decisionPanel.style.background = `radial-gradient(circle at ${x}px ${y}px, #b97343 0%, #311300 100%)`;
+            });
+            
+            decisionPanel.addEventListener('mouseleave', () => {
+                decisionPanel.style.background = `linear-gradient(135deg, #b97343 0%, #311300 100%)`;
+            });
+
+            // Smooth entrance for data rows
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach((row, i) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    row.style.transition = 'all 0.4s ease-out';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, 300 + (i * 100));
+            });
+        });
+    </script>
+</body></html>

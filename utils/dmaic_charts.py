@@ -13,15 +13,16 @@ def absorption_band_chart(df: pd.DataFrame) -> go.Figure:
         return _empty("No projects")
     out = df.copy()
     out["band"] = out["absorption_pct"].apply(
-        lambda x: "Red <70%" if x < 70 else ("Yellow 70–95%" if x < 95 else "Green ≥95%")
+        lambda x: "<70%" if x < 70 else ("70–95%" if x < 95 else "≥95%")
     )
     fig = px.bar(
         out.sort_values("absorption_pct"),
         x="project",
         y="absorption_pct",
         color="band",
-        color_discrete_map={"Red <70%": "#ff4b4b", "Yellow 70–95%": "#f0b429", "Green ≥95%": "#3dd68c"},
-        labels={"absorption_pct": "Absorption %"},
+        color_discrete_map={"<70%": "#7a1f24", "70–95%": "#b97343", "≥95%": "#1b3022"},
+        labels={"absorption_pct": "Absorption %", "project": "Project"},
+        category_orders={"band": ["<70%", "70–95%", "≥95%"]},
     )
     fig.update_layout(xaxis_tickangle=-35)
     return _style(fig, "Absorption rate by project")
