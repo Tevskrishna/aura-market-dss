@@ -34,6 +34,11 @@ def test_propstack_optional_layers_present():
         "weighted_price_trend",
         "new_launches",
         "absorption_by_price_band",
+        "productwise_supply",
+        "productwise_supply_absorption",
+        "cumulative_supply_absorption",
+        "micromarket_quarterly_unsold",
+        "micromarket_wt_price_quarterly",
     ):
         assert catalog.has(key), f"missing {key}"
     summary = propstack_summary_row(catalog)

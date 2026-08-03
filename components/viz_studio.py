@@ -45,7 +45,6 @@ def scenario_bar(
     current = str(st.session_state.get(key, fallback))
     st.caption(f"{label} · tap to switch (chart + table update below)")
 
-    # Wrap in rows of up to 3 so long labels stay tappable on phones
     for start in range(0, len(options), 3):
         chunk = options[start : start + 3]
         cols = st.columns(len(chunk), gap="small")
@@ -182,8 +181,9 @@ def render_dynamic_figure(
 ) -> None:
     """
     Rebuild Plotly whenever nonce OR scene changes.
-    ▶ Play motion sits above the chart as a Streamlit button (always visible).
+    Charts start empty and draw in when scrolled into view (or ▶ Play motion).
     """
+    from components.scroll_motion import inject_scroll_motion
     from components.visual_experience import enhance_figure
     from utils.charts import apply_entrance_motion
 
@@ -197,15 +197,15 @@ def render_dynamic_figure(
             st.session_state[anim_key] = int(st.session_state.get(anim_key, 0)) + 1
             st.rerun()
     with play_c2:
-        st.caption("← Tap this to animate the chart · or use ▶ Play animation under the plot")
+        st.caption("Scroll into view to draw the series · or tap ▶ Play motion to replay")
 
     token = int(st.session_state.get(anim_key, 0))
-    start_empty = token > 0
 
     fig = builder()
     fig = enhance_figure(fig, purpose=visual_purpose)  # type: ignore[arg-type]
 
-    if start_empty and hasattr(fig, "update_layout"):
+    # Always grow from start — scroll observer / Play triggers frame animation
+    if hasattr(fig, "update_layout"):
         fig.frames = ()
         try:
             fig.layout.updatemenus = ()
@@ -245,3 +245,4 @@ def render_dynamic_figure(
             "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d"],
         },
     )
+    inject_scroll_motion()

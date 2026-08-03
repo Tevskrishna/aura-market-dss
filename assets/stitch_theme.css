@@ -332,6 +332,13 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
   margin: 0.5rem 0 1.25rem;
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.st-snap.st-inview {
+  opacity: 1;
+  transform: translateY(0);
 }
 .st-snap-accent {
   position: absolute;
@@ -562,6 +569,27 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
   display: block;
   height: 100%;
   background: #b97343;
+  width: 0 !important;
+  transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.st-pt-wrap.st-inview .st-pt-bar i {
+  width: var(--bar-w, 0%) !important;
+}
+div[data-testid="stPlotlyChart"] {
+  opacity: 0.45;
+  transform: translateY(12px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+div[data-testid="stPlotlyChart"]:has(.iq-plot-in) {
+  opacity: 1;
+  transform: none;
+}
+.js-plotly-plot.iq-plot-in {
+  animation: st-chart-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes st-chart-in {
+  from { opacity: 0.4; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .st-pt-abs span {
   font-size: 0.75rem;
@@ -744,18 +772,6 @@ div[data-testid="stButton"] > button[kind="primary"] {
   padding: 2rem 0 1rem;
 }
 .iq-vx-banner { display: none !important; }
-
-/* Chart motion — soft entrance on remount */
-div[data-testid="stPlotlyChart"] {
-  animation: st-chart-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes st-chart-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.st-pt-bar i {
-  transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
 
 /* ===== Component chrome (light) — replaces legacy dark styles.css ===== */
 .stApp [data-testid="stMarkdownContainer"],

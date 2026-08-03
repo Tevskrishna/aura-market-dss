@@ -1,4 +1,4 @@
-"""Market Intelligence — Stitch Bagaluru snapshot + PropStack series."""
+"""Market Intelligence — full PropStack Bagaluru series (Stitch)."""
 from __future__ import annotations
 
 import sys
@@ -25,16 +25,24 @@ from services.market_service import (
     build_market_bundle,
     get_validation_report,
     propstack_absorption_bands,
+    propstack_cumulative,
     propstack_inventory,
     propstack_new_launches,
     propstack_price_trend,
+    propstack_productwise_sa,
+    propstack_productwise_supply,
+    propstack_quarterly_unsold,
     propstack_summary_row,
 )
 from services.sigma_service import market_kpis as sigma_kpis
 from utils.charts import (
     absorption_price_band_chart,
+    cumulative_supply_chart,
     inventory_trend_chart,
     new_launch_pulse_chart,
+    productwise_sa_chart,
+    productwise_supply_chart,
+    quarterly_unsold_chart,
     weighted_price_trend_chart,
 )
 from utils.dmaic_charts import absorption_band_chart, price_absorption_bubble
@@ -57,7 +65,7 @@ st.html(
     <div class="st-mkt-head">
       <div>
         <h2 class="st-page-title">Market Intelligence Overview</h2>
-        <p class="st-page-sub">Institutional data streams for Bagaluru residential · PropStack Dec 2022 – Nov 2025.</p>
+        <p class="st-page-sub">PropStack Bagaluru residential · Dec 2022 – Nov 2025 · full series stack.</p>
       </div>
       <p class="st-mkt-asof">Data current · PropStack Nov 2025</p>
     </div>
@@ -85,6 +93,22 @@ inv = propstack_inventory(catalog)
 price = propstack_price_trend(catalog)
 launches = propstack_new_launches(catalog)
 bands = propstack_absorption_bands(catalog)
+pw_supply = propstack_productwise_supply(catalog)
+pw_sa = propstack_productwise_sa(catalog)
+cumul = propstack_cumulative(catalog)
+q_unsold = propstack_quarterly_unsold(catalog)
+
+LENSES = [
+    "Price trend",
+    "Inventory",
+    "New launches",
+    "Price bands",
+    "Productwise supply",
+    "Productwise S&A",
+    "Cumulative S&A",
+    "Quarterly unsold",
+    "Project absorption",
+]
 
 chart_col, thesis_col = st.columns([2, 1], gap="large")
 with chart_col:
@@ -92,21 +116,13 @@ with chart_col:
         """
         <div class="st-card-head">
           <div>
-            <h3 class="st-section-title" style="margin:0;">Weighted Price Trend</h3>
-            <p class="st-card-sub">Historical quarterly pricing variance per sq. ft. (institutional grade)</p>
-          </div>
-          <div class="st-legend">
-            <span><i class="c-terra"></i> Primary market</span>
-            <span><i class="c-ink"></i> Secondary / available</span>
+            <h3 class="st-section-title" style="margin:0;">PropStack market series</h3>
+            <p class="st-card-sub">Switch lenses — charts draw in on scroll · ▶ Play motion to replay</p>
           </div>
         </div>
         """
     )
-    ps_lens = scenario_bar(
-        "mkt_propstack_lens",
-        "Series lens",
-        ["Price trend", "Inventory", "New launches", "Price bands", "Project absorption"],
-    )
+    ps_lens = scenario_bar("mkt_propstack_lens", "Series lens", LENSES)
 
     def _ps_fig():
         if ps_lens == "Inventory":
@@ -115,12 +131,20 @@ with chart_col:
             return new_launch_pulse_chart(launches)
         if ps_lens == "Price bands":
             return absorption_price_band_chart(bands)
+        if ps_lens == "Productwise supply":
+            return productwise_supply_chart(pw_supply)
+        if ps_lens == "Productwise S&A":
+            return productwise_sa_chart(pw_sa)
+        if ps_lens == "Cumulative S&A":
+            return cumulative_supply_chart(cumul)
+        if ps_lens == "Quarterly unsold":
+            return quarterly_unsold_chart(q_unsold)
         if ps_lens == "Project absorption":
             return absorption_band_chart(projects)
         return weighted_price_trend_chart(price)
 
     st.html('<div class="st-chart-card">')
-    render_dynamic_figure("mkt_propstack", _ps_fig, height=380, scene=f"ps|{ps_lens}|{len(projects)}")
+    render_dynamic_figure("mkt_propstack", _ps_fig, height=400, scene=f"ps|{ps_lens}|{len(projects)}")
     st.html("</div>")
 
 with thesis_col:
@@ -136,13 +160,14 @@ with thesis_col:
           <p>
             PropStack Bagaluru shows <strong>{abs_pct:.0f}%</strong> absorption across launched supply,
             with IT-corridor demand and ring-road connectivity supporting mid-premium liquidity.
-            Use this page as Hub evidence — not a second launch call.
+            All Excel export sheets are wired into the series lenses on the left.
           </p>
           <div class="st-thesis-rows">
             <div><span>Risk quotient</span><strong>{risk_q}</strong></div>
             <div><span>Liquidity index</span><strong>{liq:.2f} {"High" if liq >= 0.75 else "Moderate"}</strong></div>
             <div><span>At-risk projects</span><strong>{at_risk}</strong></div>
             <div><span>Unsold pool</span><strong>{int(sk.get("units_unsold", 0)):,}</strong></div>
+            <div><span>PropStack lenses</span><strong>{len(LENSES)}</strong></div>
           </div>
         </div>
         """

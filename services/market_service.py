@@ -212,3 +212,31 @@ def propstack_absorption_bands(catalog: DataCatalog | None = None) -> pd.DataFra
         return pd.DataFrame()
     return catalog.get("absorption_by_price_band")
 
+
+def propstack_productwise_supply(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("productwise_supply"):
+        return pd.DataFrame()
+    return catalog.get("productwise_supply")
+
+
+def propstack_productwise_sa(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("productwise_supply_absorption"):
+        return pd.DataFrame()
+    return catalog.get("productwise_supply_absorption")
+
+
+def propstack_cumulative(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("cumulative_supply_absorption"):
+        return pd.DataFrame()
+    return catalog.get("cumulative_supply_absorption")
+
+
+def propstack_quarterly_unsold(catalog: DataCatalog | None = None) -> pd.DataFrame:
+    catalog = catalog or load_catalog()
+    if not catalog.has("micromarket_quarterly_unsold"):
+        return pd.DataFrame()
+    return catalog.get("micromarket_quarterly_unsold")
+

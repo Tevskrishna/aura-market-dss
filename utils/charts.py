@@ -462,6 +462,123 @@ def absorption_price_band_chart(df: pd.DataFrame) -> go.Figure:
     return _style(fig, "Absorption by price band")
 
 
+def productwise_supply_chart(df: pd.DataFrame) -> go.Figure:
+    if df.empty:
+        return _empty("No productwise supply")
+    frame = df.copy()
+    frame["month"] = pd.to_datetime(frame["month"].astype(str) + "-01", errors="coerce")
+    frame = frame.sort_values("month")
+    fig = go.Figure()
+    for col, name, color in (
+        ("apartment_units", "Apartment Cmplx", ACCENT),
+        ("villa_units", "Row House / Villas", GREEN),
+        ("plot_units", "Plots", BLUE),
+    ):
+        if col in frame.columns:
+            fig.add_trace(
+                go.Bar(x=frame["month"], y=frame[col].fillna(0), name=name, marker_color=color, opacity=0.9)
+            )
+    fig.update_layout(barmode="stack", yaxis_title="Units launched")
+    return _style(fig, "Productwise supply (units)")
+
+
+def productwise_sa_chart(df: pd.DataFrame) -> go.Figure:
+    if df.empty:
+        return _empty("No productwise supply & absorption")
+    frame = df.copy()
+    frame["month"] = pd.to_datetime(frame["month"].astype(str) + "-01", errors="coerce")
+    frame = frame.sort_values("month")
+    long = frame.melt(
+        id_vars=["month", "product_type"],
+        value_vars=[c for c in ("supply_units", "absorption_units", "availability_units") if c in frame.columns],
+        var_name="metric",
+        value_name="units",
+    )
+    long["metric"] = long["metric"].map(
+        {
+            "supply_units": "Supply",
+            "absorption_units": "Absorption",
+            "availability_units": "Availability",
+        }
+    )
+    fig = px.bar(
+        long.dropna(subset=["units"]),
+        x="month",
+        y="units",
+        color="metric",
+        facet_row="product_type" if long["product_type"].nunique() > 1 else None,
+        barmode="group",
+        labels={"units": "Units", "month": "Month", "metric": "Metric"},
+        color_discrete_sequence=PALETTE,
+    )
+    fig.update_layout(height=max(settings.CHART_HEIGHT, 480))
+    return _style(fig, "Productwise supply & absorption")
+
+
+def cumulative_supply_chart(df: pd.DataFrame) -> go.Figure:
+    if df.empty:
+        return _empty("No cumulative supply & absorption")
+    frame = df.copy()
+    frame["month"] = pd.to_datetime(frame["month"].astype(str) + "-01", errors="coerce")
+    frame = frame.sort_values("month")
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=frame["month"],
+            y=frame["cumulative_supply"],
+            name="Cumulative supply",
+            mode="lines+markers",
+            line=dict(color=BLUE, width=2.5),
+            fill="tozeroy",
+            fillcolor="rgba(27,28,28,0.06)",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=frame["month"],
+            y=frame["cumulative_absorption"],
+            name="Cumulative absorption",
+            mode="lines+markers",
+            line=dict(color=ACCENT, width=2.8),
+        )
+    )
+    if "cumulative_availability" in frame.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=frame["month"],
+                y=frame["cumulative_availability"],
+                name="Cumulative availability",
+                mode="lines+markers",
+                line=dict(color=GREEN, width=2, dash="dash"),
+            )
+        )
+    fig.update_layout(yaxis_title="Units")
+    return _style(fig, "Cumulative supply & absorption")
+
+
+def quarterly_unsold_chart(df: pd.DataFrame) -> go.Figure:
+    if df.empty:
+        return _empty("No micromarket quarterly unsold")
+    frame = df.copy()
+    frame = frame.sort_values("period", key=lambda s: s.map(_quarter_sort_key))
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=frame["period"],
+            y=frame["unsold_units"],
+            name="Unsold units",
+            mode="lines+markers",
+            line=dict(color=ACCENT, width=2.8),
+            fill="tozeroy",
+            fillcolor="rgba(185,115,67,0.1)",
+            marker=dict(size=8, color=ACCENT),
+        )
+    )
+    periods = list(dict.fromkeys(frame["period"].tolist()))
+    fig.update_xaxes(categoryorder="array", categoryarray=periods)
+    return _style(fig, "NorthEast quarterly unsold inventory")
+
+
 def _empty(message: str) -> go.Figure:
     fig = go.Figure()
     fig.add_annotation(text=message, xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(color=MUTED))

@@ -120,6 +120,12 @@ def require_login(active_module: str | None = None) -> dict:
         from components.touch_nav import render_sidebar_touch_nav
 
         render_sidebar_touch_nav()
+        try:
+            from components.scroll_motion import inject_scroll_motion
+
+            inject_scroll_motion()
+        except Exception:
+            pass
         render_module_nav()
         from components.ai_copilot import render_ai_copilot, render_sound_pref
         from components.page_load import render_page_load_cue

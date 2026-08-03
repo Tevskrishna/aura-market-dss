@@ -209,40 +209,74 @@ def render_lifecycle(active_label: str = "Executive Hub") -> None:
 
 
 def render_bagaluru_snapshot(summary: dict | None) -> None:
-    """Dark institutional strip — matches Stitch Market Intelligence HTML."""
+    """Dark institutional strip — counters run when scrolled into view."""
+    from components.scroll_motion import inject_scroll_motion
+
     if not summary:
-        abs_pct, projects, total, avail = "—", "—", "—", "—"
-        foot = "PropStack summary not loaded"
-        velocity = "—"
-    else:
-        abs_n = float(summary.get("absorption_pct", 0))
-        abs_pct = f"{abs_n:.0f}%"
-        velocity = f"{abs_n:.0f}% Absorbed"
-        projects = f"{int(summary.get('projects', 0))}"
-        total = f"{int(summary.get('total_units', 0)):,}"
-        avail = f"{int(summary.get('units_unsold', 0)):,}"
-        foot = (
-            f"{abs_pct} Absorbed · {projects} projects · {total} units · {avail} available · "
-            f"{summary.get('period_label', 'Dec 2022 - Nov 2025')}"
+        st.html(
+            """
+            <section class="st-snap st-count-root" aria-label="Bagaluru snapshot">
+              <div class="st-snap-accent"></div>
+              <div class="st-snap-head">
+                <p class="st-snap-title">Bagaluru Snapshot</p>
+                <p class="st-snap-velocity"><span>Market velocity</span><strong>—</strong></p>
+              </div>
+              <div class="st-snap-grid">
+                <div class="st-snap-cell"><span>Market absorption</span><strong>—</strong></div>
+                <div class="st-snap-cell"><span>Active assets</span><strong>—</strong></div>
+                <div class="st-snap-cell"><span>Total inventory</span><strong>—</strong></div>
+                <div class="st-snap-cell"><span>Available units</span><strong>—</strong></div>
+              </div>
+              <div class="st-snap-foot">PropStack summary not loaded</div>
+            </section>
+            """
         )
+        inject_scroll_motion()
+        return
+
+    abs_n = float(summary.get("absorption_pct", 0))
+    projects_n = int(summary.get("projects", 0))
+    total_n = int(summary.get("total_units", 0))
+    avail_n = int(summary.get("units_unsold", 0))
+    period = html.escape(str(summary.get("period_label", "Dec 2022 - Nov 2025")))
+    foot = (
+        f"{abs_n:.0f}% Absorbed · {projects_n} projects · {total_n:,} units · "
+        f"{avail_n:,} available · {period}"
+    )
     st.html(
         f"""
-        <section class="st-snap" aria-label="Bagaluru snapshot">
+        <section class="st-snap st-count-root" aria-label="Bagaluru snapshot">
           <div class="st-snap-accent"></div>
           <div class="st-snap-head">
             <p class="st-snap-title">Bagaluru Snapshot</p>
-            <p class="st-snap-velocity"><span>Market velocity</span><strong>{html.escape(velocity)}</strong></p>
+            <p class="st-snap-velocity">
+              <span>Market velocity</span>
+              <strong class="st-count" data-target="{abs_n}" data-suffix="% Absorbed" data-decimals="0" data-duration="1600">0% Absorbed</strong>
+            </p>
           </div>
           <div class="st-snap-grid">
-            <div class="st-snap-cell"><span>Market absorption</span><strong>{html.escape(abs_pct)}</strong></div>
-            <div class="st-snap-cell"><span>Active assets</span><strong>{html.escape(projects)}</strong></div>
-            <div class="st-snap-cell"><span>Total inventory</span><strong>{html.escape(total)}</strong></div>
-            <div class="st-snap-cell"><span>Available units</span><strong>{html.escape(avail)}</strong></div>
+            <div class="st-snap-cell">
+              <span>Market absorption</span>
+              <strong class="st-count" data-target="{abs_n}" data-suffix="%" data-decimals="0" data-duration="1500">0%</strong>
+            </div>
+            <div class="st-snap-cell">
+              <span>Active assets</span>
+              <strong class="st-count" data-target="{projects_n}" data-decimals="0" data-duration="1200">0</strong>
+            </div>
+            <div class="st-snap-cell">
+              <span>Total inventory</span>
+              <strong class="st-count" data-target="{total_n}" data-decimals="0" data-duration="1700">0</strong>
+            </div>
+            <div class="st-snap-cell">
+              <span>Available units</span>
+              <strong class="st-count" data-target="{avail_n}" data-decimals="0" data-duration="1600">0</strong>
+            </div>
           </div>
           <div class="st-snap-foot">{html.escape(foot)}</div>
         </section>
         """
     )
+    inject_scroll_motion()
 
 
 def _status_badge(status: str, absorption: float) -> tuple[str, str]:
@@ -294,7 +328,7 @@ def render_portfolio_table(df) -> None:
               <td class="st-pt-mono">₹{price:,.0f}</td>
               <td>
                 <div class="st-pt-abs">
-                  <div class="st-pt-bar"><i style="width:{max(0, min(100, abs_pct)):.0f}%"></i></div>
+                  <div class="st-pt-bar"><i style="--bar-w:{max(0, min(100, abs_pct)):.0f}%"></i></div>
                   <span>{abs_pct:.0f}%</span>
                 </div>
               </td>
@@ -326,6 +360,9 @@ def render_portfolio_table(df) -> None:
         </div>
         """
     )
+    from components.scroll_motion import inject_scroll_motion
+
+    inject_scroll_motion()
 
 
 def stitch_brand_sidebar_html(project: str | None = None) -> str:
